@@ -1,13 +1,17 @@
 [
   {
-    "origin": ["http://localhost:3001","http://localhost:3000","https://mydreamtracker.netlify.app/"],
-    "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+    "origin": [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://mydreamtracker.netlify.app"
+    ],
+    "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     "maxAgeSeconds": 3600,
     "responseHeader": [
       "Content-Type",
       "Authorization",
-      "x-goog-meta-*",      
-      "x-goog-resumable",   
+      "x-goog-meta-*",
+      "x-goog-resumable",
       "Access-Control-Allow-Origin",
       "Access-Control-Allow-Headers"
     ]
