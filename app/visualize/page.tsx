@@ -86,21 +86,24 @@ export default function VisualizePage() {
     }, 500)
 
     try {
-      // 실제 구현에서는 AI 이미지 생성 API 호출 (DALL-E, Midjourney, Stable Diffusion 등)
-      await new Promise((resolve) => setTimeout(resolve, 5000))
-
       const prompt = customPrompt || `${selectedDreamData?.title}: ${selectedDreamData?.content.slice(0, 200)}`
-
+      // OpenAI DALL·E 3 이미지 생성 API 호출
+      const res = await fetch("/api/image-gen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, style: selectedStyle })
+      })
+      const data = await res.json()
+      if (!data.imageUrl) throw new Error("이미지 생성 실패")
       const newImage: GeneratedImage = {
         id: Date.now().toString(),
         dreamId: selectedDream,
         dreamTitle: selectedDreamData?.title || "커스텀 꿈",
         prompt,
-        imageUrl: "/placeholder.svg?height=400&width=400",
+        imageUrl: data.imageUrl,
         style: selectedStyle,
         createdAt: new Date(),
       }
-
       setGeneratedImages((prev) => [newImage, ...prev])
       alert("이미지가 성공적으로 생성되었습니다!")
     } catch (error) {
@@ -123,7 +126,7 @@ export default function VisualizePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen dreamy-bg pt-20">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* 소개 섹션 */}
         <Card className="mb-8 bg-gradient-to-r from-pink-100 to-purple-100 border-pink-200">

@@ -69,7 +69,7 @@ export default function LucidDreamDiary() {
   const { dreams, loading } = useDreams()
   const { user } = useAuth()
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [dreamTip, setDreamTip] = useState("")
+  const [dreamTipIdx, setDreamTipIdx] = useState(0);
 
   const dreamTips = [
     "꿈을 더 생생하게 기억하려면 잠에서 깨자마자 바로 기록하는 것이 좋습니다.",
@@ -81,7 +81,7 @@ export default function LucidDreamDiary() {
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-    setDreamTip(dreamTips[Math.floor(Math.random() * dreamTips.length)])
+    setDreamTipIdx(0); // Initialize dreamTipIdx
     return () => clearInterval(timer)
   }, [])
 
@@ -151,6 +151,17 @@ export default function LucidDreamDiary() {
     []
   )
 
+  const getRelatedTip = () => {
+    if (recentDreams.length === 0) return dreamTips[dreamTipIdx % dreamTips.length];
+    const lastDream = recentDreams[0];
+    // 감정/태그/루시드 등과 연관된 팁 추천(간단 예시)
+    if (lastDream.isLucid) return "루시드 드림을 자주 경험한다면, 꿈에서 현실 자각 연습을 해보세요.";
+    if (lastDream.emotion === "fear") return "두려운 꿈을 꿨다면, 꿈 내용을 기록하고 감정을 정리해보세요.";
+    if (lastDream.tags?.includes("가족")) return "가족이 등장하는 꿈은 관계에 대한 메시지일 수 있어요.";
+    return dreamTips[dreamTipIdx % dreamTips.length];
+  };
+  const handleNextTip = () => setDreamTipIdx(i => i + 1);
+
   if (loading) {
     return (
       <div className="min-h-screen dreamy-bg flex items-center justify-center">
@@ -176,139 +187,73 @@ export default function LucidDreamDiary() {
         ))}
       </div>
 
-      <div className="container mx-auto px-4 py-6 space-y-6 max-w-5xl">
-        {/* 헤더 */}
+      <div className="container mx-auto px-2 py-6 space-y-8 max-w-7xl pt-20">
+        {/* 헤더(알림 버튼 삭제, 프로필/새 기록만 남김) */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">나의 꿈 일기장</h1>
             <p className="text-sm text-gray-500">{currentTime.toLocaleDateString('ko-KR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="text-xs">
-              <PlusCircle className="h-4 w-4 mr-1" />
-              새 기록
+          {/* 프로필/새 기록만 */}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="text-xs ml-2">
+              <PlusCircle className="h-4 w-4 mr-1" />새 기록
             </Button>
           </div>
         </div>
-
-        {/* 주요 기능 카드 영역 */}
-        {/* 주요 기능 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* 주요 기능 카드 그리드 부분 수정 */}
+        {/* 2*2, 2*3 등에서 옆 공간이 남지 않도록 grid-cols-4까지 확장 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
           <FeatureCards />
         </div>
-
-        {/* 정보/통계/팁 위젯 영역 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <InfoWidgets stats={{
-            ...stats,
-            monthGoal: 15 // 예시: 이번 달 목표 15회
-          }} currentTime={currentTime} dreamTip={dreamTip} />
+        {/* AI 추천/분석 섹션 */}
+        <div className="rounded-xl bg-gradient-to-r from-indigo-100 to-purple-100 shadow p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-indigo-700 mb-1 flex items-center gap-2"><Sparkles className="h-5 w-5" />오늘의 AI 꿈 해석</h2>
+            <p className="text-gray-700 text-sm mb-2">AI가 최근 꿈 기록을 분석해 오늘의 꿈 패턴과 해석을 추천합니다.</p>
+            <Button size="sm" variant="secondary" className="bg-indigo-500 text-white">AI 해석 보기</Button>
+          </div>
+          <div className="flex flex-col items-center">
+            <Brain className="h-12 w-12 text-indigo-400 mb-2" />
+            <span className="text-xs text-indigo-600">AI 추천 활성화</span>
+          </div>
         </div>
 
-        {/* 최근 꿈 일기 섹션 */}
-        <Card className="glass-effect shadow-lg rounded-2xl overflow-hidden border-0">
-          <CardHeader className="pb-3 border-b">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Moon className="h-5 w-5 text-indigo-600" />
-                <CardTitle className="text-lg font-semibold">최근 꿈 일기</CardTitle>
-                <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
-                  {recentDreams.length}개
-                </Badge>
-              </div>
-              <Button variant="ghost" size="sm" className="text-indigo-600 hover:bg-indigo-50">
-                모두 보기
-              </Button>
+        {/* 최근 꿈 일기/샘플/가이드 */}
+        <div className="rounded-xl bg-white/80 shadow p-5">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-bold text-gray-800">최근 꿈 일기</h2>
+            <Link href="/dreams" className="text-xs text-indigo-600 hover:underline">모두 보기</Link>
+          </div>
+          {recentDreams.length === 0 ? (
+            <div className="flex flex-col items-center py-8">
+              <ImageIcon className="h-16 w-16 text-gray-300 mb-4" />
+              <p className="text-gray-500 mb-2">아직 꿈 일기가 없습니다.</p>
+              <Button asChild variant="outline"><Link href="/write">꿈 기록하러 가기</Link></Button>
             </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            {recentDreams.length === 0 ? (
-              <div className="text-center py-12 px-4">
-                <div className="relative inline-block">
-                  <Moon className="h-16 w-16 text-indigo-200 mx-auto mb-4 animate-float" />
-                  <div className="absolute -inset-2 bg-indigo-100 rounded-full opacity-50 blur-md -z-10"></div>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">기록된 꿈이 없어요</h3>
-                <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">오늘 본 꿈을 기록하고, 나만의 꿈 일기를 시작해보세요</p>
-                <Button
-                  onClick={() => router.push("/write")}
-                  className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5 transition-all duration-300 px-6 py-2 rounded-full font-medium"
-                >
-                  <PlusCircle className="h-4 w-4 mr-2" />
-                  첫 꿈 기록하기
-                </Button>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-100">
-                {recentDreams.map((dream) => (
-                  <button
-                    key={dream.id}
-                    type="button"
-                    className="w-full text-left p-5 hover:bg-white/50 transition-all duration-300 flex flex-col gap-2 group relative overflow-hidden card-hover-effect"
-                    onClick={() => router.push(`/dreams/${dream.id}`)}
-                    tabIndex={0}
-                    aria-label={`꿈 일기: ${dream.title}`}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") router.push(`/dreams/${dream.id}`)
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-                    <div className="flex justify-between items-start">
-                      <h4 className="font-semibold text-gray-800 line-clamp-1 group-hover:text-indigo-700 transition-colors">{dream.title}</h4>
-                      <div className="flex items-center space-x-2 text-xs">
-                        {dream.images.length > 0 && (
-                          <span className="text-indigo-400">
-                            <ImageIcon className="h-3.5 w-3.5" />
-                          </span>
-                        )}
-                        {dream.isLucid && (
-                          <span className="text-amber-400">
-                            <Sparkles className="h-3.5 w-3.5" />
-                          </span>
-                        )}
-                        <span className="text-gray-500 bg-white/50 px-2 py-0.5 rounded-full">
-                          {new Date(dream.date).toLocaleDateString("ko-KR", {month: 'numeric', day: 'numeric'})}
-                        </span>
-                      </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {recentDreams.map((dream) => (
+                <Card key={dream.id} className="bg-gradient-to-br from-purple-50 to-pink-50 border-0 shadow-md">
+                  <CardHeader>
+                    <CardTitle className="text-base font-semibold text-purple-800 line-clamp-1">{dream.title}</CardTitle>
+                    <CardDescription className="text-xs text-gray-500">{new Date(dream.date).toLocaleDateString('ko-KR')}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-700 line-clamp-3 mb-2">{dream.content}</p>
+                    <div className="flex items-center gap-2">
+                      {dream.isLucid && <Badge className="bg-orange-200 text-orange-700">루시드</Badge>}
+                      <Badge className="bg-indigo-100 text-indigo-700">{dream.emotion}</Badge>
                     </div>
-                    <p className="text-sm text-gray-700 line-clamp-2 text-left group-hover:text-gray-800 transition-colors">{dream.content}</p>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center flex-wrap gap-1.5">
-                        <Badge 
-                          variant="secondary" 
-                          className="text-[11px] h-6 px-2 bg-indigo-100 text-indigo-700 border border-indigo-200 hover:bg-indigo-200 transition-colors"
-                        >
-                          {dream.emotion}
-                        </Badge>
-                        {dream.tags.slice(0, 2).map((tag, idx) => (
-                          <Badge 
-                            key={`${dream.id}-tag-${tag}-${idx}`} 
-                            variant="outline" 
-                            className="text-[11px] h-6 px-2 bg-white/70 text-gray-600 border-gray-200 hover:bg-gray-50 transition-colors"
-                          >
-                            #{tag}
-                          </Badge>
-                        ))}
-                        {dream.tags.length > 2 && (
-                          <Badge 
-                            variant="outline" 
-                            className="text-[11px] h-6 px-2 bg-white/70 text-gray-400 border-gray-200"
-                          >
-                            +{dream.tags.length - 2}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center text-xs text-indigo-500 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">
-                        <Eye className="h-3 w-3 mr-1" />
-                        <span>{dream.vividness}/5</span>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 정보/통계/팁 위젯 강조 */}
+        <InfoWidgets stats={stats} currentTime={currentTime} dreamTip={getRelatedTip()} onNextTip={handleNextTip} />
       </div>
     </div>
   )

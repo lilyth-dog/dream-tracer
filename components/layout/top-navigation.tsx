@@ -1,12 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu"
-import { Home, BookOpen, PlusCircle, BarChart3, User, Users, Brain, Palette, Bell } from "lucide-react"
+import { Home, BookOpen, PlusCircle, BarChart3, User, Users, Brain, Palette, Bell, LogOut } from "lucide-react"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
+import LanguageSwitcher from "@/components/ui/language-switcher";
 
 export default function TopNavigation() {
   const pathname = usePathname()
+  const router = useRouter()
 
   const navItems = [
     { href: "/", icon: Home, label: "홈" },
@@ -18,11 +22,22 @@ export default function TopNavigation() {
     { href: "/visualize", icon: Palette, label: "시각화" },
   ]
 
+  const handleLogout = async () => {
+    if (confirm("정말 로그아웃하시겠습니까?")) {
+      try {
+        await signOut(auth)
+        router.push("/")
+      } catch (error) {
+        alert("로그아웃에 실패했습니다.")
+      }
+    }
+  }
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 h-16 flex items-center px-4 justify-between pointer-events-auto">
       {/* 좌측: 로고 */}
       <Link href="/" className="flex items-center gap-2 text-xl font-bold text-indigo-500">
-        <span role="img" aria-label="moon">🌙</span> 드림아이
+        <span role="img" aria-label="moon">🌙</span> 꿈결
       </Link>
       {/* 중앙: 주요 메뉴 */}
       <nav className="hidden md:flex flex-1 justify-center">
@@ -46,14 +61,25 @@ export default function TopNavigation() {
         </NavigationMenu>
       </nav>
       {/* 우측: 알림, 프로필 */}
-      <div className="flex items-center gap-4">
-        <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="알림">
+      <div className="flex items-center gap-2">
+        <button
+          className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="알림"
+        >
           <Bell className="w-6 h-6 text-gray-500" />
         </button>
         <Link href="/profile" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold">N</div>
           <span className="hidden md:inline text-base font-semibold text-gray-700">프로필</span>
         </Link>
+        <button
+          className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="로그아웃"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-6 h-6 text-gray-500" />
+        </button>
+        <LanguageSwitcher />
       </div>
     </header>
   )

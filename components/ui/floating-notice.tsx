@@ -14,14 +14,14 @@ export function FloatingNotice() {
   return (
     <>
       <button
-        className="fixed bottom-6 left-6 z-50 bg-white border shadow-lg rounded-full p-3 hover:bg-gray-100"
+        className="fixed bottom-6 left-6 z-50 bg-white border shadow-lg rounded-full p-3 hover:bg-gray-100 hidden md:block"
         onClick={() => setOpen(v => !v)}
         aria-label="알림 열기"
       >
         <Bell className="h-6 w-6 text-indigo-600" />
       </button>
       {open && (
-        <div className="fixed bottom-24 left-6 w-72 max-w-full bg-white rounded-xl shadow-2xl p-4 z-50 border">
+        <div className="fixed bottom-24 left-6 w-72 max-w-full bg-white rounded-xl shadow-2xl p-4 z-50 border hidden md:block">
           <div className="font-bold mb-2">알림</div>
           <ul className="space-y-2">
             {DEMO_NOTICES.map(n => (

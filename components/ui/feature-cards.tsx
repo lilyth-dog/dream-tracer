@@ -34,9 +34,9 @@ const features = [
 
 export default function FeatureCards() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 my-2">
+    <>
       {features.map((f) => (
-        <Link key={f.href} href={f.href} className={`group block rounded-xl p-3 bg-gradient-to-br ${f.color} shadow transition-transform hover:scale-105 focus:ring-2 focus:ring-indigo-400 outline-none min-h-[60px]`} tabIndex={0}>
+        <Link key={f.href} href={f.href} className={`group block rounded-xl p-3 bg-gradient-to-br ${f.color} shadow transition-transform hover:scale-105 focus:ring-2 focus:ring-indigo-400 outline-none min-h-[60px] min-w-0 w-full flex-1`} tabIndex={0}>
           <div className="flex items-center gap-2">
             <div className="bg-white/80 rounded-full p-2 shadow">
               {f.icon}
@@ -48,6 +48,6 @@ export default function FeatureCards() {
           </div>
         </Link>
       ))}
-    </div>
+    </>
   )
 } 

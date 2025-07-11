@@ -8,10 +8,10 @@ const languages = [
   { code: 'zh', label: '中文' },
 ];
 
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({ className }: { className?: string }) {
   const { i18n } = useTranslation();
   return (
-    <div className="flex gap-2 items-center">
+    <div className={className ? `flex gap-2 items-center ${className}` : "flex gap-2 items-center"}>
       <span className="text-xs text-gray-500">🌐</span>
       <select
         className="border rounded px-2 py-1 text-sm"

@@ -67,17 +67,22 @@ export default function DejavuFinderPage() {
         return prev + 10
       })
     }, 300)
-    // 실제 구현에서는 AI API 호출
+    // OpenAI Embedding + Claude 해설 API 호출
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-      setDejavuMatches(sampleMatches)
+      const res = await fetch("/api/dejavu-vector", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dreams, realEvent, topN: 3 })
+      })
+      const data = await res.json()
+      setDejavuMatches(data.result)
     } catch (error) {
       alert("분석 중 오류가 발생했습니다.")
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen dreamy-bg pt-20">
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         {/* 소개 섹션 */}
         <Card className="mb-8 bg-gradient-to-r from-purple-100 to-pink-100 border-purple-200">

@@ -1,6 +1,6 @@
 import { BarChart3, Calendar, Heart, Sparkles, Info, BookOpen } from "lucide-react"
 
-export default function InfoWidgets({ stats, currentTime, dreamTip }: {
+export default function InfoWidgets({ stats, currentTime, dreamTip, onNextTip }: {
   stats: {
     totalDreams: number
     thisMonth: number
@@ -10,7 +10,8 @@ export default function InfoWidgets({ stats, currentTime, dreamTip }: {
     monthGoal?: number
   },
   currentTime: Date,
-  dreamTip: string
+  dreamTip: string,
+  onNextTip?: () => void
 }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-2 my-2">
@@ -48,7 +49,9 @@ export default function InfoWidgets({ stats, currentTime, dreamTip }: {
           <span className="font-bold text-purple-700 text-sm">오늘의 꿈 팁</span>
         </div>
         <div className="text-xs text-gray-700 mb-1">{dreamTip}</div>
-        <div className="text-[10px] text-purple-500">✨ 새로운 팁</div>
+        {onNextTip && (
+          <button className="text-[10px] text-purple-500 underline hover:text-purple-700" onClick={onNextTip}>✨ 새로운 팁 보기</button>
+        )}
       </div>
     </div>
   )

@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Users, Heart, MessageCircle, LayoutDashboard, BookOpen, BarChart2, Palette, Brain, PenLine } from "lucide-react"
 import Link from "next/link"
+import { useAuth } from "@/hooks/useAuth";
 
 // 샘플 커뮤니티 데이터
 const communityPosts = [
@@ -86,15 +87,30 @@ type Post = {
   timeAgo: string;
   category: string;
   createdAt: string; // ISO date string
+  likedUserIds?: string[]; // 좋아요한 사용자 ID 배열
 };
 
 type Comment = {
   id: string;
   author: string;
   text: string;
+  anonId?: string; // 브라우저별 임시 ID
+  userId?: string; // 사용자 ID
 };
 
+// 1. 브라우저별 임시 ID 생성/저장
+function getAnonId() {
+  if (typeof window === 'undefined') return '';
+  let id = localStorage.getItem("dreamai_anon_id");
+  if (!id) {
+    id = Math.random().toString(36).slice(2, 10);
+    localStorage.setItem("dreamai_anon_id", id);
+  }
+  return id;
+}
+
 export default function CommunityPage() {
+	const { user } = useAuth();
 	const [posts, setPosts] = useState<Post[]>([])
 	const [newContent, setNewContent] = useState("")
 	const [loading, setLoading] = useState(false)
@@ -129,94 +145,88 @@ export default function CommunityPage() {
 		setLoading(false)
 	}
 	const handleLike = async (id: string) => {
+		if (!user) return;
+		const post = posts.find(p => p.id === id);
+		const liked = post?.likedUserIds?.includes(user.uid);
 		await fetch("/api/community", {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ postId: id, like: true })
-		})
-		setPosts(posts.map(p => p.id === id ? { ...p, likes: p.likes + 1 } : p))
-	}
+			body: JSON.stringify({ postId: id, like: !liked, userId: user.uid })
+		});
+		setPosts(posts.map(p =>
+			p.id === id
+				? {
+					...p,
+					likes: liked ? p.likes - 1 : p.likes + 1,
+					likedUserIds: liked
+						? p.likedUserIds.filter((uid: string) => uid !== user.uid)
+						: [...(p.likedUserIds || []), user.uid],
+				}
+				: p
+		));
+	};
 	const handleComment = async (id: string, comment: string) => {
-		if (!comment.trim()) return
+		if (!comment.trim() || !user) return;
 		await fetch("/api/community", {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ postId: id, comment })
-		})
-		setPosts(posts.map(p => p.id === id ? { ...p, comments: [...(p.comments||[]), { id: Date.now().toString(), author: "익명", text: comment }] } : p))
-	}
+			body: JSON.stringify({ postId: id, comment, userId: user.uid })
+		});
+		// 익명 번호 매핑은 서버에서 처리, 프론트는 author만 사용
+		setPosts(posts.map(p =>
+			p.id === id
+				? {
+					...p,
+					comments: [
+						...(p.comments || []),
+						{ id: Date.now().toString(), author: "", text: comment, userId: user.uid },
+					],
+				}
+				: p
+		));
+	};
 	return (
-		<div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-			{/* 좌측 대시보드 카드 */}
-			<aside className="hidden md:flex flex-col gap-6 w-64 p-6">
-				<div className="mb-8">
-					<h1 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent neon-text drop-shadow-lg">드림아이</h1>
-				</div>
-				<div className="space-y-4">
-					<Card className="shadow-md">
-						<CardContent className="p-4 flex flex-col gap-3">
-							<NavButton icon={<LayoutDashboard className="h-5 w-5" />} label="대시보드" href="/" />
-							<NavButton icon={<PenLine className="h-5 w-5" />} label="꿈 일기 작성" href="/write" />
-							<NavButton icon={<BookOpen className="h-5 w-5" />} label="꿈 일기 보기" href="/dreams" />
-							<NavButton icon={<Brain className="h-5 w-5" />} label="데자뷰 파인더" href="/dejavu" />
-							<NavButton icon={<Palette className="h-5 w-5" />} label="꿈 시각화" href="/visualize" />
-							<NavButton icon={<BarChart2 className="h-5 w-5" />} label="꿈 통계" href="/stats" />
-							<NavButton icon={<Users className="h-5 w-5" />} label="커뮤니티" href="/community" />
-						</CardContent>
-					</Card>
-				</div>
-			</aside>
-			{/* 메인 컨텐츠 */}
-			<main className="flex-1 max-w-2xl mx-auto py-8 px-4 md:px-12 space-y-6">
-				<Card>
-					<CardHeader>
-						<CardTitle>꿈 공유하기</CardTitle>
-					</CardHeader>
-					<CardContent className="space-y-2">
-						<Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="꿈을 자유롭게 공유해보세요!" />
-						<Button onClick={handlePost} disabled={loading}>{loading ? '등록 중...' : '공유하기'}</Button>
-					</CardContent>
-				</Card>
-				{posts.map(post => (
-					<Card key={post.id} className="space-y-2">
+		<div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+			<div className="container mx-auto px-2 py-8 max-w-3xl pt-20">
+				<main className="w-full">
+					<Card>
 						<CardHeader>
-							<div className="flex items-center gap-2">
-								<span className="font-bold text-indigo-700">{post.author.name}</span>
-								<span className="text-xs text-gray-400">{new Date(post.createdAt).toLocaleString('ko-KR')}</span>
-							</div>
+							<CardTitle>꿈 공유하기</CardTitle>
 						</CardHeader>
-						<CardContent>
-							<div className="mb-2 whitespace-pre-line">{post.content}</div>
-							<div className="flex items-center gap-4">
-								<Button variant="ghost" size="sm" onClick={() => handleLike(post.id)}>
-									<Heart className="h-4 w-4 text-pink-500" /> {post.likes}
-								</Button>
-								<MessageCircle className="h-4 w-4 text-gray-400" /> {(post.comments||[]).length}
-							</div>
-							<div className="mt-2 space-y-1">
-								{(post.comments||[]).map((c: Comment) => (
-									<div key={c.id} className="text-xs text-gray-700 pl-2 border-l">
-										<span className="font-semibold">{c.author}:</span> {c.text}
-									</div>
-								))}
-								<CommentInput postId={post.id} onComment={handleComment} />
-							</div>
+						<CardContent className="space-y-2">
+							<Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="꿈을 자유롭게 공유해보세요!" />
+							<Button onClick={handlePost} disabled={loading}>{loading ? '등록 중...' : '공유하기'}</Button>
 						</CardContent>
 					</Card>
-				))}
-			</main>
-			{/* 우측 네비게이션 바 */}
-			<nav className="hidden lg:flex flex-col gap-4 w-40 p-6 items-end">
-				<div className="sticky top-24 space-y-3">
-					<NavButton icon={<LayoutDashboard className="h-5 w-5" />} label="대시보드" href="/" />
-					<NavButton icon={<PenLine className="h-5 w-5" />} label="꿈 일기 작성" href="/write" />
-					<NavButton icon={<BookOpen className="h-5 w-5" />} label="꿈 일기 보기" href="/dreams" />
-					<NavButton icon={<Brain className="h-5 w-5" />} label="데자뷰 파인더" href="/dejavu" />
-					<NavButton icon={<Palette className="h-5 w-5" />} label="꿈 시각화" href="/visualize" />
-					<NavButton icon={<BarChart2 className="h-5 w-5" />} label="꿈 통계" href="/stats" />
-					<NavButton icon={<Users className="h-5 w-5" />} label="커뮤니티" href="/community" />
-				</div>
-			</nav>
+					{posts.map(post => (
+						<Card key={post.id} className="space-y-2 mt-6">
+							<CardHeader>
+								<div className="flex items-center gap-2">
+									<span className="font-bold text-indigo-700">{post.author.name}</span>
+									<span className="text-xs text-gray-400">{new Date(post.createdAt).toLocaleString('ko-KR')}</span>
+								</div>
+							</CardHeader>
+							<CardContent>
+								<div className="mb-2 whitespace-pre-line">{post.content}</div>
+								<div className="flex items-center gap-4">
+									<Button variant={post.likedUserIds?.includes(user?.uid) ? "solid" : "ghost"} size="sm" onClick={() => handleLike(post.id)}>
+										<Heart className={post.likedUserIds?.includes(user?.uid) ? "h-4 w-4 text-pink-500 fill-pink-500" : "h-4 w-4 text-pink-500"} /> {post.likes}
+									</Button>
+									<MessageCircle className="h-4 w-4 text-gray-400" /> {(post.comments||[]).length}
+								</div>
+								<div className="mt-2 space-y-1">
+									{(post.comments||[]).map((c: Comment) => (
+										<div key={c.id} className="text-xs text-gray-700 pl-2 border-l">
+											<span className="font-semibold">{c.author}:</span> {c.text}
+										</div>
+									))}
+									<CommentInput postId={post.id} onComment={handleComment} />
+								</div>
+							</CardContent>
+						</Card>
+					))}
+				</main>
+			</div>
 		</div>
 	)
 }

@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import Client from "./client"
 
 export const metadata: Metadata = {
-  title: "드림아이(DreamAI) - 꿈을 기록하고 해석하세요",
+  title: "꿈결 - 꿈을 기록하고 해석하세요",
   description: "AI와 함께하는 스마트한 꿈 일기장. 꿈을 기록하고, 분석하고, 해석해보세요.",
   generator: 'v0.dev'
 }

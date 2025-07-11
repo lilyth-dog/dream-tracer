@@ -138,7 +138,7 @@ export default function DreamsListPage() {
 
   return (
     <div className="min-h-screen dreamy-bg">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pt-20">
         {/* 검색 및 필터 */}
         <Card className="mb-8 glass-effect">
           <CardContent className="p-6">
@@ -245,9 +245,10 @@ export default function DreamsListPage() {
           </CardContent>
         </Card>
 
-        {/* 달력: 꿈 일기 작성일 하이라이트 */}
-        <div className="mb-8">
-          <Card className="glass-effect">
+        {/* 달력과 최근 꿈 일기 리스트를 2단 레이아웃으로 배치 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          {/* 달력 카드 - 왼쪽 */}
+          <Card className="glass-effect w-full max-w-md mx-auto text-base">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-blue-600" />
@@ -260,9 +261,32 @@ export default function DreamsListPage() {
                 mode="multiple"
                 selected={dreamDates}
                 showOutsideDays
-                className="rounded-md border"
-                disabled={() => true} // 날짜 선택 비활성화
+                className="rounded-md border text-base"
+                disabled={() => true}
               />
+            </CardContent>
+          </Card>
+          {/* 최근 꿈 일기 리스트 - 오른쪽 */}
+          <Card className="glass-effect w-full">
+            <CardHeader>
+              <CardTitle>최근 꿈 일기</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {filteredDreams.length === 0 ? (
+                <div className="text-gray-400 text-sm py-8 text-center">최근 꿈 일기가 없습니다.</div>
+              ) : (
+                <ul className="divide-y divide-gray-100">
+                  {filteredDreams.slice(0, 5).map((dream) => (
+                    <li key={dream.id} className="py-3 cursor-pointer hover:bg-purple-50 px-2 rounded transition" onClick={() => router.push(`/dreams/${dream.id}`)}>
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-indigo-700 line-clamp-1">{dream.title}</span>
+                        <span className="text-xs text-gray-400 ml-2">{format(new Date(dream.date), "yyyy.MM.dd", { locale: ko })}</span>
+                      </div>
+                      <div className="text-xs text-gray-600 line-clamp-2 mt-0.5">{dream.content}</div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </CardContent>
           </Card>
         </div>
