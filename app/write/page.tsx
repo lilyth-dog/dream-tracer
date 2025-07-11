@@ -223,7 +223,7 @@ export default function WriteDreamPage() {
 
   return (
     <div className="min-h-screen dreamy-bg pt-20">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto px-4 py-8 pb-24 lg:pb-8 max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Form */}
           <div className="lg:col-span-3">
@@ -686,6 +686,34 @@ export default function WriteDreamPage() {
                 </Button>
               </CardContent>
             </Card>
+          </div>
+        </div>
+        
+        {/* Mobile Save Button - Only visible on small screens */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
+          <div className="container mx-auto max-w-6xl">
+            <div className="flex gap-3">
+              <Button
+                onClick={handleSave}
+                disabled={saving || !dreamData.title || !dreamData.content}
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600"
+              >
+                {saving ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    저장 중...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    저장하기
+                  </>
+                )}
+              </Button>
+              <Button variant="outline" onClick={handleDraft} disabled={saving}>
+                <FileText className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
