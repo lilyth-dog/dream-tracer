@@ -92,6 +92,7 @@ type Post = {
   nickname?: string; // 작성자 닉네임
   recommendedUserIds?: string[]; // 추천한 사용자 ID 배열
   recommends?: number; // 추천 수
+  isPublicProfile?: boolean; // 공개 프로필 여부
 };
 
 type Comment = {
@@ -101,6 +102,7 @@ type Comment = {
   anonId?: string; // 브라우저별 임시 ID
   userId?: string; // 사용자 ID
   nickname?: string; // 댓글 작성자 닉네임
+  isPublicProfile?: boolean; // 공개 프로필 여부
 };
 
 // 1. 브라우저별 임시 ID 생성/저장
@@ -118,6 +120,7 @@ export default function CommunityPage() {
 	const { user } = useAuth();
 	const [posts, setPosts] = useState<Post[]>([])
 	const [newContent, setNewContent] = useState("")
+	const [isPublicProfile, setIsPublicProfile] = useState(false)
 	const [loading, setLoading] = useState(false)
 	useEffect(() => {
 		fetch("/api/community")
@@ -139,7 +142,7 @@ export default function CommunityPage() {
 		const res = await fetch("/api/community", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ content: newContent, authorId, nickname })
+			body: JSON.stringify({ content: newContent, authorId, nickname, isPublicProfile })
 		})
 		const data = await res.json()
 		const postWithCreatedAt = {
@@ -148,6 +151,7 @@ export default function CommunityPage() {
 		}
 		setPosts([postWithCreatedAt, ...posts])
 		setNewContent("")
+		setIsPublicProfile(false)
 		setLoading(false)
 	}
 	const handleLike = async (id: string) => {
@@ -172,12 +176,12 @@ export default function CommunityPage() {
 			));
 		}
 	};
-	const handleComment = async (id: string, comment: string) => {
+	const handleComment = async (id: string, comment: string, isPublicProfile: boolean) => {
 		if (!comment.trim() || !user) return;
 		const res = await fetch("/api/community", {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ postId: id, comment, userId: user.uid })
+			body: JSON.stringify({ postId: id, comment, userId: user.uid, isPublicProfile })
 		});
 		const data = await res.json();
 		if (data.ok && data.comment) {
@@ -239,6 +243,10 @@ export default function CommunityPage() {
 						</CardHeader>
 						<CardContent className="space-y-2">
 							<Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="꿈을 자유롭게 공유해보세요!" />
+							<div className="flex items-center gap-2">
+								<input type="checkbox" id="publicProfile" checked={isPublicProfile} onChange={e => setIsPublicProfile(e.target.checked)} />
+								<label htmlFor="publicProfile" className="text-xs select-none">공개 프로필로 작성</label>
+							</div>
 							<Button onClick={handlePost} disabled={loading}>{loading ? '등록 중...' : '공유하기'}</Button>
 						</CardContent>
 					</Card>
@@ -246,11 +254,22 @@ export default function CommunityPage() {
 						{posts.map((post) => (
 							<Card key={post.id}>
 								<CardHeader className="flex flex-row items-center gap-2">
-									<Avatar>
-										<AvatarFallback>{post.nickname?.[0] || '익'}</AvatarFallback>
-									</Avatar>
+									{post.isPublicProfile && user && user.uid === post.authorId ? (
+										<Avatar>
+											<AvatarImage src={user.photoURL || undefined} />
+											<AvatarFallback>{user.displayName?.[0] || '유'}</AvatarFallback>
+										</Avatar>
+									) : (
+										<Avatar>
+											<AvatarFallback>{post.nickname?.[0] || '익'}</AvatarFallback>
+										</Avatar>
+									)}
 									<div>
-										<CardTitle className="text-base">{post.nickname || '익명'}</CardTitle>
+										<CardTitle className="text-base">
+											{post.isPublicProfile && user && user.uid === post.authorId
+												? user.displayName || '프로필'
+												: post.nickname || '익명'}
+										</CardTitle>
 										<CardDescription className="text-xs text-gray-400">{post.createdAt?.toString().slice(0, 10) || ''}</CardDescription>
 									</div>
 									{user?.uid === post.authorId && (
@@ -285,8 +304,14 @@ export default function CommunityPage() {
 									</div>
 									<div className="mt-4 space-y-2">
 										{(post.comments||[]).map((c: Comment) => (
-											<div key={c.id} className="text-xs text-gray-700 pl-2 border-l">
-												<span className="font-semibold">{c.nickname || '익명'}:</span> {c.text}
+											<div key={c.id} className="text-xs text-gray-700 pl-2 border-l flex items-center gap-1">
+												{c.isPublicProfile && user && user.uid === c.authorId ? (
+													<Avatar className="w-5 h-5">
+														<AvatarImage src={user.photoURL || undefined} />
+														<AvatarFallback>{user.displayName?.[0] || '유'}</AvatarFallback>
+													</Avatar>
+												) : null}
+												<span className="font-semibold">{c.isPublicProfile && user && user.uid === c.authorId ? (user.displayName || '프로필') : (c.nickname || '익명')}:</span> {c.text}
 											</div>
 										))}
 									</div>
@@ -310,11 +335,14 @@ function NavButton({ icon, label, href }: { icon: React.ReactNode; label: string
 	)
 }
 
-function CommentInput({ postId, onComment }: { postId: string; onComment: (id: string, comment: string) => void }) {
+function CommentInput({ postId, onComment }: { postId: string; onComment: (id: string, comment: string, isPublicProfile: boolean) => void }) {
 	const [comment, setComment] = useState("")
+	const [isPublicProfile, setIsPublicProfile] = useState(false)
 	return (
-		<form onSubmit={e => { e.preventDefault(); onComment(postId, comment); setComment("") }} className="flex gap-2 mt-1">
+		<form onSubmit={e => { e.preventDefault(); onComment(postId, comment, isPublicProfile); setComment(""); setIsPublicProfile(false); }} className="flex gap-2 mt-1 items-center">
 			<Input value={comment} onChange={e => setComment(e.target.value)} placeholder="댓글 달기" className="text-xs" />
+			<input type="checkbox" id={`comment-public-${postId}`} checked={isPublicProfile} onChange={e => setIsPublicProfile(e.target.checked)} />
+			<label htmlFor={`comment-public-${postId}`} className="text-xs select-none">공개 프로필로</label>
 			<Button type="submit" size="sm" variant="outline">등록</Button>
 		</form>
 	)

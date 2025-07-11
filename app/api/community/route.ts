@@ -18,7 +18,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { content, authorId } = await request.json()
+  const { content, authorId, isPublicProfile } = await request.json()
   // 새 글에는 anonMap을 생성, 작성자에게 익명1 부여
   const anonMap = authorId ? { [authorId]: 1 } : {}
   const nickname = authorId ? '익명1' : '익명'
@@ -27,18 +27,19 @@ export async function POST(request: Request) {
     nickname,
     anonMap,
     content,
+    isPublicProfile: !!isPublicProfile,
     likes: 0,
     likedUserIds: [],
     comments: [],
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
   })
-  const post = { id: ref.id, authorId: authorId || '', nickname, content, likes: 0, comments: [], createdAt: new Date().toISOString() }
+  const post = { id: ref.id, authorId: authorId || '', nickname, content, isPublicProfile: !!isPublicProfile, likes: 0, comments: [], createdAt: new Date().toISOString() }
   return Response.json({ post })
 }
 
 export async function PUT(request: Request) {
-  const { postId, comment, userId, like, recommend } = await request.json();
+  const { postId, comment, userId, like, recommend, isPublicProfile } = await request.json();
   if (!postId || (!comment && typeof like !== 'boolean' && typeof recommend !== 'boolean')) return Response.json({ ok: false, error: '필수 정보 누락' }, { status: 400 });
 
   const postRef = doc(db, 'community', postId);
@@ -64,6 +65,7 @@ export async function PUT(request: Request) {
       authorId: userId,
       nickname,
       text: comment,
+      isPublicProfile: !!isPublicProfile,
       createdAt: new Date().toISOString(),
     };
     const comments = Array.isArray(postData.comments) ? [...postData.comments, newComment] : [newComment];

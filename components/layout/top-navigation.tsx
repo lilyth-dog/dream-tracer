@@ -8,10 +8,13 @@ import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import LanguageSwitcher from "@/components/ui/language-switcher";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function TopNavigation() {
   const pathname = usePathname()
   const router = useRouter()
+  const { user } = useAuth()
 
   const navItems = [
     { href: "/", icon: Home, label: "홈" },
@@ -79,7 +82,10 @@ export default function TopNavigation() {
           <LogOut className="w-6 h-6 text-gray-500 dark:text-gray-400" />
         </button>
         <Link href="/profile" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold">N</div>
+          <Avatar className="w-8 h-8">
+            <AvatarImage src={user?.photoURL || undefined} />
+            <AvatarFallback>{user?.displayName?.[0] || 'N'}</AvatarFallback>
+          </Avatar>
           <span className="hidden md:inline text-base font-semibold text-gray-700 dark:text-gray-300">프로필</span>
         </Link>
       </div>
