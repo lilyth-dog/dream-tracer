@@ -19,6 +19,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Moon, ArrowLeft, User, Camera, Bell, Shield, Save, Star, Trophy, Palette } from "lucide-react"
 import Link from "next/link"
+import { saveUserProfile, getUserProfile, initializeBadges, getUserBadges, updateUserStats, checkAndAwardBadges, getBadges } from "@/lib/utils"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { useTheme } from "next-themes"
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -66,39 +69,82 @@ export default function ProfilePage() {
     achievements: ["첫 꿈 기록", "일주일 연속", "루시드 드림 달성"],
   })
 
+  const [userBadges, setUserBadges] = useState([])
+  const [allBadges, setAllBadges] = useState([])
+
+  const { theme, setTheme } = useTheme()
+
   useEffect(() => {
     if (user) {
-      setProfileData({
-        displayName: user.displayName || "",
-        email: user.email || "",
-        photoURL: user.photoURL || "",
-        bio: "꿈을 통해 자아를 탐구하는 여행자입니다.",
-        dreamGoal: "매일 꿈 기록하기",
-        favoriteTheme: "자연",
-        joinDate: user.metadata.creationTime
-          ? new Date(user.metadata.creationTime).toLocaleDateString("ko-KR")
-          : "2024년 1월",
+      // Firestore에서 최신 프로필 정보 불러오기
+      getUserProfile(user.uid).then((dbUser) => {
+        setProfileData({
+          displayName: dbUser?.displayName || user.displayName || "",
+          email: dbUser?.email || user.email || "",
+          photoURL: dbUser?.photoURL || user.photoURL || "",
+          bio: dbUser?.bio || "",
+          dreamGoal: dbUser?.dreamGoal || "매일 꿈 기록하기",
+          favoriteTheme: dbUser?.favoriteTheme || "자연",
+          joinDate: user.metadata.creationTime
+            ? new Date(user.metadata.creationTime).toLocaleDateString("ko-KR")
+            : "2024년 1월",
+        })
+        
+        // 사용자 통계 업데이트 (데모 데이터)
+        setStats({
+          totalDreams: dbUser?.stats?.dreamCount || 47,
+          lucidDreams: dbUser?.stats?.lucidDreams || 12,
+          streak: dbUser?.stats?.streak || 5,
+          joinedDays: 120,
+          achievements: dbUser?.badges || ["첫 꿈 기록", "일주일 연속", "루시드 드림 달성"],
+        })
       })
+      
+      // 배지 데이터 불러오기
+      loadBadges()
     }
   }, [user])
+
+  const loadBadges = async () => {
+    if (!user) return
+    try {
+      // 배지 초기화 (최초 1회)
+      await initializeBadges()
+      
+      // 사용자 배지 불러오기
+      const badges = await getUserBadges(user.uid)
+      setUserBadges(badges)
+      
+      // 전체 배지 목록 불러오기
+      const allBadgesData = await getBadges()
+      setAllBadges(allBadgesData)
+    } catch (error) {
+      console.error("배지 로드 실패:", error)
+    }
+  }
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) return
-
     setLoading(true)
     try {
       // Firebase가 설정된 경우에만 실제 업데이트
       const isFirebaseConfigured =
         process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "demo-api-key"
-
       if (isFirebaseConfigured) {
         await updateProfile(user, {
           displayName: profileData.displayName,
           photoURL: profileData.photoURL,
         })
+        // Firestore에도 저장
+        await saveUserProfile({
+          uid: user.uid,
+          displayName: profileData.displayName,
+          email: profileData.email,
+          photoURL: profileData.photoURL,
+          bio: profileData.bio,
+        })
       }
-
       alert("프로필이 업데이트되었습니다.")
     } catch (error) {
       console.error("Profile update error:", error)
@@ -170,6 +216,27 @@ export default function ProfilePage() {
     }
   }
 
+  const handleStatsUpdate = async () => {
+    if (!user) return
+    try {
+      // 사용자 통계 업데이트
+      await updateUserStats(user.uid, {
+        dreamCount: stats.totalDreams,
+        lucidDreams: stats.lucidDreams,
+        streak: stats.streak
+      })
+      
+      // 새로운 배지 체크
+      const newBadges = await checkAndAwardBadges(user.uid)
+      if (newBadges.length > 0) {
+        alert(`새로운 배지를 획득했습니다! ${newBadges.join(', ')}`)
+        loadBadges() // 배지 목록 새로고침
+      }
+    } catch (error) {
+      console.error("통계 업데이트 실패:", error)
+    }
+  }
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center">
@@ -184,8 +251,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="container mx-auto px-4 pt-20 pb-8 max-w-6xl">
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="profile">프로필</TabsTrigger>
@@ -256,8 +323,8 @@ export default function ProfilePage() {
                         <Textarea
                           id="bio"
                           value={profileData.bio}
-                          onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
-                          placeholder="자신을 소개해주세요"
+                          onChange={e => setProfileData({ ...profileData, bio: e.target.value })}
+                          placeholder="자기소개를 입력하세요"
                           className="min-h-[100px]"
                         />
                       </div>
@@ -612,56 +679,86 @@ export default function ProfilePage() {
           {/* 성취 탭 */}
           <TabsContent value="achievements" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* 통계 */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5 text-yellow-600" />
-                    나의 통계
+                    <Trophy className="h-5 w-5" />
+                    획득한 배지
                   </CardTitle>
+                  <CardDescription>달성한 성취들을 확인해보세요</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">{stats.totalDreams}</div>
-                      <div className="text-sm text-gray-600">총 꿈 기록</div>
-                    </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <div className="text-2xl font-bold text-purple-600">{stats.lucidDreams}</div>
-                      <div className="text-sm text-gray-600">루시드 드림</div>
-                    </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">{stats.streak}</div>
-                      <div className="text-sm text-gray-600">연속 기록</div>
-                    </div>
-                    <div className="text-center p-4 bg-orange-50 rounded-lg">
-                      <div className="text-2xl font-bold text-orange-600">{stats.joinedDays}</div>
-                      <div className="text-sm text-gray-600">가입 일수</div>
-                    </div>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {userBadges.map((badge) => (
+                      <div key={badge.id} className="text-center p-4 border rounded-lg bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
+                        <div className="text-3xl mb-2">{badge.iconUrl}</div>
+                        <div className="font-semibold text-sm">{badge.name}</div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">{badge.description}</div>
+                      </div>
+                    ))}
+                    {userBadges.length === 0 && (
+                      <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
+                        아직 획득한 배지가 없습니다.
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
-
-              {/* 성취 배지 */}
+              
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-yellow-600" />
-                    성취 배지
+                    <Star className="h-5 w-5" />
+                    전체 배지
                   </CardTitle>
+                  <CardDescription>획득 가능한 모든 배지들</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {stats.achievements.map((achievement) => (
-                      <div key={achievement.id || achievement.name} className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
-                        <Trophy className="h-5 w-5 text-yellow-600" />
-                        <span className="font-medium">{achievement}</span>
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {allBadges.map((badge) => {
+                      const earned = userBadges.some(ub => ub.id === badge.id)
+                      return (
+                        <div key={badge.id} className={`text-center p-4 border rounded-lg ${earned ? 'bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20' : 'bg-gray-50 dark:bg-gray-800 opacity-60'}`}>
+                          <div className="text-3xl mb-2">{badge.iconUrl}</div>
+                          <div className="font-semibold text-sm">{badge.name}</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">{badge.description}</div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </CardContent>
               </Card>
             </div>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>통계 업데이트</CardTitle>
+                <CardDescription>현재 통계를 기반으로 새로운 배지를 확인합니다</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.totalDreams}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">총 꿈 기록</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.lucidDreams}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">루시드 드림</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.streak}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">연속 기록</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">{userBadges.length}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">획득 배지</div>
+                  </div>
+                </div>
+                <Button onClick={handleStatsUpdate} className="w-full">
+                  배지 확인하기
+                </Button>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

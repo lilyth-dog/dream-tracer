@@ -14,6 +14,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { useState, useEffect, useRef } from "react"
 import { MessageCircle } from "lucide-react"
 import { FloatingNotice } from "@/components/ui/floating-notice"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -234,22 +235,29 @@ export default function RootLayout({
 }: Readonly<PropsWithChildren<unknown>>) {
   return (
     <html lang="ko" className="h-full">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50`}>
-        <AuthWrapper>
-          <div className="flex flex-col min-h-screen">
-            <TopNavigation />
-            <div className="flex flex-1 overflow-hidden">
-              <Navigation className="w-64 border-r hidden md:block bg-white/80 backdrop-blur-sm" />
-              <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto w-full">
-                  {children}
-                </div>
-              </main>
+      <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthWrapper>
+            <div className="flex flex-col min-h-screen">
+              <TopNavigation />
+              <div className="flex flex-1 overflow-hidden">
+                <Navigation className="w-64 border-r hidden md:block bg-white/80 backdrop-blur-sm dark:bg-gray-800/80" />
+                <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+                  <div className="max-w-7xl mx-auto w-full">
+                    {children}
+                  </div>
+                </main>
+              </div>
             </div>
-          </div>
-          <AIHelpButton />
-          <FloatingNotice />
-        </AuthWrapper>
+            <AIHelpButton />
+            <FloatingNotice />
+          </AuthWrapper>
+        </ThemeProvider>
       </body>
     </html>
   )

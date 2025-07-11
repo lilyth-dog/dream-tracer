@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Users, Heart, MessageCircle, LayoutDashboard, BookOpen, BarChart2, Palette, Brain, PenLine } from "lucide-react"
+import { Users, Heart, MessageCircle, LayoutDashboard, BookOpen, BarChart2, Palette, Brain, PenLine, Bookmark, ThumbsUp, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/hooks/useAuth";
 
@@ -88,6 +88,10 @@ type Post = {
   category: string;
   createdAt: string; // ISO date string
   likedUserIds?: string[]; // 좋아요한 사용자 ID 배열
+  authorId?: string; // 작성자 ID
+  nickname?: string; // 작성자 닉네임
+  recommendedUserIds?: string[]; // 추천한 사용자 ID 배열
+  recommends?: number; // 추천 수
 };
 
 type Comment = {
@@ -96,6 +100,7 @@ type Comment = {
   text: string;
   anonId?: string; // 브라우저별 임시 ID
   userId?: string; // 사용자 ID
+  nickname?: string; // 댓글 작성자 닉네임
 };
 
 // 1. 브라우저별 임시 ID 생성/저장
@@ -129,13 +134,14 @@ export default function CommunityPage() {
 	const handlePost = async () => {
 		if (!newContent.trim()) return
 		setLoading(true)
+		const authorId = user?.uid || ''
+		const nickname = '익명' // 추후 익명N 로직 추가 예정
 		const res = await fetch("/api/community", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ content: newContent })
+			body: JSON.stringify({ content: newContent, authorId, nickname })
 		})
 		const data = await res.json()
-		// Ensure createdAt is set (fallback to now if missing)
 		const postWithCreatedAt = {
 			...data.post,
 			createdAt: data.post.createdAt || new Date().toISOString(),
@@ -148,42 +154,80 @@ export default function CommunityPage() {
 		if (!user) return;
 		const post = posts.find(p => p.id === id);
 		const liked = post?.likedUserIds?.includes(user.uid);
-		await fetch("/api/community", {
+		const res = await fetch("/api/community", {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ postId: id, like: !liked, userId: user.uid })
 		});
-		setPosts(posts.map(p =>
-			p.id === id
-				? {
-					...p,
-					likes: liked ? p.likes - 1 : p.likes + 1,
-					likedUserIds: liked
-						? p.likedUserIds.filter((uid: string) => uid !== user.uid)
-						: [...(p.likedUserIds || []), user.uid],
-				}
-				: p
-		));
+		const data = await res.json();
+		if (data.ok) {
+			setPosts(posts.map(p =>
+				p.id === id
+					? {
+						...p,
+						likes: data.likes,
+						likedUserIds: data.likedUserIds,
+					}
+					: p
+			));
+		}
 	};
 	const handleComment = async (id: string, comment: string) => {
 		if (!comment.trim() || !user) return;
-		await fetch("/api/community", {
+		const res = await fetch("/api/community", {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ postId: id, comment, userId: user.uid })
 		});
-		// 익명 번호 매핑은 서버에서 처리, 프론트는 author만 사용
-		setPosts(posts.map(p =>
-			p.id === id
-				? {
-					...p,
-					comments: [
-						...(p.comments || []),
-						{ id: Date.now().toString(), author: "", text: comment, userId: user.uid },
-					],
-				}
-				: p
-		));
+		const data = await res.json();
+		if (data.ok && data.comment) {
+			setPosts(posts.map(p =>
+				p.id === id
+					? {
+						...p,
+						comments: [...(p.comments || []), data.comment],
+					}
+					: p
+			));
+		}
+	};
+	const handleRecommend = async (id: string) => {
+		if (!user) return;
+		const post = posts.find(p => p.id === id);
+		const recommended = post?.recommendedUserIds?.includes(user.uid);
+		// 서버에 추천 상태 업데이트 요청 (PUT)
+		const res = await fetch("/api/community", {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ postId: id, recommend: !recommended, userId: user.uid })
+		});
+		const data = await res.json();
+		if (data.ok) {
+			setPosts(posts.map(p =>
+				p.id === id
+					? {
+						...p,
+						recommends: data.recommends,
+						recommendedUserIds: data.recommendedUserIds,
+					}
+					: p
+			));
+		}
+	};
+	const handleDelete = async (id: string) => {
+		if (!user) return;
+		if (!window.confirm("정말 삭제하시겠습니까?")) return;
+		const res = await fetch("/api/community", {
+			method: "DELETE",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ postId: id, userId: user.uid })
+		});
+		const data = await res.json();
+		if (data.ok) {
+			setPosts(posts.filter(p => p.id !== id));
+		} else {
+			alert(data.error || "삭제에 실패했습니다.");
+		}
 	};
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
@@ -198,33 +242,59 @@ export default function CommunityPage() {
 							<Button onClick={handlePost} disabled={loading}>{loading ? '등록 중...' : '공유하기'}</Button>
 						</CardContent>
 					</Card>
-					{posts.map(post => (
-						<Card key={post.id} className="space-y-2 mt-6">
-							<CardHeader>
-								<div className="flex items-center gap-2">
-									<span className="font-bold text-indigo-700">{post.author.name}</span>
-									<span className="text-xs text-gray-400">{new Date(post.createdAt).toLocaleString('ko-KR')}</span>
-								</div>
-							</CardHeader>
-							<CardContent>
-								<div className="mb-2 whitespace-pre-line">{post.content}</div>
-								<div className="flex items-center gap-4">
-									<Button variant={post.likedUserIds?.includes(user?.uid) ? "solid" : "ghost"} size="sm" onClick={() => handleLike(post.id)}>
-										<Heart className={post.likedUserIds?.includes(user?.uid) ? "h-4 w-4 text-pink-500 fill-pink-500" : "h-4 w-4 text-pink-500"} /> {post.likes}
-									</Button>
-									<MessageCircle className="h-4 w-4 text-gray-400" /> {(post.comments||[]).length}
-								</div>
-								<div className="mt-2 space-y-1">
-									{(post.comments||[]).map((c: Comment) => (
-										<div key={c.id} className="text-xs text-gray-700 pl-2 border-l">
-											<span className="font-semibold">{c.author}:</span> {c.text}
-										</div>
-									))}
+					<div className="space-y-4 mt-8">
+						{posts.map((post) => (
+							<Card key={post.id}>
+								<CardHeader className="flex flex-row items-center gap-2">
+									<Avatar>
+										<AvatarFallback>{post.nickname?.[0] || '익'}</AvatarFallback>
+									</Avatar>
+									<div>
+										<CardTitle className="text-base">{post.nickname || '익명'}</CardTitle>
+										<CardDescription className="text-xs text-gray-400">{post.createdAt?.toString().slice(0, 10) || ''}</CardDescription>
+									</div>
+									{user?.uid === post.authorId && (
+										<button
+											className="ml-auto p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500"
+											onClick={() => handleDelete(post.id)}
+											title="삭제"
+										>
+											<Trash2 className="w-5 h-5" />
+										</button>
+									)}
+								</CardHeader>
+								<CardContent>
+									<div className="whitespace-pre-line">{post.content}</div>
+									<div className="flex items-center gap-4 mt-2">
+										<Button
+											variant={post.likedUserIds?.includes(user?.uid) ? "solid" : "ghost"}
+											size="sm"
+											onClick={() => handleLike(post.id)}
+										>
+											<Heart className={post.likedUserIds?.includes(user?.uid) ? "h-4 w-4 text-pink-500 fill-pink-500" : "h-4 w-4 text-pink-500"} />
+											{post.likes}
+										</Button>
+										<Button
+											variant={post.recommendedUserIds?.includes(user?.uid) ? "solid" : "ghost"}
+											size="sm"
+											onClick={() => handleRecommend(post.id)}
+										>
+											<ThumbsUp className={post.recommendedUserIds?.includes(user?.uid) ? "h-4 w-4 text-green-500 fill-green-500" : "h-4 w-4 text-green-500"} />
+											{post.recommends || 0}
+										</Button>
+									</div>
+									<div className="mt-4 space-y-2">
+										{(post.comments||[]).map((c: Comment) => (
+											<div key={c.id} className="text-xs text-gray-700 pl-2 border-l">
+												<span className="font-semibold">{c.nickname || '익명'}:</span> {c.text}
+											</div>
+										))}
+									</div>
 									<CommentInput postId={post.id} onComment={handleComment} />
-								</div>
-							</CardContent>
-						</Card>
-					))}
+								</CardContent>
+							</Card>
+						))}
+					</div>
 				</main>
 			</div>
 		</div>

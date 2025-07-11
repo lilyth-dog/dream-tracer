@@ -7,6 +7,7 @@ import { Home, BookOpen, PlusCircle, BarChart3, User, Users, Brain, Palette, Bel
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import LanguageSwitcher from "@/components/ui/language-switcher";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function TopNavigation() {
   const pathname = usePathname()
@@ -34,9 +35,9 @@ export default function TopNavigation() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 h-16 flex items-center px-4 justify-between pointer-events-auto">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 h-16 flex items-center px-4 justify-between pointer-events-auto">
       {/* 좌측: 로고 */}
-      <Link href="/" className="flex items-center gap-2 text-xl font-bold text-indigo-500">
+      <Link href="/" className="flex items-center gap-2 text-xl font-bold text-indigo-500 dark:text-indigo-400">
         <span role="img" aria-label="moon">🌙</span> 꿈결
       </Link>
       {/* 중앙: 주요 메뉴 */}
@@ -49,7 +50,7 @@ export default function TopNavigation() {
               return (
                 <NavigationMenuItem key={item.href}>
                   <Link href={item.href} legacyBehavior passHref>
-                    <NavigationMenuLink active={isActive} className="flex items-center gap-1 px-4 py-2 text-base font-medium hover:text-indigo-600 transition-colors">
+                    <NavigationMenuLink active={isActive} className="flex items-center gap-1 px-4 py-2 text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                       <IconComponent className="w-5 h-5" />
                       {item.label}
                     </NavigationMenuLink>
@@ -60,26 +61,27 @@ export default function TopNavigation() {
           </NavigationMenuList>
         </NavigationMenu>
       </nav>
-      {/* 우측: 알림, 프로필 */}
+      {/* 우측: 왼쪽에서 오른쪽으로 [언어 변경] [테마 토글] [알림] [로그아웃] [프로필] 순서 */}
       <div className="flex items-center gap-2">
+        <LanguageSwitcher />
+        <ThemeToggle />
         <button
-          className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+          className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           aria-label="알림"
         >
-          <Bell className="w-6 h-6 text-gray-500" />
+          <Bell className="w-6 h-6 text-gray-500 dark:text-gray-400" />
         </button>
-        <Link href="/profile" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold">N</div>
-          <span className="hidden md:inline text-base font-semibold text-gray-700">프로필</span>
-        </Link>
         <button
-          className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+          className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           aria-label="로그아웃"
           onClick={handleLogout}
         >
-          <LogOut className="w-6 h-6 text-gray-500" />
+          <LogOut className="w-6 h-6 text-gray-500 dark:text-gray-400" />
         </button>
-        <LanguageSwitcher />
+        <Link href="/profile" className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold">N</div>
+          <span className="hidden md:inline text-base font-semibold text-gray-700 dark:text-gray-300">프로필</span>
+        </Link>
       </div>
     </header>
   )
