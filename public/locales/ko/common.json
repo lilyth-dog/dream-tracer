@@ -1,0 +1,14 @@
+{
+  "appName": "드림아이",
+  "diaryTitle": "드림아이 - 꿈을 기록하고 해석하세요",
+  "diaryDesc": "AI와 함께하는 스마트한 꿈 일기장. 꿈을 기록하고, 분석하고, 해석해보세요.",
+  "save": "저장하기",
+  "draft": "임시저장",
+  "profile": "프로필",
+  "logout": "로그아웃",
+  "dreamWrite": "꿈 일기 작성",
+  "dreamList": "꿈 목록",
+  "community": "커뮤니티",
+  "settings": "설정",
+  "language": "언어"
+}

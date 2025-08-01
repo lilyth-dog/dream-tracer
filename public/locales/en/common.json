@@ -1,0 +1,14 @@
+{
+  "appName": "DreamAI",
+  "diaryTitle": "DreamAI - Record and Interpret Your Dreams",
+  "diaryDesc": "A smart dream journal with AI. Record, analyze, and interpret your dreams.",
+  "save": "Save",
+  "draft": "Save as Draft",
+  "profile": "Profile",
+  "logout": "Logout",
+  "dreamWrite": "Write Dream",
+  "dreamList": "Dream List",
+  "community": "Community",
+  "settings": "Settings",
+  "language": "Language"
+}

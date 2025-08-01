@@ -1,0 +1,14 @@
+{
+  "appName": "梦AI",
+  "diaryTitle": "梦AI - 记录并解读你的梦境",
+  "diaryDesc": "与AI一起的智能梦日记。记录、分析并解读你的梦境。",
+  "save": "保存",
+  "draft": "保存为草稿",
+  "profile": "个人资料",
+  "logout": "登出",
+  "dreamWrite": "写梦日记",
+  "dreamList": "梦境列表",
+  "community": "社区",
+  "settings": "设置",
+  "language": "语言"
+}

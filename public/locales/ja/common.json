@@ -1,0 +1,14 @@
+{
+  "appName": "ドリームアイ",
+  "diaryTitle": "ドリームアイ - 夢を記録して解釈しよう",
+  "diaryDesc": "AIと一緒に使うスマートな夢日記。夢を記録し、分析し、解釈しましょう。",
+  "save": "保存",
+  "draft": "下書き保存",
+  "profile": "プロフィール",
+  "logout": "ログアウト",
+  "dreamWrite": "夢日記を書く",
+  "dreamList": "夢リスト",
+  "community": "コミュニティ",
+  "settings": "設定",
+  "language": "言語"
+}
