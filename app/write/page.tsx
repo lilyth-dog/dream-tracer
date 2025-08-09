@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useDreams } from "@/hooks/useDreams"
 import { Button } from "@/components/ui/button"
@@ -35,6 +35,8 @@ import {
   Brain,
   Wand2,
   CheckCircle,
+  Mic,
+  MicOff,
 } from "lucide-react"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
@@ -61,6 +63,107 @@ export default function WriteDreamPage() {
   const [completionScore, setCompletionScore] = useState(0)
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([])
   const [showAiHelp, setShowAiHelp] = useState(false)
+
+  // 음성 입력 & AI 보조 상태
+  const [isRecording, setIsRecording] = useState(false)
+  const [isTranscribing, setIsTranscribing] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [isSpeechSupported, setIsSpeechSupported] = useState(false)
+  const recognitionRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const supported =
+        // @ts-expect-error - webkitSpeechRecognition는 브라우저 벤더 프리픽스 API
+        !!(window.webkitSpeechRecognition || (window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition)
+      setIsSpeechSupported(supported)
+    }
+  }, [])
+
+  const startVoiceInput = () => {
+    if (!isSpeechSupported) {
+      alert("이 브라우저에서는 음성 인식을 지원하지 않습니다.")
+      return
+    }
+    try {
+      // @ts-expect-error - webkitSpeechRecognition는 런타임에서만 존재
+      const SR = window.webkitSpeechRecognition || (window as any).SpeechRecognition
+      const recognition = new SR()
+      recognition.lang = "ko-KR"
+      recognition.interimResults = true
+      recognition.continuous = true
+      recognition.onresult = (event: any) => {
+        let transcript = ""
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript
+        }
+        if (transcript) {
+          setDreamData((prev) => ({ ...prev, content: (prev.content + " " + transcript).trim() }))
+        }
+      }
+      recognition.onerror = () => {
+        setIsRecording(false)
+      }
+      recognition.onend = () => {
+        setIsRecording(false)
+      }
+      recognitionRef.current = recognition
+      setIsRecording(true)
+      recognition.start()
+    } catch (err) {
+      console.error("Speech start error", err)
+      setIsRecording(false)
+    }
+  }
+
+  const stopVoiceInput = () => {
+    try {
+      const r = recognitionRef.current
+      if (r) r.stop()
+    } catch (err) {
+      console.error("Speech stop error", err)
+    } finally {
+      setIsRecording(false)
+    }
+  }
+
+  const rewriteWithAI = async (mode: "rewrite" | "expand" | "draft") => {
+    if (mode !== "draft" && !dreamData.content) return
+    setAiLoading(true)
+    try {
+      const res = await fetch("/api/ai-rewrite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode,
+          content: dreamData.content,
+          context: {
+            title: dreamData.title,
+            emotion: dreamData.emotion,
+            dreamType: dreamData.dreamType,
+            tags: dreamData.tags,
+          },
+        }),
+      })
+      const data = await res.json()
+      if (data?.text) {
+        setDreamData((prev) => ({
+          ...prev,
+          content:
+            mode === "draft"
+              ? (prev.content ? prev.content + "\n\n" : "") + data.text
+              : data.text,
+        }))
+      } else {
+        alert("AI 처리에 실패했습니다.")
+      }
+    } catch (error) {
+      console.error("AI rewrite error", error)
+      alert("AI 처리 중 오류가 발생했습니다.")
+    } finally {
+      setAiLoading(false)
+    }
+  }
 
   const emotions = [
     { value: "joy", label: "기쁨", icon: Smile, color: "text-yellow-500", bg: "bg-yellow-50" },
@@ -222,7 +325,7 @@ export default function WriteDreamPage() {
   }, [])
 
   return (
-    <div className="min-h-screen dreamy-bg pt-20">
+    <div className="min-h-screen dreamy-bg pt-20 pb-28">
       <div className="container mx-auto px-4 py-8 pb-24 lg:pb-8 max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Form */}
@@ -294,13 +397,59 @@ export default function WriteDreamPage() {
                         value={dreamData.content}
                         onChange={(e) => setDreamData({ ...dreamData, content: e.target.value })}
                       />
-                      <div className="flex justify-between text-sm text-gray-500">
-                        <span>{dreamData.content.length}자</span>
-                        <Button variant="ghost" size="sm" onClick={generateAiSuggestions} disabled={!dreamData.content}>
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-gray-500">
+                      <span>{dreamData.content.length}자</span>
+                      <div className="flex gap-2">
+                        {isSpeechSupported && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={isRecording ? stopVoiceInput : startVoiceInput}
+                          >
+                            {isRecording ? (
+                              <>
+                                <MicOff className="h-4 w-4 mr-1" /> 녹음 중지
+                              </>
+                            ) : (
+                              <>
+                                <Mic className="h-4 w-4 mr-1" /> 음성 입력
+                              </>
+                            )}
+                          </Button>
+                        )}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={generateAiSuggestions}
+                          disabled={!dreamData.content}
+                        >
                           <Brain className="h-4 w-4 mr-1" />
                           AI 도움받기
                         </Button>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => rewriteWithAI("rewrite")}
+                          disabled={!dreamData.content || aiLoading}
+                        >
+                          <Wand2 className="h-4 w-4 mr-1" /> AI로 정리
+                        </Button>
+                        {!dreamData.content && (
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => rewriteWithAI("draft")}
+                            disabled={aiLoading}
+                          >
+                            <Sparkles className="h-4 w-4 mr-1" /> AI 초안
+                          </Button>
+                        )}
                       </div>
+                    </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -689,8 +838,8 @@ export default function WriteDreamPage() {
           </div>
         </div>
         
-        {/* Mobile Save Button - Only visible on small screens */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
+        {/* Mobile Save Bar (always visible on /write) */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-[60] pb-[calc(16px+env(safe-area-inset-bottom))]">
           <div className="container mx-auto max-w-6xl">
             <div className="flex gap-3">
               <Button
@@ -710,7 +859,7 @@ export default function WriteDreamPage() {
                   </>
                 )}
               </Button>
-              <Button variant="outline" onClick={handleDraft} disabled={saving}>
+              <Button variant="outline" onClick={handleDraft} disabled={saving} aria-label="임시저장">
                 <FileText className="h-4 w-4" />
               </Button>
             </div>

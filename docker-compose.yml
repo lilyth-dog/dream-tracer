@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # 꿈결 메인 애플리케이션
+  dream-tracer:
+    build:
+      context: .
+      target: development
+    container_name: dream-tracer-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+    env_file:
+      - .env
+    volumes:
+      # 코드 변경사항 실시간 반영을 위한 볼륨 마운트
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - dream-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis (캐싱용 - AI 응답 캐시, 세션 관리)
+  redis:
+    image: redis:7-alpine
+    container_name: dream-tracer-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - dream-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-dreamtracer2024}
+
+  # PostgreSQL (분석 데이터용 - Firebase와 병행 사용)
+  postgres:
+    image: postgres:15-alpine
+    container_name: dream-tracer-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-dreamtracer}
+      - POSTGRES_USER=${POSTGRES_USER:-dreamuser}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dreampass2024}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - dream-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dreamuser}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx (개발 환경에서 리버스 프록시 역할)
+  nginx:
+    image: nginx:alpine
+    container_name: dream-tracer-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - dream-tracer
+    networks:
+      - dream-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  dream-network:
+    driver: bridge

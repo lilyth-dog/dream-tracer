@@ -4,6 +4,7 @@ import "../i18n"
 import type { PropsWithChildren } from "react"
 
 import { Inter } from "next/font/google"
+import { usePathname } from "next/navigation"
 import "./globals.css"
 import { Navigation } from "@/components/layout/navigation"
 import TopNavigation from "@/components/layout/top-navigation"
@@ -15,6 +16,7 @@ import { useState, useEffect, useRef } from "react"
 import { MessageCircle } from "lucide-react"
 import { FloatingNotice } from "@/components/ui/floating-notice"
 import { ThemeProvider } from "@/components/theme-provider"
+import { InstallPrompt } from "@/components/pwa/install-prompt"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -217,22 +219,14 @@ function AuthWrapper({ children }: Readonly<PropsWithChildren<unknown>>) {
     return <LoginForm />
   }
 
-  return (
-    <>
-      <TopNavigation />
-      {children}
-      {/* 모바일에서만 하단 네비게이션 보이게 */}
-      <div className="md:hidden">
-        <Navigation />
-      </div>
-      <FloatingNotice />
-    </>
-  )
+  return <>{children}</>
 }
 
 export default function RootLayout({
   children,
 }: Readonly<PropsWithChildren<unknown>>) {
+  const pathname = usePathname()
+  const showMobileNav = pathname !== "/write"
   return (
     <html lang="ko" className="h-full">
       <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900`}>
@@ -253,11 +247,19 @@ export default function RootLayout({
                   </div>
                 </main>
               </div>
+              {/* 모바일 하단 내비게이션: /write 페이지에서는 숨김 */}
+              {showMobileNav && (
+                <div className="md:hidden">
+                  <Navigation />
+                </div>
+              )}
             </div>
             <AIHelpButton />
             <FloatingNotice />
           </AuthWrapper>
         </ThemeProvider>
+        {/* PWA 설치 배너 */}
+        <InstallPrompt />
       </body>
     </html>
   )

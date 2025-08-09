@@ -12,8 +12,13 @@ const navItems = [
 
 export function Navigation() {
   const pathname = usePathname();
+  const isWrite = pathname === "/write";
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-2 py-1 flex justify-between md:hidden shadow">
+    <nav
+      className={`fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-2 py-1 flex justify-between md:hidden shadow
+      ${isWrite ? "hidden" : ""}
+      `}
+    >
       {navItems.map((item) => {
         const IconComponent = item.icon;
         const isActive = pathname === item.href;

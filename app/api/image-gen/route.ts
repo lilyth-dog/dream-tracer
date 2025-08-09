@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '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';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export async function POST(req: NextRequest) {
+  if (!OPENAI_API_KEY) {
+    return NextResponse.json({ error: '서버 설정 오류: OPENAI_API_KEY 미설정' }, { status: 500 });
+  }
+
   const { prompt, style } = await req.json();
   if (!prompt) {
     return NextResponse.json({ error: '프롬프트가 필요합니다.' }, { status: 400 });

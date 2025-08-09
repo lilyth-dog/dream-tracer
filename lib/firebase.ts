@@ -22,6 +22,8 @@ export const auth = getAuth(app)
 export const db = getFirestore(app)
 export const storage = getStorage(app)
 export const googleProvider = new GoogleAuthProvider()
+// 계정 자동 선택 방지: 항상 계정 선택 팝업 표시
+googleProvider.setCustomParameters({ prompt: "select_account" })
 
 // 개발 환경에서 에뮬레이터 연결 (선택사항)
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {

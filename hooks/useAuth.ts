@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react"
 import type { User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
-import { onAuthStateChanged } from "firebase/auth"
+import { onAuthStateChanged, setPersistence, browserSessionPersistence } from "firebase/auth"
 
 // 데모용 사용자 데이터
 const DEMO_USER = {
@@ -45,33 +45,41 @@ export function useAuth() {
     // Firebase 인증 상태 감시
     let unsubscribe: (() => void) | undefined
 
-    try {
-      unsubscribe = onAuthStateChanged(
-        auth,
-        (user) => {
-          setUser(user)
-          setLoading(false)
-          setError(null)
-        },
-        (error) => {
-          console.error("Auth state change error:", error)
-          setError(error.message)
-          setLoading(false)
+    const initAuth = async () => {
+      try {
+        if (typeof window !== "undefined") {
+          await setPersistence(auth, browserSessionPersistence)
+        }
 
-          // 에러 발생 시 데모 사용자로 fallback
+        unsubscribe = onAuthStateChanged(
+          auth,
+          (user) => {
+            setUser(user)
+            setLoading(false)
+            setError(null)
+          },
+          (error) => {
+            console.error("Auth state change error:", error)
+            setError(error.message)
+            setLoading(false)
+
+            // 에러 발생 시 데모 사용자로 fallback
+            setUser(DEMO_USER)
+          },
+        )
+      } catch (error) {
+        console.error("Firebase auth initialization error:", error)
+        setError("Firebase 초기화 실패")
+
+        // Firebase 초기화 실패 시 데모 모드로 전환
+        setTimeout(() => {
           setUser(DEMO_USER)
-        },
-      )
-    } catch (error) {
-      console.error("Firebase auth initialization error:", error)
-      setError("Firebase 초기화 실패")
-
-      // Firebase 초기화 실패 시 데모 모드로 전환
-      setTimeout(() => {
-        setUser(DEMO_USER)
-        setLoading(false)
-      }, 1000)
+          setLoading(false)
+        }, 1000)
+      }
     }
+
+    initAuth()
 
     return () => {
       if (unsubscribe) {
