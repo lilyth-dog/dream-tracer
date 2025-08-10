@@ -137,10 +137,10 @@ export default function DreamsListPage() {
   }
 
   return (
-    <div className="min-h-screen dreamy-bg">
+    <div className="min-h-screen dreamy-bg overflow-x-hidden">
       <div className="container mx-auto px-4 py-8 pt-20">
         {/* 검색 및 필터 */}
-        <Card className="mb-8 glass-effect">
+        <Card className="mb-8 glass-effect dark:bg-gray-800/70">
           <CardContent className="p-6">
             <Tabs defaultValue="search" className="space-y-4">
               <TabsList className="grid w-full grid-cols-3">
@@ -248,7 +248,7 @@ export default function DreamsListPage() {
         {/* 달력과 최근 꿈 일기 리스트를 2단 레이아웃으로 배치 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           {/* 달력 카드 - 왼쪽 */}
-          <Card className="glass-effect w-full max-w-md mx-auto text-base">
+          <Card className="glass-effect dark:bg-gray-800/70 w-full max-w-md mx-auto text-base">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-blue-600" />
@@ -267,7 +267,7 @@ export default function DreamsListPage() {
             </CardContent>
           </Card>
           {/* 최근 꿈 일기 리스트 - 오른쪽 */}
-          <Card className="glass-effect w-full">
+          <Card className="glass-effect dark:bg-gray-800/70 w-full">
             <CardHeader>
               <CardTitle>최근 꿈 일기</CardTitle>
             </CardHeader>
@@ -363,7 +363,7 @@ export default function DreamsListPage() {
 
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge variant="secondary" className="flex items-center gap-1 dark:bg-gray-800 dark:text-gray-100">
                             <Heart className="h-3 w-3" />
                             {emotions.find((e) => e.value === dream.emotion)?.label || dream.emotion}
                           </Badge>

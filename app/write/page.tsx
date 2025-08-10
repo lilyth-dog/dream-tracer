@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useDreams } from "@/hooks/useDreams"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -35,13 +35,17 @@ import {
   Brain,
   Wand2,
   CheckCircle,
+  Mic,
+  MicOff,
 } from "lucide-react"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 
 export default function WriteDreamPage() {
   const router = useRouter()
-  const { addDream } = useDreams()
+  const searchParams = useSearchParams()
+  const editId = searchParams.get("edit")
+  const { dreams, addDream, updateDream } = useDreams()
   const [saving, setSaving] = useState(false)
   const [dreamData, setDreamData] = useState({
     title: "",
@@ -61,6 +65,12 @@ export default function WriteDreamPage() {
   const [completionScore, setCompletionScore] = useState(0)
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([])
   const [showAiHelp, setShowAiHelp] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  
+  // 음성 인식 관련 state
+  const [isListening, setIsListening] = useState(false)
+  const [recognition, setRecognition] = useState<any>(null)
+  const [isSupported, setIsSupported] = useState(false)
 
   const emotions = [
     { value: "joy", label: "기쁨", icon: Smile, color: "text-yellow-500", bg: "bg-yellow-50" },
@@ -111,6 +121,54 @@ export default function WriteDreamPage() {
     "영화",
   ]
 
+  // 음성 인식 초기화
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition
+      if (SpeechRecognition) {
+        const recognitionInstance = new SpeechRecognition()
+        recognitionInstance.continuous = true
+        recognitionInstance.interimResults = true
+        recognitionInstance.lang = 'ko-KR'
+        
+        recognitionInstance.onresult = (event: any) => {
+          let finalTranscript = ''
+          let interimTranscript = ''
+          
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript
+            } else {
+              interimTranscript += transcript
+            }
+          }
+          
+          if (finalTranscript) {
+            setDreamData(prev => ({
+              ...prev,
+              content: prev.content + finalTranscript
+            }))
+          }
+        }
+        
+        recognitionInstance.onerror = (event: any) => {
+          console.error('음성 인식 오류:', event.error)
+          setIsListening(false)
+        }
+        
+        recognitionInstance.onend = () => {
+          setIsListening(false)
+        }
+        
+        setRecognition(recognitionInstance)
+        setIsSupported(true)
+      } else {
+        setIsSupported(false)
+      }
+    }
+  }, [])
+
   // 완성도 계산
   useEffect(() => {
     let score = 0
@@ -123,6 +181,27 @@ export default function WriteDreamPage() {
     if (uploadedImages.length > 0) score += 5
     setCompletionScore(score)
   }, [dreamData, uploadedImages])
+
+  // 음성 인식 시작/중지
+  const toggleVoiceRecognition = () => {
+    if (!recognition || !isSupported) {
+      alert('이 브라우저에서는 음성 인식을 지원하지 않습니다.')
+      return
+    }
+    
+    if (isListening) {
+      recognition.stop()
+      setIsListening(false)
+    } else {
+      try {
+        recognition.start()
+        setIsListening(true)
+      } catch (error) {
+        console.error('음성 인식 시작 실패:', error)
+        alert('음성 인식을 시작할 수 없습니다. 마이크 권한을 확인해주세요.')
+      }
+    }
+  }
 
   // AI 제안 생성
   const generateAiSuggestions = async () => {
@@ -183,21 +262,35 @@ export default function WriteDreamPage() {
 
     setSaving(true)
     try {
-      await addDream({
-        title: dreamData.title,
-        content: dreamData.content,
-        date: dreamData.date,
-        emotion: dreamData.emotion,
-        tags: dreamData.tags,
-        vividness: dreamData.vividness[0],
-        isLucid: dreamData.isLucid,
-        sleepQuality: dreamData.sleepQuality,
-        dreamType: dreamData.dreamType,
-        images: uploadedImages,
-      })
-
-      // 성공 애니메이션
-      alert("꿈 일기가 저장되었습니다! ✨")
+      if (isEditMode && editId) {
+        await updateDream(editId, {
+          title: dreamData.title,
+          content: dreamData.content,
+          date: dreamData.date,
+          emotion: dreamData.emotion,
+          tags: dreamData.tags,
+          vividness: dreamData.vividness[0],
+          isLucid: dreamData.isLucid,
+          sleepQuality: dreamData.sleepQuality,
+          dreamType: dreamData.dreamType,
+          images: uploadedImages,
+        })
+        alert("꿈 일기가 수정되었습니다! ✨")
+      } else {
+        await addDream({
+          title: dreamData.title,
+          content: dreamData.content,
+          date: dreamData.date,
+          emotion: dreamData.emotion,
+          tags: dreamData.tags,
+          vividness: dreamData.vividness[0],
+          isLucid: dreamData.isLucid,
+          sleepQuality: dreamData.sleepQuality,
+          dreamType: dreamData.dreamType,
+          images: uploadedImages,
+        })
+        alert("꿈 일기가 저장되었습니다! ✨")
+      }
       router.push("/")
     } catch (error) {
       console.error("Save error:", error)
@@ -212,14 +305,33 @@ export default function WriteDreamPage() {
     alert("임시저장되었습니다!")
   }
 
-  // 임시저장된 데이터 불러오기
+  // 편집 모드/임시저장된 데이터 불러오기
   useEffect(() => {
-    const draft = localStorage.getItem("dreamDraft")
-    if (draft) {
-      const parsedDraft = JSON.parse(draft)
-      setDreamData({ ...parsedDraft, date: new Date(parsedDraft.date) })
+    if (editId && dreams.length > 0) {
+      const target = dreams.find((d) => d.id === editId)
+      if (target) {
+        setDreamData({
+          title: target.title,
+          content: target.content,
+          date: new Date(target.date),
+          emotion: target.emotion,
+          tags: target.tags,
+          vividness: [target.vividness],
+          isLucid: target.isLucid,
+          sleepQuality: target.sleepQuality,
+          dreamType: target.dreamType,
+        })
+        setUploadedImages((target.images || []) as any)
+        setIsEditMode(true)
+      }
+    } else {
+      const draft = localStorage.getItem("dreamDraft")
+      if (draft) {
+        const parsedDraft = JSON.parse(draft)
+        setDreamData({ ...parsedDraft, date: new Date(parsedDraft.date) })
+      }
     }
-  }, [])
+  }, [editId, dreams])
 
   return (
     <div className="min-h-screen dreamy-bg pt-20">
@@ -241,9 +353,9 @@ export default function WriteDreamPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Sparkles className="h-5 w-5 text-purple-600" />
-                      기본 정보
+                      {isEditMode ? "기본 정보 수정" : "기본 정보"}
                     </CardTitle>
-                    <CardDescription>꿈의 기본적인 정보를 입력해주세요</CardDescription>
+                    <CardDescription>{isEditMode ? "선택한 꿈의 정보를 수정하세요" : "꿈의 기본적인 정보를 입력해주세요"}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-2">
@@ -287,19 +399,45 @@ export default function WriteDreamPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="content">꿈의 내용 *</Label>
-                      <Textarea
-                        id="content"
-                        placeholder="꿈의 내용을 자세히 적어주세요. 장소, 인물, 상황, 느낌 등을 포함해서 작성하면 더 좋습니다..."
-                        className="min-h-[200px] text-base leading-relaxed"
-                        value={dreamData.content}
-                        onChange={(e) => setDreamData({ ...dreamData, content: e.target.value })}
-                      />
-                      <div className="flex justify-between text-sm text-gray-500">
+                      <div className="relative">
+                        <Textarea
+                          id="content"
+                          placeholder="꿈의 내용을 자세히 적어주세요. 장소, 인물, 상황, 느낌 등을 포함해서 작성하면 더 좋습니다..."
+                          className="min-h-[200px] text-base leading-relaxed pr-12"
+                          value={dreamData.content}
+                          onChange={(e) => setDreamData({ ...dreamData, content: e.target.value })}
+                        />
+                        {isSupported && (
+                          <Button
+                            type="button"
+                            variant={isListening ? "destructive" : "outline"}
+                            size="sm"
+                            className="absolute top-2 right-2 h-8 w-8 p-0"
+                            onClick={toggleVoiceRecognition}
+                            title={isListening ? "음성 인식 중지" : "음성으로 작성"}
+                          >
+                            {isListening ? (
+                              <MicOff className="h-4 w-4" />
+                            ) : (
+                              <Mic className="h-4 w-4" />
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                      <div className="flex justify-between items-center text-sm text-gray-500">
                         <span>{dreamData.content.length}자</span>
-                        <Button variant="ghost" size="sm" onClick={generateAiSuggestions} disabled={!dreamData.content}>
-                          <Brain className="h-4 w-4 mr-1" />
-                          AI 도움받기
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          {isListening && (
+                            <div className="flex items-center gap-1 text-red-500 animate-pulse">
+                              <Mic className="h-3 w-3" />
+                              <span>음성 인식 중...</span>
+                            </div>
+                          )}
+                          <Button variant="ghost" size="sm" onClick={generateAiSuggestions} disabled={!dreamData.content}>
+                            <Brain className="h-4 w-4 mr-1" />
+                            AI 도움받기
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -508,17 +646,17 @@ export default function WriteDreamPage() {
                       {uploadedImages.length > 0 && (
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {uploadedImages.map((image) => (
-                            <div key={image.url || image.name} className="relative group">
+                            <div key={image} className="relative group">
                               <img
-                                src={image.url}
-                                alt={`업로드된 이미지 ${image.name || image.url}`}
+                                src={image}
+                                alt={`업로드된 이미지`}
                                 className="w-full h-32 object-cover rounded-lg"
                               />
                               <Button
                                 size="icon"
                                 variant="destructive"
                                 className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => setUploadedImages(uploadedImages.filter((img) => img.url !== image.url))}
+                                onClick={() => setUploadedImages(uploadedImages.filter((img) => img !== image))}
                               >
                                 <X className="h-3 w-3" />
                               </Button>

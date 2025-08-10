@@ -207,7 +207,7 @@ export default function LucidDreamDiary() {
           <FeatureCards />
         </div>
         {/* AI 추천/분석 섹션 */}
-        <div className="rounded-xl bg-gradient-to-r from-indigo-100 to-purple-100 shadow p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="rounded-xl bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 shadow p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-indigo-700 mb-1 flex items-center gap-2"><Sparkles className="h-5 w-5" />오늘의 AI 꿈 해석</h2>
             <p className="text-gray-700 text-sm mb-2">AI가 최근 꿈 기록을 분석해 오늘의 꿈 패턴과 해석을 추천합니다.</p>
@@ -220,7 +220,7 @@ export default function LucidDreamDiary() {
         </div>
 
         {/* 최근 꿈 일기/샘플/가이드 */}
-        <div className="rounded-xl bg-white/80 shadow p-5">
+        <div className="rounded-xl bg-white/80 dark:bg-gray-800/80 shadow p-5">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-bold text-gray-800">최근 꿈 일기</h2>
             <Link href="/dreams" className="text-xs text-indigo-600 hover:underline">모두 보기</Link>
@@ -234,19 +234,21 @@ export default function LucidDreamDiary() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {recentDreams.map((dream) => (
-                <Card key={dream.id} className="bg-gradient-to-br from-purple-50 to-pink-50 border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle className="text-base font-semibold text-purple-800 line-clamp-1">{dream.title}</CardTitle>
-                    <CardDescription className="text-xs text-gray-500">{new Date(dream.date).toLocaleDateString('ko-KR')}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-700 line-clamp-3 mb-2">{dream.content}</p>
-                    <div className="flex items-center gap-2">
-                      {dream.isLucid && <Badge className="bg-orange-200 text-orange-700">루시드</Badge>}
-                      <Badge className="bg-indigo-100 text-indigo-700">{dream.emotion}</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Link key={dream.id} href={`/dreams/${dream.id}`} className="block group">
+                  <Card className="border-0 shadow-md group-hover:shadow-lg transition cursor-pointer glass-effect dark:bg-gray-800/70">
+                    <CardHeader>
+                      <CardTitle className="text-base font-semibold text-purple-800 dark:text-gray-100 line-clamp-1">{dream.title}</CardTitle>
+                      <CardDescription className="text-xs text-gray-500 dark:text-gray-400">{new Date(dream.date).toLocaleDateString('ko-KR')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-700 dark:text-gray-200 line-clamp-3 mb-2">{dream.content}</p>
+                      <div className="flex items-center gap-2">
+                        {dream.isLucid && <Badge className="bg-orange-200 text-orange-700 dark:bg-orange-900/40 dark:text-orange-200">루시드</Badge>}
+                        <Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200">{dream.emotion}</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}

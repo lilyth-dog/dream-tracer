@@ -158,24 +158,24 @@ function AIHelpButton() {
         const dialogPos = getDialogPosition()
         return (
           <div
-            className="fixed z-50 bg-white rounded-xl shadow-2xl p-4 border"
+            className="fixed z-50 bg-white dark:bg-gray-800 dark:text-gray-100 rounded-xl shadow-2xl p-4 border border-gray-200 dark:border-gray-700"
             style={{ left: dialogPos.left, top: dialogPos.top, width: 320, maxWidth: '100%' }}
           >
             <div className="font-bold mb-2">AI 도우미</div>
             <div className="h-40 overflow-y-auto text-sm mb-2 flex flex-col gap-2">
               {messages.map((msg, i) => (
-                <div key={i} className={msg.role === "ai" ? "text-indigo-700" : "text-gray-800 text-right"}>{msg.text}</div>
+                <div key={i} className={msg.role === "ai" ? "text-indigo-700 dark:text-indigo-300" : "text-gray-800 dark:text-gray-100 text-right"}>{msg.text}</div>
               ))}
             </div>
             <div className="flex gap-2">
               <input
-                className="flex-1 border rounded px-2 py-1 text-sm"
+                className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-300"
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter") sendMessage() }}
                 placeholder="AI에게 물어보세요..."
               />
-              <button className="bg-indigo-500 text-white px-3 py-1 rounded" onClick={sendMessage}>전송</button>
+              <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded" onClick={sendMessage}>전송</button>
             </div>
           </div>
         )
@@ -235,7 +235,7 @@ export default function RootLayout({
 }: Readonly<PropsWithChildren<unknown>>) {
   return (
     <html lang="ko" className="h-full">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900`}>
+      <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -258,6 +258,7 @@ export default function RootLayout({
             <FloatingNotice />
           </AuthWrapper>
         </ThemeProvider>
+        <script dangerouslySetInnerHTML={{__html:`(function(){if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}})();`}} />
       </body>
     </html>
   )

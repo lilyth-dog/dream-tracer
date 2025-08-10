@@ -17,14 +17,16 @@ import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Moon, ArrowLeft, User, Camera, Bell, Shield, Save, Star, Trophy, Palette } from "lucide-react"
+import { Moon, ArrowLeft, User, Camera, Bell, Shield, Save, Star, Trophy, Palette, Download } from "lucide-react"
 import Link from "next/link"
 import { saveUserProfile, getUserProfile, initializeBadges, getUserBadges, updateUserStats, checkAndAwardBadges, getBadges } from "@/lib/utils"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { useTheme } from "next-themes"
+import { usePWAInstall } from "@/hooks/usePWAInstall"
 
 export default function ProfilePage() {
   const { user } = useAuth()
+  const { isInstallable, isInstalled, promptInstall } = usePWAInstall()
   const [loading, setLoading] = useState(false)
   const [profileData, setProfileData] = useState({
     displayName: "",
@@ -370,7 +372,7 @@ export default function ProfilePage() {
               </div>
 
               {/* 프로필 미리보기 */}
-              <div>
+              <div className="space-y-6">
                 <Card>
                   <CardHeader>
                     <CardTitle>프로필 미리보기</CardTitle>
@@ -400,6 +402,27 @@ export default function ProfilePage() {
                         <span>{profileData.joinDate}</span>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+
+                {/* 앱 설치 카드 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Download className="h-5 w-5 text-indigo-600" />
+                      앱 설치
+                    </CardTitle>
+                    <CardDescription>홈 화면 배너 외에도 여기서 설치할 수 있어요</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {isInstalled ? (
+                      <p className="text-sm text-green-600">설치 완료됨</p>
+                    ) : (
+                      <Button onClick={() => promptInstall()} disabled={!isInstallable} className="w-full">
+                        {isInstallable ? "앱 설치하기" : "설치 가능 시 표시됩니다"}
+                      </Button>
+                    )}
+                    <p className="text-xs text-gray-500">설치 버튼이 보이지 않는 경우, 브라우저 메뉴에서 "홈 화면에 추가"를 이용하세요.</p>
                   </CardContent>
                 </Card>
               </div>

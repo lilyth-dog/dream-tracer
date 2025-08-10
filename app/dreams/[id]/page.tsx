@@ -186,13 +186,13 @@ ${dream.content}
   }
 
   return (
-    <div className="min-h-screen dreamy-bg">
+    <div className="min-h-screen dreamy-bg overflow-x-hidden">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
             {/* Dream Header */}
-            <Card className="glass-effect">
+            <Card className="glass-effect dark:bg-gray-800/70">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -251,7 +251,7 @@ ${dream.content}
 
               {/* 꿈 내용 */}
               <TabsContent value="content">
-                <Card className="glass-effect">
+                <Card className="glass-effect dark:bg-gray-800/70">
                   <CardHeader>
                     <CardTitle>꿈의 내용</CardTitle>
                   </CardHeader>
@@ -265,7 +265,7 @@ ${dream.content}
 
               {/* AI 분석 */}
               <TabsContent value="analysis">
-                <Card className="glass-effect">
+                <Card className="glass-effect dark:bg-gray-800/70">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Brain className="h-5 w-5 text-purple-600" />
@@ -344,7 +344,7 @@ ${dream.content}
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Dream Stats */}
-            <Card className="glass-effect sticky top-24">
+            <Card className="glass-effect dark:bg-gray-800/70 sticky top-24">
               <CardHeader>
                 <CardTitle>꿈의 정보</CardTitle>
               </CardHeader>
@@ -353,7 +353,7 @@ ${dream.content}
                   <span className="text-sm text-gray-600">감정</span>
                   <Badge
                     variant="secondary"
-                    className={`flex items-center gap-1 ${emotions[dream.emotion as keyof typeof emotions]?.bg}`}
+                    className={`flex items-center gap-1 ${emotions[dream.emotion as keyof typeof emotions]?.bg} dark:bg-gray-800 dark:text-gray-100`}
                   >
                     <Heart className="h-3 w-3" />
                     {emotions[dream.emotion as keyof typeof emotions]?.label || dream.emotion}
@@ -407,7 +407,7 @@ ${dream.content}
             </Card>
 
             {/* Tags */}
-            <Card className="glass-effect">
+            <Card className="glass-effect dark:bg-gray-800/70">
               <CardHeader>
                 <CardTitle>태그</CardTitle>
               </CardHeader>
@@ -428,7 +428,7 @@ ${dream.content}
             </Card>
 
             {/* Quick Actions */}
-            <Card className="glass-effect">
+            <Card className="glass-effect dark:bg-gray-800/70">
               <CardHeader>
                 <CardTitle>빠른 작업</CardTitle>
               </CardHeader>

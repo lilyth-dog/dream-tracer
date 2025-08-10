@@ -234,25 +234,25 @@ export default function CommunityPage() {
 		}
 	};
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+		<div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
 			<div className="container mx-auto px-2 py-8 max-w-3xl pt-20">
 				<main className="w-full">
-					<Card>
+					<Card className="glass-effect dark:bg-gray-800/70">
 						<CardHeader>
 							<CardTitle>꿈 공유하기</CardTitle>
 						</CardHeader>
 						<CardContent className="space-y-2">
-							<Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="꿈을 자유롭게 공유해보세요!" />
+							<Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="꿈을 자유롭게 공유해보세요!" className="dark:bg-gray-800/70 dark:border-gray-700" />
 							<div className="flex items-center gap-2">
 								<input type="checkbox" id="publicProfile" checked={isPublicProfile} onChange={e => setIsPublicProfile(e.target.checked)} />
 								<label htmlFor="publicProfile" className="text-xs select-none">공개 프로필로 작성</label>
 							</div>
-							<Button onClick={handlePost} disabled={loading}>{loading ? '등록 중...' : '공유하기'}</Button>
+							<Button onClick={handlePost} disabled={loading} className="dark:bg-indigo-600 dark:hover:bg-indigo-500">{loading ? '등록 중...' : '공유하기'}</Button>
 						</CardContent>
 					</Card>
 					<div className="space-y-4 mt-8">
 						{posts.map((post) => (
-							<Card key={post.id}>
+							<Card key={post.id} className="glass-effect dark:bg-gray-800/70">
 								<CardHeader className="flex flex-row items-center gap-2">
 									{post.isPublicProfile && user && user.uid === post.authorId ? (
 										<Avatar>
@@ -270,7 +270,7 @@ export default function CommunityPage() {
 												? user.displayName || '프로필'
 												: post.nickname || '익명'}
 										</CardTitle>
-										<CardDescription className="text-xs text-gray-400">{post.createdAt?.toString().slice(0, 10) || ''}</CardDescription>
+								<CardDescription className="text-xs text-gray-400 dark:text-gray-300">{post.createdAt?.toString().slice(0, 10) || ''}</CardDescription>
 									</div>
 									{user?.uid === post.authorId && (
 										<button
@@ -289,6 +289,7 @@ export default function CommunityPage() {
 											variant={post.likedUserIds?.includes(user?.uid) ? "solid" : "ghost"}
 											size="sm"
 											onClick={() => handleLike(post.id)}
+											className="dark:hover:bg-gray-700"
 										>
 											<Heart className={post.likedUserIds?.includes(user?.uid) ? "h-4 w-4 text-pink-500 fill-pink-500" : "h-4 w-4 text-pink-500"} />
 											{post.likes}
@@ -297,6 +298,7 @@ export default function CommunityPage() {
 											variant={post.recommendedUserIds?.includes(user?.uid) ? "solid" : "ghost"}
 											size="sm"
 											onClick={() => handleRecommend(post.id)}
+											className="dark:hover:bg-gray-700"
 										>
 											<ThumbsUp className={post.recommendedUserIds?.includes(user?.uid) ? "h-4 w-4 text-green-500 fill-green-500" : "h-4 w-4 text-green-500"} />
 											{post.recommends || 0}

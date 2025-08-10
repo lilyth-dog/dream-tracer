@@ -128,7 +128,7 @@ export function LoginForm() {
           <div className="flex items-center justify-center gap-2 mb-4">
             <Moon className="h-8 w-8 text-indigo-600" />
             <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              루비드 드림 다이어리
+              루시드 드림 다이어리
             </h1>
           </div>
           <CardTitle>로그인</CardTitle>

@@ -38,13 +38,13 @@ export default function TopNavigation() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 h-16 flex items-center px-4 justify-between pointer-events-auto">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 h-16 flex items-center px-4 justify-between pointer-events-auto overflow-x-hidden">
       {/* 좌측: 로고 */}
       <Link href="/" className="flex items-center gap-2 text-xl font-bold text-indigo-500 dark:text-indigo-400">
         <span role="img" aria-label="moon">🌙</span> 꿈결
       </Link>
       {/* 중앙: 주요 메뉴 */}
-      <nav className="hidden md:flex flex-1 justify-center">
+      <nav className="hidden md:flex flex-1 justify-center min-w-0">
         <NavigationMenu>
           <NavigationMenuList>
             {navItems.map((item) => {
@@ -53,7 +53,7 @@ export default function TopNavigation() {
               return (
                 <NavigationMenuItem key={item.href}>
                   <Link href={item.href} legacyBehavior passHref>
-                    <NavigationMenuLink active={isActive} className="flex items-center gap-1 px-4 py-2 text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                    <NavigationMenuLink active={isActive} className="flex items-center gap-1 px-4 py-2 text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate">
                       <IconComponent className="w-5 h-5" />
                       {item.label}
                     </NavigationMenuLink>
