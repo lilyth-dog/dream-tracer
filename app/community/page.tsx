@@ -138,6 +138,8 @@ export default function CommunityPage() {
     const [pendingLikeIds, setPendingLikeIds] = useState<Set<string>>(new Set())
     // 추천은 하트로 통합됨
     const [pendingReportIds, setPendingReportIds] = useState<Set<string>>(new Set())
+    const [mutedUserIds, setMutedUserIds] = useState<Set<string>>(new Set())
+    const [blockedUserIds, setBlockedUserIds] = useState<Set<string>>(new Set())
 
     const normalizePosts = useCallback((arr: any[]) => {
         return (arr || []).map((post: any) => {
@@ -168,11 +170,11 @@ export default function CommunityPage() {
             const res = await fetch(`/api/community?${params.toString()}`)
             const data = await res.json()
             if (mode === 'popular') {
-                const list = normalizePosts(data.posts || [])
+                const list = normalizePosts(data.posts || []).filter((p:any)=> !blockedUserIds.has(p.authorId) && !mutedUserIds.has(p.authorId))
                 setPosts((prev) => (opts?.reset ? list : [...prev, ...list]))
                 setNextOffset(data.nextOffset ?? (opts?.reset ? list.length : nextOffset + list.length))
             } else {
-                const list = normalizePosts(data.posts || [])
+                const list = normalizePosts(data.posts || []).filter((p:any)=> !blockedUserIds.has(p.authorId) && !mutedUserIds.has(p.authorId))
                 setPosts((prev) => (opts?.reset ? list : [...prev, ...list]))
                 setNextCursorMs(data.nextCursorMs || null)
             }
@@ -186,6 +188,17 @@ export default function CommunityPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    // 로컬 저장된 뮤트/차단 목록 로드
+    useEffect(() => {
+        if (!user) return
+        try {
+          const m = localStorage.getItem(`muted_${user.uid}`)
+          const b = localStorage.getItem(`blocked_${user.uid}`)
+          if (m) setMutedUserIds(new Set(JSON.parse(m)))
+          if (b) setBlockedUserIds(new Set(JSON.parse(b)))
+        } catch {}
+    }, [user])
+
     const onChangeSort = async (mode: 'recent' | 'popular') => {
         setSortMode(mode)
         setInitialLoading(true)
@@ -197,6 +210,36 @@ export default function CommunityPage() {
         setLoadingMore(true)
         await fetchPosts()
         setLoadingMore(false)
+    }
+
+    const persistRelations = () => {
+        if (!user) return
+        try {
+            localStorage.setItem(`muted_${user.uid}`, JSON.stringify(Array.from(mutedUserIds)))
+            localStorage.setItem(`blocked_${user.uid}`, JSON.stringify(Array.from(blockedUserIds)))
+        } catch {}
+    }
+
+    const toggleMute = async (targetUserId?: string) => {
+        if (!user || !targetUserId) return
+        const isMuted = mutedUserIds.has(targetUserId)
+        await fetch('/api/community', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: isMuted ? 'unmute' : 'mute', targetUserId, actorUserId: user.uid }) })
+        const next = new Set(mutedUserIds)
+        if (isMuted) next.delete(targetUserId); else next.add(targetUserId)
+        setMutedUserIds(next)
+        persistRelations()
+        setPosts(prev => prev.filter(p => p.authorId !== targetUserId))
+    }
+
+    const toggleBlock = async (targetUserId?: string) => {
+        if (!user || !targetUserId) return
+        const isBlocked = blockedUserIds.has(targetUserId)
+        await fetch('/api/community', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: isBlocked ? 'unblock' : 'block', targetUserId, actorUserId: user.uid }) })
+        const next = new Set(blockedUserIds)
+        if (isBlocked) next.delete(targetUserId); else next.add(targetUserId)
+        setBlockedUserIds(next)
+        persistRelations()
+        setPosts(prev => prev.filter(p => p.authorId !== targetUserId))
     }
 
     // IntersectionObserver로 자동 더보기
