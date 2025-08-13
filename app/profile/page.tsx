@@ -82,13 +82,14 @@ export default function ProfilePage() {
     if (user) {
       // Firestore에서 최신 프로필 정보 불러오기
       getUserProfile(user.uid).then((dbUser) => {
+        const local = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('profile')||'{}') : {}
         setProfileData({
           displayName: dbUser?.displayName || user.displayName || "",
           email: dbUser?.email || user.email || "",
           photoURL: dbUser?.photoURL || user.photoURL || "",
-          bio: dbUser?.bio || "",
-          dreamGoal: dbUser?.dreamGoal || "매일 꿈 기록하기",
-          favoriteTheme: dbUser?.favoriteTheme || "자연",
+          bio: dbUser?.bio || local.bio || "",
+          dreamGoal: dbUser?.dreamGoal || local.dreamGoal || "매일 꿈 기록하기",
+          favoriteTheme: dbUser?.favoriteTheme || local.favoriteTheme || "자연",
           joinDate: user.metadata.creationTime
             ? new Date(user.metadata.creationTime).toLocaleDateString("ko-KR")
             : "2024년 1월",
@@ -149,6 +150,8 @@ export default function ProfilePage() {
           bio: profileData.bio,
         })
       }
+      // 로컬 미러 저장(데모/비로그인 환경 폴백)
+      try { localStorage.setItem('profile', JSON.stringify(profileData)); } catch {}
       alert(t('profile.updateSuccess', '프로필이 업데이트되었습니다.'))
     } catch (error) {
       console.error("Profile update error:", error)

@@ -61,6 +61,7 @@
     "submit": "投稿",
     "anon": "匿名",
     "report": "通報",
+    "reportDesc": "この投稿を通報しますか？ 複数回通報されると自動的に非表示になる場合があります。",
     "hiddenNotice": "通報が多いため非表示になりました。",
     "shareCta": "共有",
     "sortRecent": "最新",

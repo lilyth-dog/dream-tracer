@@ -1,6 +1,6 @@
 {
-  "name": "Dream Tracer",
-  "short_name": "DreamTracer",
+  "name": "꿈결 Kkumgyeol",
+  "short_name": "꿈결",
   "description": "꿈을 기록하고 해석하며 시각화하는 PWA",
   "start_url": "/",
   "display": "standalone",

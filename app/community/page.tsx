@@ -9,7 +9,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Users, Heart, MessageCircle, LayoutDashboard, BookOpen, BarChart2, Palette, Brain, PenLine, Bookmark, Trash2 } from "lucide-react"
+import { Users, Heart, MessageCircle, LayoutDashboard, BookOpen, BarChart2, Palette, Brain, PenLine, Bookmark, Trash2, Flag } from "lucide-react"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useTranslation } from "react-i18next"
 import Link from "next/link"
 import { useAuth } from "@/hooks/useAuth";
@@ -365,34 +366,37 @@ export default function CommunityPage() {
 											{post.likes}
 										</Button>
                                         {/* 신고 */}
-                                        <Button
-                                            variant={post.reportedUserIds?.includes(user?.uid) ? "solid" : "ghost"}
-                                            size="sm"
-                                            onClick={async () => {
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            <Button variant={post.reportedUserIds?.includes(user?.uid) ? "solid" : "ghost"} size="sm" className="dark:hover:bg-gray-700">
+                                              <Flag className="h-4 w-4 mr-1" /> {t('community.report', '신고')} {post.reports || 0}
+                                            </Button>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>{t('community.report', '신고')}</AlertDialogTitle>
+                                              <AlertDialogDescription>{t('community.reportDesc','이 게시글을 신고하시겠습니까? 여러 차례 신고되면 자동으로 숨김 처리됩니다.')}</AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel>{t('common.no','아니오')}</AlertDialogCancel>
+                                              <AlertDialogAction onClick={async () => {
                                                 if (!user) return
                                                 if (pendingReportIds.has(post.id)) return
                                                 setPendingReportIds(new Set(pendingReportIds).add(post.id))
                                                 const reported = post.reportedUserIds?.includes(user.uid)
                                                 const res = await fetch('/api/community', {
-                                                    method: 'PUT',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ postId: post.id, report: !reported, userId: user.uid })
+                                                  method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({ postId: post.id, report: !reported, userId: user.uid })
                                                 })
                                                 const data = await res.json()
                                                 if (data.ok) {
-                                                    setPosts(posts.map(p => p.id === post.id ? {
-                                                        ...p,
-                                                        reportedUserIds: data.reportedUserIds,
-                                                        reports: data.reports,
-                                                        hidden: data.hidden ?? p.hidden,
-                                                    } : p))
+                                                  setPosts(posts.map(p => p.id === post.id ? { ...p, reportedUserIds: data.reportedUserIds, reports: data.reports, hidden: data.hidden ?? p.hidden } : p))
                                                 }
                                                 setPendingReportIds(prev => { const n = new Set(prev); n.delete(post.id); return n })
-                                            }}
-                                            className="dark:hover:bg-gray-700"
-                                        >
-									{t('community.report', '신고')} {post.reports || 0}
-                                        </Button>
+                                              }}>{t('common.yes','예')}</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
 									</div>
 									<div className="mt-4 space-y-2">
 										{(post.comments||[]).map((c: Comment) => (

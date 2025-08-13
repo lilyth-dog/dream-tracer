@@ -56,7 +56,7 @@ export default function TopNavigation() {
         <span role="img" aria-label="moon">🌙</span> {t('app.title', '꿈결')}
       </Link>
       {/* 중앙: 주요 메뉴 */}
-      <nav className="hidden md:flex flex-1 justify-center min-w-0">
+      <nav className="hidden sm:flex flex-1 justify-center min-w-0">
         <NavigationMenu>
           <NavigationMenuList>
             {navItems.map((item) => {
@@ -65,7 +65,7 @@ export default function TopNavigation() {
               return (
                 <NavigationMenuItem key={item.href}>
                   <Link href={item.href} legacyBehavior passHref>
-                    <NavigationMenuLink active={isActive} className="flex items-center gap-1 px-4 py-2 text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate">
+                    <NavigationMenuLink active={isActive} className="flex items-center gap-1 px-3 py-2 text-sm md:text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate">
                       <IconComponent className="w-5 h-5" />
                       {t(`nav.${item.labelKey}`, defaultLabels[item.labelKey] || item.labelKey)}
                     </NavigationMenuLink>

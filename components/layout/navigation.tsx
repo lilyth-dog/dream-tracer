@@ -22,10 +22,10 @@ export function Navigation() {
         return (
           <Link key={item.href} href={item.href} className="flex-1">
             <button
-              className={`flex flex-col items-center justify-center w-full py-1.5 ${isActive ? "text-indigo-600 dark:text-indigo-400 font-bold" : "text-gray-600 dark:text-gray-300"}`}
+              className={`flex flex-col items-center justify-center w-full py-1.5 min-w-0 ${isActive ? "text-indigo-600 dark:text-indigo-400 font-bold" : "text-gray-600 dark:text-gray-300"}`}
             >
-              <IconComponent className="h-6 w-6 mb-0.5" />
-              <span className="text-xs leading-none">{t(`nav.${item.labelKey || item.label}`)}</span>
+              <IconComponent className="h-6 w-6 mb-0.5 flex-shrink-0" />
+              <span className="text-[11px] leading-none max-w-[56px] truncate">{t(`nav.${item.labelKey || item.label}`)}</span>
             </button>
           </Link>
         );
