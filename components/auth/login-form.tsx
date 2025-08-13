@@ -130,7 +130,7 @@ export function LoginForm() {
           <div className="flex items-center justify-center gap-2 mb-4">
             <Moon className="h-8 w-8 text-indigo-600" />
             <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              {t('app.title', '드림트레이서')}
+              {t('app.title', '꿈결')}
             </h1>
           </div>
           <CardTitle>{t('auth.login.title', '로그인')}</CardTitle>

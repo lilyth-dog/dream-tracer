@@ -75,12 +75,12 @@ export default function WriteDreamPage() {
   const [isSupported, setIsSupported] = useState(false)
 
   const emotions = [
-    { value: "joy", label: t('emotions.joy', '기쁨'), icon: Smile, color: "text-yellow-500", bg: "bg-yellow-50" },
-    { value: "peace", label: t('emotions.peace', '평온'), icon: Meh, color: "text-blue-500", bg: "bg-blue-50" },
-    { value: "fear", label: t('emotions.fear', '두려움'), icon: Frown, color: "text-red-500", bg: "bg-red-50" },
-    { value: "sadness", label: t('emotions.sadness', '슬픔'), icon: Frown, color: "text-gray-500", bg: "bg-gray-50" },
-    { value: "excitement", label: t('emotions.excitement', '흥분'), icon: Zap, color: "text-orange-500", bg: "bg-orange-50" },
-    { value: "wonder", label: t('emotions.wonder', '경이'), icon: Star, color: "text-purple-500", bg: "bg-purple-50" },
+    { value: "joy", label: t('emotions.joy', '기쁨'), icon: Smile, color: "text-yellow-600 dark:text-yellow-300", bg: "bg-yellow-50", darkBg: "dark:bg-yellow-900/30" },
+    { value: "peace", label: t('emotions.peace', '평온'), icon: Meh, color: "text-blue-600 dark:text-blue-300", bg: "bg-blue-50", darkBg: "dark:bg-blue-900/30" },
+    { value: "fear", label: t('emotions.fear', '두려움'), icon: Frown, color: "text-red-600 dark:text-red-300", bg: "bg-red-50", darkBg: "dark:bg-red-900/30" },
+    { value: "sadness", label: t('emotions.sadness', '슬픔'), icon: Frown, color: "text-gray-600 dark:text-gray-200", bg: "bg-gray-50", darkBg: "dark:bg-gray-800/60" },
+    { value: "excitement", label: t('emotions.excitement', '흥분'), icon: Zap, color: "text-orange-600 dark:text-orange-300", bg: "bg-orange-50", darkBg: "dark:bg-orange-900/30" },
+    { value: "wonder", label: t('emotions.wonder', '경이'), icon: Star, color: "text-purple-600 dark:text-purple-300", bg: "bg-purple-50", darkBg: "dark:bg-purple-900/30" },
   ]
 
   const dreamTypes = [
@@ -481,7 +481,7 @@ export default function WriteDreamPage() {
                             <Button
                               key={emotion.value}
                               variant={isSelected ? "default" : "outline"}
-                              className={`h-auto p-4 flex flex-col gap-2 ${isSelected ? "ring-2 ring-purple-300" : ""} ${emotion.bg} hover:${emotion.bg}`}
+                              className={`h-auto p-4 flex flex-col gap-2 ${isSelected ? "ring-2 ring-purple-300" : "border"} ${emotion.bg} ${emotion.darkBg || ''} text-gray-800 dark:text-gray-100`}
                               onClick={() => setDreamData({ ...dreamData, emotion: emotion.value })}
                             >
                               <IconComponent className={`h-6 w-6 ${emotion.color}`} />
@@ -527,11 +527,11 @@ export default function WriteDreamPage() {
                           step={1}
                           className="w-full"
                         />
-                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-300 mt-1">
                           <span>{t('write.details.vividLow', '흐릿함')}</span>
                           <span>{t('write.details.vividHigh', '매우 생생함')}</span>
                         </div>
-                        <p className="text-center text-sm text-gray-600 mt-2">
+                        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-2">
                           {t('write.details.current', '현재')}: {dreamData.vividness[0]}/5
                           {dreamData.vividness[0] >= 4 && " ✨"}
                         </p>
@@ -539,13 +539,13 @@ export default function WriteDreamPage() {
                     </div>
 
                     {/* 루시드 드림 */}
-                    <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
+                    <div className="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                       <div className="space-y-1">
-                        <Label className="flex items-center gap-2">
+                        <Label className="flex items-center gap-2 text-gray-800 dark:text-gray-100">
                           <Sparkles className="h-4 w-4 text-yellow-500" />
                           {t('write.details.lucid', '루시드 드림 (자각몽)')}
                         </Label>
-                        <p className="text-sm text-gray-500">{t('write.details.lucidHint', '꿈 속에서 꿈인 것을 알고 있었나요?')}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-300">{t('write.details.lucidHint', '꿈 속에서 꿈인 것을 알고 있었나요?')}</p>
                       </div>
                       <Switch
                         checked={dreamData.isLucid}

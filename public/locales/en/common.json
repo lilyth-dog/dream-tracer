@@ -11,7 +11,7 @@
   "community": "Community",
   "settings": "Settings",
   "language": "Language",
-  "app": { "title": "DreamTracer" },
+  "app": { "title": "Kkumgyeol" },
   "nav": {
     "home": "Home",
     "write": "Write Dream",
@@ -311,6 +311,18 @@
       "emotion": "Emotion analysis",
       "analyzing": "AI is analyzing...",
       "suggestions": "AI suggestions"
+    },
+    "tips": {
+      "1": "• Record colors, sounds, and smells you experienced in the dream",
+      "2": "• Dialogues with people in the dream are also important details",
+      "3": "• Describe the emotions you felt as concretely as possible",
+      "4": "• Note anything that differs from reality",
+      "ai": {
+        "1": "Describe the emotions you felt in more detail",
+        "2": "Include sensory details like colors and sounds",
+        "3": "Conversations with others can be useful clues",
+        "4": "Write the beginning and ending of the dream more specifically"
+      }
     },
     "sidebar": {
       "progress": "Writing progress",

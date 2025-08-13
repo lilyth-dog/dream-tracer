@@ -238,7 +238,7 @@ export default function RootLayout({
 }: Readonly<PropsWithChildren<unknown>>) {
   return (
     <html lang="ko" className="h-full" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden`}>
+            <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden text-gray-900 dark:text-gray-100`}>
         <script
           dangerouslySetInnerHTML={{
             __html: `(() => { try { var m = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; var c = document.documentElement; if (c) { if (m) { c.classList.add('dark'); c.style.colorScheme = 'dark'; } else { c.classList.remove('dark'); c.style.colorScheme = 'light'; } } } catch (e) {} })();`
