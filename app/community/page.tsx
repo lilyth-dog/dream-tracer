@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Users, Heart, MessageCircle, LayoutDashboard, BookOpen, BarChart2, Palette, Brain, PenLine, Bookmark, Trash2, Flag } from "lucide-react"
+import { Users, Heart, MessageCircle, LayoutDashboard, BookOpen, BarChart2, Palette, Brain, PenLine, Bookmark, Trash2, Flag, MoreVertical } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useTranslation } from "react-i18next"
 import Link from "next/link"
 import { useAuth } from "@/hooks/useAuth";
@@ -339,15 +340,55 @@ export default function CommunityPage() {
 										</CardTitle>
 								<CardDescription className="text-xs text-gray-400 dark:text-gray-300">{post.createdAt?.toString().slice(0, 10) || ''}</CardDescription>
 									</div>
-									{user?.uid === post.authorId && (
-										<button
-											className="ml-auto p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500"
-											onClick={() => handleDelete(post.id)}
-									 title={t('common.delete', '삭제')}
-										>
-											<Trash2 className="w-5 h-5" />
-										</button>
-									)}
+                                    <div className="ml-auto">
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <button className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="more">
+                                            <MoreVertical className="w-5 h-5" />
+                                          </button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                          {user?.uid === post.authorId && (
+                                            <DropdownMenuItem onClick={() => handleDelete(post.id)} className="text-red-600">
+                                              <Trash2 className="w-4 h-4" /> {t('common.delete','삭제')}
+                                            </DropdownMenuItem>
+                                          )}
+                                          <DropdownMenuSeparator />
+                                          {/* 신고 모달 트리거 */}
+                                          <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                              <DropdownMenuItem className="text-red-600">
+                                                <Flag className="w-4 h-4" /> {t('community.report','신고')}
+                                              </DropdownMenuItem>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                              <AlertDialogHeader>
+                                                <AlertDialogTitle>{t('community.report','신고')}</AlertDialogTitle>
+                                                <AlertDialogDescription>{t('community.reportDesc','이 게시글을 신고하시겠습니까? 여러 차례 신고되면 자동으로 숨김 처리됩니다.')}</AlertDialogDescription>
+                                                <textarea id={`report-reason-${post.id}`} className="mt-3 w-full border dark:border-gray-700 rounded p-2 text-sm bg-white dark:bg-gray-800" placeholder={t('community.reportReason','신고 사유(선택)') as string}></textarea>
+                                              </AlertDialogHeader>
+                                              <AlertDialogFooter>
+                                                <AlertDialogCancel>{t('common.no','아니오')}</AlertDialogCancel>
+                                                <AlertDialogAction onClick={async () => {
+                                                  if (!user) return
+                                                  if (pendingReportIds.has(post.id)) return
+                                                  setPendingReportIds(new Set(pendingReportIds).add(post.id))
+                                                  const reported = post.reportedUserIds?.includes(user.uid)
+                                                  const reasonEl = document.getElementById(`report-reason-${post.id}`) as HTMLTextAreaElement | null
+                                                  const reason = reasonEl?.value || ''
+                                                  const res = await fetch('/api/community', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ postId: post.id, report: !reported, userId: user.uid, reason }) })
+                                                  const data = await res.json()
+                                                  if (data.ok) {
+                                                    setPosts(posts.map(p => p.id === post.id ? { ...p, reportedUserIds: data.reportedUserIds, reports: data.reports, hidden: data.hidden ?? p.hidden } : p))
+                                                  }
+                                                  setPendingReportIds(prev => { const n = new Set(prev); n.delete(post.id); return n })
+                                                }}>{t('common.yes','예')}</AlertDialogAction>
+                                              </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                          </AlertDialog>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                    </div>
 								</CardHeader>
                                 <CardContent>
 							{post.hidden && (
