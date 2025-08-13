@@ -13,6 +13,12 @@ export function usePWAInstall() {
   const [isInstalled, setIsInstalled] = useState(false)
 
   useEffect(() => {
+    // iOS 가이드: beforeinstallprompt 미지원. 홈 화면에 추가 안내를 위해 설치 가능 플래그를 유사 판단
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+    const isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || (navigator as any).standalone
+    if (isIOS && !isStandalone) {
+      setIsInstallable(true)
+    }
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e as BeforeInstallPromptEvent)

@@ -1,5 +1,6 @@
 "use client";
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner'
 
 const languages = [
   { code: 'ko', label: '한국어' },
@@ -16,7 +17,7 @@ export default function LanguageSwitcher({ className }: { className?: string }) 
       <select
         className="border rounded px-2 py-1 text-sm"
         value={i18n.language}
-        onChange={e => { localStorage.setItem('lang', e.target.value); i18n.changeLanguage(e.target.value); }}
+        onChange={e => { localStorage.setItem('lang', e.target.value); i18n.changeLanguage(e.target.value); try { toast.success(i18n.t('language') + ' ✓'); } catch {} }}
         aria-label={i18n.t('language', '언어')}
       >
         {languages.map(lang => (
