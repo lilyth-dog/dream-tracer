@@ -12,12 +12,12 @@ export default function LanguageSwitcher({ className }: { className?: string }) 
   const { i18n } = useTranslation();
   return (
     <div className={className ? `flex gap-2 items-center ${className}` : "flex gap-2 items-center"}>
-      <span className="text-xs text-gray-500">🌐</span>
+      <span className="text-xs text-gray-500" aria-hidden>🌐</span>
       <select
         className="border rounded px-2 py-1 text-sm"
         value={i18n.language}
-        onChange={e => i18n.changeLanguage(e.target.value)}
-        aria-label="언어 선택"
+        onChange={e => { localStorage.setItem('lang', e.target.value); i18n.changeLanguage(e.target.value); }}
+        aria-label={i18n.t('language', '언어')}
       >
         {languages.map(lang => (
           <option key={lang.code} value={lang.code}>{lang.label}</option>

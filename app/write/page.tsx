@@ -39,9 +39,11 @@ import {
   MicOff,
 } from "lucide-react"
 import { format } from "date-fns"
-import { ko } from "date-fns/locale"
+import { enUS, ko, ja, zhCN } from "date-fns/locale"
+import { useTranslation } from 'react-i18next'
 
 export default function WriteDreamPage() {
+  const { t, i18n } = useTranslation()
   const router = useRouter()
   const searchParams = useSearchParams()
   const editId = searchParams.get("edit")
@@ -73,30 +75,43 @@ export default function WriteDreamPage() {
   const [isSupported, setIsSupported] = useState(false)
 
   const emotions = [
-    { value: "joy", label: "기쁨", icon: Smile, color: "text-yellow-500", bg: "bg-yellow-50" },
-    { value: "peace", label: "평온", icon: Meh, color: "text-blue-500", bg: "bg-blue-50" },
-    { value: "fear", label: "두려움", icon: Frown, color: "text-red-500", bg: "bg-red-50" },
-    { value: "sadness", label: "슬픔", icon: Frown, color: "text-gray-500", bg: "bg-gray-50" },
-    { value: "excitement", label: "흥분", icon: Zap, color: "text-orange-500", bg: "bg-orange-50" },
-    { value: "wonder", label: "경이", icon: Star, color: "text-purple-500", bg: "bg-purple-50" },
+    { value: "joy", label: t('emotions.joy', '기쁨'), icon: Smile, color: "text-yellow-500", bg: "bg-yellow-50" },
+    { value: "peace", label: t('emotions.peace', '평온'), icon: Meh, color: "text-blue-500", bg: "bg-blue-50" },
+    { value: "fear", label: t('emotions.fear', '두려움'), icon: Frown, color: "text-red-500", bg: "bg-red-50" },
+    { value: "sadness", label: t('emotions.sadness', '슬픔'), icon: Frown, color: "text-gray-500", bg: "bg-gray-50" },
+    { value: "excitement", label: t('emotions.excitement', '흥분'), icon: Zap, color: "text-orange-500", bg: "bg-orange-50" },
+    { value: "wonder", label: t('emotions.wonder', '경이'), icon: Star, color: "text-purple-500", bg: "bg-purple-50" },
   ]
 
   const dreamTypes = [
-    { value: "normal", label: "일반적인 꿈", emoji: "😴" },
-    { value: "nightmare", label: "악몽", emoji: "😰" },
-    { value: "lucid", label: "루시드 드림", emoji: "✨" },
-    { value: "recurring", label: "반복되는 꿈", emoji: "🔄" },
-    { value: "prophetic", label: "예지몽", emoji: "🔮" },
-    { value: "healing", label: "치유의 꿈", emoji: "🌸" },
+    { value: "normal", label: t('dreamTypes.normal', '일반적인 꿈'), emoji: "😴" },
+    { value: "nightmare", label: t('dreamTypes.nightmare', '악몽'), emoji: "😰" },
+    { value: "lucid", label: t('dreamTypes.lucid', '루시드 드림'), emoji: "✨" },
+    { value: "recurring", label: t('dreamTypes.recurring', '반복되는 꿈'), emoji: "🔄" },
+    { value: "prophetic", label: t('dreamTypes.prophetic', '예지몽'), emoji: "🔮" },
+    { value: "healing", label: t('dreamTypes.healing', '치유의 꿈'), emoji: "🌸" },
   ]
 
   const sleepQualities = [
-    { value: "excellent", label: "매우 좋음", emoji: "😴" },
-    { value: "good", label: "좋음", emoji: "😊" },
-    { value: "fair", label: "보통", emoji: "😐" },
-    { value: "poor", label: "나쁨", emoji: "😔" },
-    { value: "terrible", label: "매우 나쁨", emoji: "😵" },
+    { value: "excellent", label: t('sleepQualities.excellent', '매우 좋음'), emoji: "😴" },
+    { value: "good", label: t('sleepQualities.good', '좋음'), emoji: "😊" },
+    { value: "fair", label: t('sleepQualities.fair', '보통'), emoji: "😐" },
+    { value: "poor", label: t('sleepQualities.poor', '나쁨'), emoji: "😔" },
+    { value: "terrible", label: t('sleepQualities.terrible', '매우 나쁨'), emoji: "😵" },
   ]
+
+  // 언어별 로케일 매핑 및 날짜/단위 포맷 유틸
+  const getDateFnsLocale = () => {
+    const lng = (i18n?.language || (typeof window !== 'undefined' ? (localStorage.getItem('lang') || 'ko') : 'ko')) as string
+    switch (lng) {
+      case 'en': return enUS
+      case 'ja': return ja
+      case 'zh': return zhCN
+      default: return ko
+    }
+  }
+  const dateLocale = getDateFnsLocale()
+  const countSuffix = t('home.widgets.countSuffix', '개')
 
   const suggestedTags = [
     "비행",
@@ -185,7 +200,7 @@ export default function WriteDreamPage() {
   // 음성 인식 시작/중지
   const toggleVoiceRecognition = () => {
     if (!recognition || !isSupported) {
-      alert('이 브라우저에서는 음성 인식을 지원하지 않습니다.')
+      alert(t('write.voice.notSupported', '이 브라우저에서는 음성 인식을 지원하지 않습니다.'))
       return
     }
     
@@ -198,7 +213,7 @@ export default function WriteDreamPage() {
         setIsListening(true)
       } catch (error) {
         console.error('음성 인식 시작 실패:', error)
-        alert('음성 인식을 시작할 수 없습니다. 마이크 권한을 확인해주세요.')
+        alert(t('write.voice.cannotStart', '음성 인식을 시작할 수 없습니다. 마이크 권한을 확인해주세요.'))
       }
     }
   }
@@ -211,10 +226,10 @@ export default function WriteDreamPage() {
     // 실제로는 AI API 호출
     setTimeout(() => {
       const suggestions = [
-        "꿈에서 느낀 감정을 더 자세히 설명해보세요",
-        "꿈 속 색깔이나 소리도 기록해보면 좋겠어요",
-        "다른 사람들과의 대화 내용도 중요한 단서가 될 수 있어요",
-        "꿈의 시작과 끝 부분을 더 구체적으로 적어보세요",
+        t('write.tips.ai.1', '꿈에서 느낀 감정을 더 자세히 설명해보세요'),
+        t('write.tips.ai.2', '꿈 속 색깔이나 소리도 기록해보면 좋겠어요'),
+        t('write.tips.ai.3', '다른 사람들과의 대화 내용도 중요한 단서가 될 수 있어요'),
+        t('write.tips.ai.4', '꿈의 시작과 끝 부분을 더 구체적으로 적어보세요'),
       ]
       setAiSuggestions(suggestions)
     }, 1000)
@@ -256,7 +271,7 @@ export default function WriteDreamPage() {
 
   const handleSave = async () => {
     if (!dreamData.title || !dreamData.content) {
-      alert("제목과 내용을 입력해주세요.")
+      alert(t('write.requiredFields', '제목과 내용을 입력해주세요.'))
       return
     }
 
@@ -275,7 +290,7 @@ export default function WriteDreamPage() {
           dreamType: dreamData.dreamType,
           images: uploadedImages,
         })
-        alert("꿈 일기가 수정되었습니다! ✨")
+        alert(t('write.saveSuccessEdit', '꿈 일기가 수정되었습니다! ✨'))
       } else {
         await addDream({
           title: dreamData.title,
@@ -289,12 +304,12 @@ export default function WriteDreamPage() {
           dreamType: dreamData.dreamType,
           images: uploadedImages,
         })
-        alert("꿈 일기가 저장되었습니다! ✨")
+        alert(t('write.saveSuccess', '꿈 일기가 저장되었습니다! ✨'))
       }
       router.push("/")
     } catch (error) {
       console.error("Save error:", error)
-      alert("저장에 실패했습니다.")
+      alert(t('common.saveFailed', '저장에 실패했습니다.'))
     } finally {
       setSaving(false)
     }
@@ -302,7 +317,7 @@ export default function WriteDreamPage() {
 
   const handleDraft = () => {
     localStorage.setItem("dreamDraft", JSON.stringify(dreamData))
-    alert("임시저장되었습니다!")
+    alert(t('write.draftSuccess', '임시저장되었습니다!'))
   }
 
   // 편집 모드/임시저장된 데이터 불러오기
@@ -341,10 +356,10 @@ export default function WriteDreamPage() {
           <div className="lg:col-span-3">
             <Tabs defaultValue="basic" className="space-y-6">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="basic">기본 정보</TabsTrigger>
-                <TabsTrigger value="details">세부사항</TabsTrigger>
-                <TabsTrigger value="media">미디어</TabsTrigger>
-                <TabsTrigger value="ai">AI 도움</TabsTrigger>
+                <TabsTrigger value="basic">{t('write.tabs.basic', '기본 정보')}</TabsTrigger>
+                <TabsTrigger value="details">{t('write.tabs.details', '세부사항')}</TabsTrigger>
+                <TabsTrigger value="media">{t('write.tabs.media', '미디어')}</TabsTrigger>
+                <TabsTrigger value="ai">{t('write.tabs.ai', 'AI 도움')}</TabsTrigger>
               </TabsList>
 
               {/* 기본 정보 탭 */}
@@ -353,16 +368,16 @@ export default function WriteDreamPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Sparkles className="h-5 w-5 text-purple-600" />
-                      {isEditMode ? "기본 정보 수정" : "기본 정보"}
+                      {isEditMode ? t('write.basic.editTitle', '기본 정보 수정') : t('write.basic.title', '기본 정보')}
                     </CardTitle>
-                    <CardDescription>{isEditMode ? "선택한 꿈의 정보를 수정하세요" : "꿈의 기본적인 정보를 입력해주세요"}</CardDescription>
+                    <CardDescription>{isEditMode ? t('write.basic.editDesc', '선택한 꿈의 정보를 수정하세요') : t('write.basic.desc', '꿈의 기본적인 정보를 입력해주세요')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="title">꿈의 제목 *</Label>
+                      <Label htmlFor="title">{t('write.fields.title.label', '꿈의 제목 *')}</Label>
                       <Input
                         id="title"
-                        placeholder="예: 하늘을 나는 꿈"
+                        placeholder={t('write.fields.title.placeholder', '예: 하늘을 나는 꿈')}
                         value={dreamData.title}
                         onChange={(e) => setDreamData({ ...dreamData, title: e.target.value })}
                         className="text-lg"
@@ -370,7 +385,7 @@ export default function WriteDreamPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>꿈을 꾼 날짜</Label>
+                      <Label>{t('write.fields.date.label', '꿈을 꾼 날짜')}</Label>
                       <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                         <PopoverTrigger asChild>
                           <Button
@@ -378,7 +393,7 @@ export default function WriteDreamPage() {
                             className="w-full justify-start text-left font-normal bg-transparent"
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {format(dreamData.date, "PPP", { locale: ko })}
+                            {format(dreamData.date, "PPP", { locale: dateLocale })}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -398,11 +413,11 @@ export default function WriteDreamPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="content">꿈의 내용 *</Label>
+                      <Label htmlFor="content">{t('write.fields.content.label', '꿈의 내용 *')}</Label>
                       <div className="relative">
                         <Textarea
                           id="content"
-                          placeholder="꿈의 내용을 자세히 적어주세요. 장소, 인물, 상황, 느낌 등을 포함해서 작성하면 더 좋습니다..."
+                          placeholder={t('write.fields.content.placeholder', '꿈의 내용을 자세히 적어주세요. 장소, 인물, 상황, 느낌 등을 포함해서 작성하면 더 좋습니다...')}
                           className="min-h-[200px] text-base leading-relaxed pr-12"
                           value={dreamData.content}
                           onChange={(e) => setDreamData({ ...dreamData, content: e.target.value })}
@@ -414,7 +429,7 @@ export default function WriteDreamPage() {
                             size="sm"
                             className="absolute top-2 right-2 h-8 w-8 p-0"
                             onClick={toggleVoiceRecognition}
-                            title={isListening ? "음성 인식 중지" : "음성으로 작성"}
+                              title={isListening ? t('write.voice.stop', '음성 인식 중지') : t('write.voice.start', '음성으로 작성')}
                           >
                             {isListening ? (
                               <MicOff className="h-4 w-4" />
@@ -424,18 +439,18 @@ export default function WriteDreamPage() {
                           </Button>
                         )}
                       </div>
-                      <div className="flex justify-between items-center text-sm text-gray-500">
-                        <span>{dreamData.content.length}자</span>
+                      <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-300">
+                        <span>{t('write.content.charCount', '{{count}} chars', { count: dreamData.content.length })}</span>
                         <div className="flex items-center gap-2">
                           {isListening && (
                             <div className="flex items-center gap-1 text-red-500 animate-pulse">
                               <Mic className="h-3 w-3" />
-                              <span>음성 인식 중...</span>
+                              <span>{t('write.voice.listening', '음성 인식 중...')}</span>
                             </div>
                           )}
                           <Button variant="ghost" size="sm" onClick={generateAiSuggestions} disabled={!dreamData.content}>
                             <Brain className="h-4 w-4 mr-1" />
-                            AI 도움받기
+                            {t('write.ai.help', 'AI 도움받기')}
                           </Button>
                         </div>
                       </div>
@@ -450,14 +465,14 @@ export default function WriteDreamPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Eye className="h-5 w-5 text-blue-600" />
-                      꿈의 세부사항
+                      {t('write.details.title', '꿈의 세부사항')}
                     </CardTitle>
-                    <CardDescription>꿈의 특성과 느낌을 기록해주세요</CardDescription>
+                    <CardDescription>{t('write.details.desc', '꿈의 특성과 느낌을 기록해주세요')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* 감정 선택 */}
                     <div className="space-y-3">
-                      <Label>주된 감정</Label>
+                      <Label>{t('write.details.emotion', '주된 감정')}</Label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {emotions.map((emotion) => {
                           const IconComponent = emotion.icon
@@ -479,13 +494,13 @@ export default function WriteDreamPage() {
 
                     {/* 꿈 유형 */}
                     <div className="space-y-2">
-                      <Label>꿈의 유형</Label>
+                      <Label>{t('write.details.dreamType', '꿈의 유형')}</Label>
                       <Select
                         value={dreamData.dreamType}
                         onValueChange={(value) => setDreamData({ ...dreamData, dreamType: value })}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="꿈의 유형을 선택해주세요" />
+                          <SelectValue placeholder={t('write.details.dreamTypePlaceholder', '꿈의 유형을 선택해주세요')} />
                         </SelectTrigger>
                         <SelectContent>
                           {dreamTypes.map((type) => (
@@ -502,7 +517,7 @@ export default function WriteDreamPage() {
 
                     {/* 생생함 */}
                     <div className="space-y-3">
-                      <Label>꿈의 생생함 정도</Label>
+                      <Label>{t('write.details.vividness', '꿈의 생생함 정도')}</Label>
                       <div className="px-3">
                         <Slider
                           value={dreamData.vividness}
@@ -513,11 +528,11 @@ export default function WriteDreamPage() {
                           className="w-full"
                         />
                         <div className="flex justify-between text-xs text-gray-500 mt-1">
-                          <span>흐릿함</span>
-                          <span>매우 생생함</span>
+                          <span>{t('write.details.vividLow', '흐릿함')}</span>
+                          <span>{t('write.details.vividHigh', '매우 생생함')}</span>
                         </div>
                         <p className="text-center text-sm text-gray-600 mt-2">
-                          현재: {dreamData.vividness[0]}/5
+                          {t('write.details.current', '현재')}: {dreamData.vividness[0]}/5
                           {dreamData.vividness[0] >= 4 && " ✨"}
                         </p>
                       </div>
@@ -528,9 +543,9 @@ export default function WriteDreamPage() {
                       <div className="space-y-1">
                         <Label className="flex items-center gap-2">
                           <Sparkles className="h-4 w-4 text-yellow-500" />
-                          루시드 드림 (자각몽)
+                          {t('write.details.lucid', '루시드 드림 (자각몽)')}
                         </Label>
-                        <p className="text-sm text-gray-500">꿈 속에서 꿈인 것을 알고 있었나요?</p>
+                        <p className="text-sm text-gray-500">{t('write.details.lucidHint', '꿈 속에서 꿈인 것을 알고 있었나요?')}</p>
                       </div>
                       <Switch
                         checked={dreamData.isLucid}
@@ -540,13 +555,13 @@ export default function WriteDreamPage() {
 
                     {/* 수면의 질 */}
                     <div className="space-y-2">
-                      <Label>수면의 질</Label>
+                      <Label>{t('write.details.sleepQuality', '수면의 질')}</Label>
                       <Select
                         value={dreamData.sleepQuality}
                         onValueChange={(value) => setDreamData({ ...dreamData, sleepQuality: value })}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="수면의 질을 선택해주세요" />
+                          <SelectValue placeholder={t('write.details.sleepQualityPlaceholder', '수면의 질을 선택해주세요')} />
                         </SelectTrigger>
                         <SelectContent>
                           {sleepQualities.map((quality) => (
@@ -566,19 +581,19 @@ export default function WriteDreamPage() {
                 {/* 태그 */}
                 <Card className="glass-effect">
                   <CardHeader>
-                    <CardTitle>태그</CardTitle>
-                    <CardDescription>꿈과 관련된 키워드를 추가해주세요</CardDescription>
+                    <CardTitle>{t('write.tags.title', '태그')}</CardTitle>
+                    <CardDescription>{t('write.tags.desc', '꿈과 관련된 키워드를 추가해주세요')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex gap-2">
                       <Input
-                        placeholder="태그 입력 (예: 비행, 바다, 가족)"
+                        placeholder={t('write.tags.placeholder', '태그 입력 (예: 비행, 바다, 가족)')}
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                         onKeyPress={(e) => e.key === "Enter" && addTag()}
                       />
                       <Button onClick={addTag} variant="outline">
-                        추가
+                        {t('write.tags.add', '추가')}
                       </Button>
                     </div>
 
@@ -594,7 +609,7 @@ export default function WriteDreamPage() {
 
                     {/* 추천 태그 */}
                     <div className="space-y-2">
-                      <Label className="text-sm">추천 태그</Label>
+                      <Label className="text-sm">{t('write.tags.suggested', '추천 태그')}</Label>
                       <div className="flex flex-wrap gap-2">
                         {suggestedTags
                           .filter((tag) => !dreamData.tags.includes(tag))
@@ -621,9 +636,9 @@ export default function WriteDreamPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <ImagePlus className="h-5 w-5 text-green-600" />
-                      이미지 업로드
+                      {t('write.media.title', '이미지 업로드')}
                     </CardTitle>
-                    <CardDescription>꿈과 관련된 이미지나 그림을 업로드해주세요</CardDescription>
+                    <CardDescription>{t('write.media.desc', '꿈과 관련된 이미지나 그림을 업로드해주세요')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -638,8 +653,8 @@ export default function WriteDreamPage() {
                         />
                         <label htmlFor="image-upload" className="cursor-pointer">
                           <ImagePlus className="h-16 w-16 text-purple-400 mx-auto mb-4 float-animation" />
-                          <p className="text-gray-600 text-lg mb-2">클릭하여 이미지를 업로드하세요</p>
-                          <p className="text-sm text-gray-400">PNG, JPG, GIF 파일 지원 (최대 10MB)</p>
+                          <p className="text-gray-600 text-lg mb-2">{t('write.media.cta', '클릭하여 이미지를 업로드하세요')}</p>
+                          <p className="text-sm text-gray-400">{t('write.media.hint', 'PNG, JPG, GIF 파일 지원 (최대 10MB)')}</p>
                         </label>
                       </div>
 
@@ -649,7 +664,7 @@ export default function WriteDreamPage() {
                             <div key={image} className="relative group">
                               <img
                                 src={image}
-                                alt={`업로드된 이미지`}
+                                 alt={t('write.media.uploadedAlt', '업로드된 이미지')}
                                 className="w-full h-32 object-cover rounded-lg"
                               />
                               <Button
@@ -675,9 +690,9 @@ export default function WriteDreamPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Brain className="h-5 w-5 text-purple-600" />
-                      AI 작성 도우미
+                      {t('write.ai.title', 'AI 작성 도우미')}
                     </CardTitle>
-                    <CardDescription>AI가 더 나은 꿈 일기 작성을 도와드립니다</CardDescription>
+                    <CardDescription>{t('write.ai.desc', 'AI가 더 나은 꿈 일기 작성을 도와드립니다')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="flex gap-4">
@@ -687,11 +702,11 @@ export default function WriteDreamPage() {
                         className="bg-gradient-to-r from-purple-600 to-pink-600"
                       >
                         <Wand2 className="h-4 w-4 mr-2" />
-                        AI 제안 받기
+                        {t('write.ai.suggest', 'AI 제안 받기')}
                       </Button>
                       <Button variant="outline">
                         <Sparkles className="h-4 w-4 mr-2" />
-                        감정 분석
+                        {t('write.ai.emotion', '감정 분석')}
                       </Button>
                     </div>
 
@@ -700,11 +715,11 @@ export default function WriteDreamPage() {
                         {aiSuggestions.length === 0 ? (
                           <div className="text-center py-8">
                             <Brain className="h-12 w-12 text-purple-400 mx-auto mb-4 animate-pulse" />
-                            <p className="text-gray-600">AI가 분석하고 있습니다...</p>
+                            <p className="text-gray-600">{t('write.ai.analyzing', 'AI가 분석하고 있습니다...')}</p>
                           </div>
                         ) : (
                           <div className="space-y-3">
-                            <h4 className="font-medium text-purple-800">AI 제안사항</h4>
+                            <h4 className="font-medium text-purple-800">{t('write.ai.suggestions', 'AI 제안사항')}</h4>
                             {aiSuggestions.map((suggestion) => (
                               <div key={suggestion.text || suggestion} className="p-3 bg-purple-50 rounded-lg border border-purple-200">
                                 <div className="flex items-start gap-2">
@@ -725,11 +740,11 @@ export default function WriteDreamPage() {
           {/* Sidebar: 진행도+팁+저장버튼, lg 이상에서만 스크롤 */}
           <div className="hidden lg:flex flex-col gap-6 max-h-[calc(100vh-120px)] overflow-y-auto sticky top-24">
             {/* 진행도 */}
-            <Card className="glass-effect">
+                <Card className="glass-effect">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-green-600" />
-                  작성 진행도
+                  {t('write.sidebar.progress', '작성 진행도')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -739,34 +754,34 @@ export default function WriteDreamPage() {
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span>제목</span>
+                          <div className="flex justify-between text-sm">
+                     <span>{t('write.sidebar.title', '제목')}</span>
                     <span className={dreamData.title ? "text-green-600" : "text-gray-400"}>
-                      {dreamData.title ? "✓" : "○"}
+                      {dreamData.title ? (t('common.ok', '✓')) : (t('common.notOk', '○'))}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>내용</span>
-                    <span className={dreamData.content ? "text-green-600" : "text-gray-400"}>
-                      {dreamData.content ? "✓" : "○"}
+                     <span>{t('write.sidebar.content', '내용')}</span>
+                     <span className={dreamData.content ? "text-green-600" : "text-gray-400"}>
+                      {dreamData.content ? (t('common.ok', '✓')) : (t('common.notOk', '○'))}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>감정</span>
-                    <span className={dreamData.emotion ? "text-green-600" : "text-gray-400"}>
-                      {dreamData.emotion ? "✓" : "○"}
+                     <span>{t('write.sidebar.emotion', '감정')}</span>
+                     <span className={dreamData.emotion ? "text-green-600" : "text-gray-400"}>
+                      {dreamData.emotion ? (t('common.ok', '✓')) : (t('common.notOk', '○'))}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>꿈 유형</span>
-                    <span className={dreamData.dreamType ? "text-green-600" : "text-gray-400"}>
-                      {dreamData.dreamType ? "✓" : "○"}
+                     <span>{t('write.sidebar.dreamType', '꿈 유형')}</span>
+                     <span className={dreamData.dreamType ? "text-green-600" : "text-gray-400"}>
+                      {dreamData.dreamType ? (t('common.ok', '✓')) : (t('common.notOk', '○'))}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>태그</span>
-                    <span className={dreamData.tags.length > 0 ? "text-green-600" : "text-gray-400"}>
-                      {dreamData.tags.length > 0 ? "✓" : "○"}
+                     <span>{t('write.sidebar.tags', '태그')}</span>
+                     <span className={dreamData.tags.length > 0 ? "text-green-600" : "text-gray-400"}>
+                      {dreamData.tags.length > 0 ? (t('common.ok', '✓')) : (t('common.notOk', '○'))}
                     </span>
                   </div>
                 </div>
@@ -775,7 +790,7 @@ export default function WriteDreamPage() {
                   <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                     <div className="flex items-center gap-2">
                       <Star className="h-4 w-4 text-green-600" />
-                      <span className="text-sm font-medium text-green-800">완성도가 높아요!</span>
+                      <span className="text-sm font-medium text-green-800">{t('write.sidebar.high', '완성도가 높아요!')}</span>
                     </div>
                   </div>
                 )}
@@ -786,15 +801,15 @@ export default function WriteDreamPage() {
               <CardHeader>
                 <CardTitle className="text-purple-800 flex items-center gap-2">
                   <Star className="h-5 w-5" />
-                  작성 팁
+                  {t('write.sidebar.tips', '작성 팁')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="text-sm text-purple-700 space-y-2">
-                  <p>• 꿈에서 본 색깔, 소리, 냄새도 기록해보세요</p>
-                  <p>• 꿈 속 인물들과의 대화 내용도 중요합니다</p>
-                  <p>• 꿈에서 느낀 감정을 구체적으로 표현해보세요</p>
-                  <p>• 현실과 다른 점들을 특별히 기록해두세요</p>
+                  <p>{t('write.tips.1', '• 꿈에서 본 색깔, 소리, 냄새도 기록해보세요')}</p>
+                  <p>{t('write.tips.2', '• 꿈 속 인물들과의 대화 내용도 중요합니다')}</p>
+                  <p>{t('write.tips.3', '• 꿈에서 느낀 감정을 구체적으로 표현해보세요')}</p>
+                  <p>{t('write.tips.4', '• 현실과 다른 점들을 특별히 기록해두세요')}</p>
                 </div>
               </CardContent>
             </Card>
@@ -809,18 +824,18 @@ export default function WriteDreamPage() {
                   {saving ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      저장 중...
+                      {t('write.save.saving', '저장 중...')}
                     </>
                   ) : (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      저장하기
+                      {t('write.save.submit', '저장하기')}
                     </>
                   )}
                 </Button>
                 <Button variant="outline" onClick={handleDraft} className="w-full bg-transparent" disabled={saving}>
                   <FileText className="h-4 w-4 mr-2" />
-                  임시저장
+                  {t('write.save.draft', '임시저장')}
                 </Button>
               </CardContent>
             </Card>
@@ -839,12 +854,12 @@ export default function WriteDreamPage() {
                 {saving ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    저장 중...
+                    {t('write.save.saving', '저장 중...')}
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4 mr-2" />
-                    저장하기
+                    {t('write.save.submit', '저장하기')}
                   </>
                 )}
               </Button>

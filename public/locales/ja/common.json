@@ -10,5 +10,373 @@
   "dreamList": "夢リスト",
   "community": "コミュニティ",
   "settings": "設定",
-  "language": "言語"
+  "language": "言語",
+  "app": { "title": "ドリームトレーサー" },
+  "nav": {
+    "home": "ホーム",
+    "write": "夢を記録",
+    "dreamList": "夢リスト",
+    "stats": "統計",
+    "community": "コミュニティ",
+    "dejavu": "デジャヴ",
+    "visualize": "ビジュアライズ",
+    "profile": "プロフィール"
+  },
+  "home": { "title": "マイ夢日記", "aiTitle": "今日のAI夢解釈", "aiDesc": "AIが最近の夢を分析し、今日のパターンと解釈を提案します。", "aiCta": "AI 解釈を見る" },
+  "common": { "loading": "読み込み中...", "submitting": "送信中...", "more": "さらに読み込む", "logout": "ログアウト", "or": "または", "confirmDelete": "本当に削除しますか？", "delete": "削除", "deleteFailed": "削除に失敗しました。", "empty": "なし", "yes": "はい", "no": "いいえ" },
+  "auth": {
+    "login": { "title": "ログイン", "desc": "夢の世界に入ろう", "loading": "ログイン中...", "submit": "ログイン", "toRegister": "新規登録", "forgot": "パスワードをお忘れですか" },
+    "fields": { "email": "メール", "password": "パスワード" },
+    "demo": { "title": "デモモード", "desc": "Firebase 環境変数が未設定のためデモモードで動作します。", "autoLogin": "デモモードでは自動的にログインされます。", "info": "デモ情報", "start": "デモモードで開始", "resetNotSupported": "デモモードではパスワード再設定は利用できません。", "registerNotSupported": "デモモードでは新規登録は利用できません。" },
+    "error": { "loginFailed": "ログインに失敗しました。", "userNotFound": "登録されていないメールです。", "wrongPassword": "パスワードが正しくありません。", "invalidEmail": "無効なメール形式です。", "googleFailed": "Google ログインに失敗しました。", "canceled": "ログインがキャンセルされました。", "popupBlocked": "ポップアップがブロックされました。許可してください。" },
+    "register": { "submit": "新規登録", "submitting": "登録中...", "backToLogin": "ログインに戻る", "success": "登録が完了しました。ログインしてください。", "failed": "登録に失敗しました: " },
+    "reset": { "sending": "メール送信中...", "submit": "パスワード再設定メールを送信", "sent": "再設定メールを送信しました。", "failed": "パスワード再設定に失敗しました: " },
+    "google": "Googleで続行"
+  },
+  "dejavu": {
+    "title": "現実-夢 デジャヴ検索",
+    "desc": "最近の現実での出来事や場面を入力すると、AIが過去の夢記録から類似内容を見つけて関連付けます。",
+    "hint": "『この場面、夢で見たことがある？』という瞬間を科学的に探究しましょう。",
+    "scoreNote": "表示される類似度は自身の夢リスト内でのパーセンタイルです。例：80%は上位20%の類似度。",
+    "input": {
+      "title": "現実での出来事の説明",
+      "desc": "最近体験した出来事・場面・会話・感情などを自由に入力してください。",
+      "placeholder": "例：初めて行ったカフェで見覚えのある風景を見た...",
+      "required": "現実での出来事を入力してください。"
+    },
+    "cta": "デジャヴを探す",
+    "progress": { "title": "AIが現実と夢を比較分析しています...", "running": "分析中...", "done": "完了" },
+    "empty": { "title": "結果はまだありません", "hint": "出来事を入力して『デジャヴを探す』を押してください。" },
+    "result": { "elements": "類似要素", "ai": "AI分析", "dream": "夢", "date": "記録日" },
+    "result.elements": { "similarPlace": "似た場所", "similarPerson": "似た人物", "similarEmotion": "似た感情", "placeSimilarity": "場所の類似", "emotionSimilarity": "感情の類似" },
+    "sample": { "dream1Title": "空を飛ぶ夢", "dream1Analysis": "現実の自由な感覚が過去の飛行の夢と結びついています。", "dream2Title": "子どもの頃の家", "dream2Analysis": "馴染みのある空間での感情が過去の夢の安心感とつながっています。" },
+    "error": "分析中にエラーが発生しました。"
+  },
+  "community": {
+    "shareTitle": "夢を共有",
+    "sharePlaceholder": "自由に夢を共有してください...",
+    "publicProfile": "公開プロフィールで投稿",
+    "publicProfileShort": "公開プロフィールで",
+    "commentPlaceholder": "コメントを書く",
+    "submit": "投稿",
+    "anon": "匿名",
+    "report": "通報",
+    "hiddenNotice": "通報が多いため非表示になりました。",
+    "shareCta": "共有",
+    "sortRecent": "最新",
+    "sortPopular": "人気"
+  }
+  ,
+  "settings": {
+    "logoutConfirm": "本当にログアウトしますか？",
+    "logoutFailed": "ログアウトに失敗しました。"
+  }
+  ,
+  "visualize": {
+    "title": "AI夢のビジュアライズ",
+    "desc": "AIがあなたの夢を美しい画像にします。様々なスタイルで可視化し、記憶を鮮明に残しましょう。",
+    "stats": { "available": "生成可能な夢", "generated": "生成済み画像" },
+    "panel": { "title": "画像生成", "desc": "夢を選択するか説明を入力" },
+    "form": { "selectDream": "夢を選択", "selectPlaceholder": "ビジュアライズする夢を選択", "custom": "または説明を入力", "customPlaceholder": "シーンを詳しく説明してください...", "style": "画像スタイル" },
+    "generating": "生成中...",
+    "generate": "画像生成",
+    "progress": { "title": "進行状況" },
+    "tabs": { "generated": "生成済み", "gallery": "ギャラリー" },
+    "empty": { "title": "生成された画像はありません", "hint": "夢を選んで画像を生成しましょう！" },
+    "toast": { "success": "画像が生成されました！", "fail": "画像生成に失敗しました。", "download": "ダウンロードは近日提供。", "share": "共有は近日提供。" },
+    "input": { "required": "夢を選択するか説明を入力してください。" },
+    "styles": {
+      "realistic": "リアル", "realisticDesc": "写真のように鮮明",
+      "artistic": "アーティスティック", "artisticDesc": "絵画のような美しいスタイル",
+      "dreamy": "ドリーミー", "dreamyDesc": "夢のように柔らかく神秘的",
+      "fantasy": "ファンタジー", "fantasyDesc": "魔法のような幻想世界",
+      "minimalist": "ミニマル", "minimalistDesc": "シンプルでクリーン",
+      "surreal": "シュルレアリスム", "surrealDesc": "ダリのような超現実"
+    },
+    "sample": "サンプル"
+  }
+  ,
+  "app": { "title": "ドリームトレーサー" },
+  "profile": {
+    "needLogin": "ログインが必要です。",
+    "tabs": { "profile": "プロフィール", "preferences": "環境設定", "security": "セキュリティ", "achievements": "実績" },
+    "basic": { "title": "基本情報", "desc": "プロフィール情報を編集できます" },
+    "form": { "name": "名前", "email": "メール", "bio": "自己紹介", "goal": "夢の目標", "theme": "好きな夢のテーマ", "namePlaceholder": "名前を入力", "bioPlaceholder": "自己紹介を入力", "goalPlaceholder": "例：毎日夢を記録", "themePlaceholder": "テーマを選択" },
+    "image": { "change": "写真を変更", "hint": "JPG/PNGのみ対応" },
+    "preview": { "title": "プロフィールプレビュー", "desc": "他のユーザーからの見え方", "noName": "名前なし", "noBio": "自己紹介なし", "goal": "夢の目標", "theme": "好きなテーマ", "joined": "参加日" },
+    "pwa": { "title": "アプリをインストール", "desc": "ホームバナー以外でもここからインストール可能", "installed": "インストール済み", "install": "インストール", "pending": "インストール可能時に表示", "tip": "ボタンが見えない場合、ブラウザの『ホーム画面に追加』を利用してください。" },
+    "notify": { "title": "通知設定", "reminder": "夢のリマインダー", "reminderDesc": "毎晩の通知", "weekly": "週間レポート", "weeklyDesc": "1週間の夢分析", "community": "コミュニティ更新", "communityDesc": "新着投稿の通知", "ai": "AIインサイト", "aiDesc": "AI分析結果" },
+    "privacy": { "title": "プライバシー設定", "public": "プロフィール公開", "publicDesc": "プロフィールを公開する", "shareStats": "統計を共有", "shareStatsDesc": "夢の統計情報を共有", "messages": "メッセージを許可", "messagesDesc": "他ユーザーからのメッセージを受信" },
+    "display": { "title": "表示設定", "theme": "テーマ", "lang": "言語", "date": "日付形式", "themes": { "light": "ライト", "dark": "ダーク", "auto": "システム" }, "dateSamples": { "korean": "2024年1月15日", "international": "15/01/2024", "american": "01/15/2024" } },
+    "themes": { "nature": "自然", "adventure": "冒険", "fantasy": "ファンタジー", "daily": "日常", "memory": "思い出" },
+    "save": { "saving": "保存中...", "submit": "プロフィールを保存" },
+    "security": { "title": "パスワード変更", "desc": "セキュリティのため定期的に変更してください", "current": "現在のパスワード", "currentPlaceholder": "現在のパスワード", "new": "新しいパスワード", "newPlaceholder": "新しいパスワード", "confirm": "新しいパスワード（確認）", "confirmPlaceholder": "新しいパスワード（確認）", "saving": "変更中...", "submit": "パスワードを変更" },
+    "achievements": { "mine": { "title": "獲得したバッジ", "desc": "達成した実績を確認", "empty": "まだバッジはありません。" }, "all": { "title": "すべてのバッジ", "desc": "獲得可能な全バッジ" } },
+    "stats": { "title": "統計の更新", "desc": "現在の統計から新しいバッジを確認", "totalDreams": "総夢件数", "lucidDreams": "明晰夢", "streak": "連続記録", "badges": "獲得バッジ", "checkBadges": "バッジを確認" },
+    "updateSuccess": "プロフィールを更新しました。",
+    "updateFailed": "プロフィールの更新に失敗しました。",
+    "imageUploadSuccess": "プロフィール写真を更新しました。",
+    "imageUploadFailed": "画像のアップロードに失敗しました。",
+    "passwordMismatch": "新しいパスワードが一致しません。",
+    "passwordChangeSuccess": "パスワードを変更しました。",
+    "passwordChangeFailed": "パスワードの変更に失敗しました。",
+    "newBadge": "新しいバッジを獲得しました！{{badges}}"
+  },
+  "featureCards": {
+    "newEntry": { "title": "新しい夢を書く", "desc": "今日の夢を記録しましょう" },
+    "viewDreams": { "title": "夢日記を見る", "desc": "過去の夢を振り返る" },
+    "dejavu": { "title": "デジャヴ・ファインダー", "desc": "夢のパターンを探す" },
+    "visualize": { "title": "夢のビジュアライズ", "desc": "夢を新たに描く" }
+  },
+  "home.widgets": {
+    "statsTitle": "夢の統計",
+    "totalDreams": "総夢件数",
+    "thisMonth": "今月",
+    "lucidDreams": "明晰夢",
+    "streak": "連続記録",
+    "monthGoal": "今月の目標",
+    "countSuffix": "件",
+    "daySuffix": "日",
+    "todayInfo": "今日の情報",
+    "now": "現在時刻",
+    "moon": "今日の月",
+    "frequentEmotion": "よく感じる感情",
+    "aiAvailable": "AI分析可能な夢",
+    "todayTip": "今日の夢アドバイス",
+    "nextTip": "次のアドバイスを見る"
+  }
+  ,
+  "home": {
+    "title": "マイ夢日記",
+    "aiTitle": "今日のAI夢解釈",
+    "aiDesc": "AIが最近の夢を分析し、今日のパターンと解釈を提案します。",
+    "aiCta": "AI 解釈を見る",
+    "newEntry": "新規作成",
+    "recentDreams": "最近の夢",
+    "viewAll": "すべて表示",
+    "noDreams": "まだ夢の記録がありません。",
+    "goWrite": "夢を記録する",
+    "aiEnabled": "AIレコメンド有効",
+    "widgets": {
+      "statsTitle": "夢の統計",
+      "totalDreams": "総夢件数",
+      "thisMonth": "今月",
+      "lucidDreams": "明晰夢",
+      "streak": "連続記録",
+      "monthGoal": "今月の目標",
+      "countSuffix": "件",
+      "daySuffix": "日",
+      "todayInfo": "今日の情報",
+      "now": "現在時刻",
+      "moon": "今日の月",
+      "frequentEmotion": "よく感じる感情",
+      "aiAvailable": "AI分析可能な夢",
+      "todayTip": "今日の夢アドバイス",
+      "nextTip": "次のアドバイスを見る"
+    },
+    "tips": {
+      "tip1": "夢を鮮明に覚えるには、起きてすぐに記録しましょう。",
+      "tip2": "明晰夢のために、日中に『今は夢かな？』と自問してみてください。",
+      "tip3": "感情や色、音などの詳細も一緒に書きましょう。",
+      "tip4": "瞑想と規則的な睡眠は夢の質を高めます。",
+      "tip5": "夢の中で手を見る練習は明晰夢に役立ちます。",
+      "related": {
+        "lucid": "明晰夢が多い場合、夢の中で現実チェックを練習しましょう。",
+        "fear": "怖い夢を見たら、内容を記録し感情を整理しましょう。",
+        "family": "家族が登場する夢は人間関係のメッセージかもしれません。"
+      }
+    }
+  }
+  ,
+  "aiHelper": {
+    "welcome": "こんにちは！夢の記録、解釈、可視化について何でも聞いてください。",
+    "open": "AIヘルパーを開く",
+    "title": "AIアシスタント",
+    "placeholder": "AIに質問...",
+    "send": "送信"
+  }
+  ,
+  "notice": {
+    "open": "通知を開く",
+    "title": "通知",
+    "items": {
+      "remindRecord": "今日の夢を記録しましょう！",
+      "newCommunity": "コミュニティに新しい投稿があります。",
+      "aiUpdated": "AIヘルプが更新されました。"
+    },
+    "time": {
+      "justNow": "たった今",
+      "oneHourAgo": "1時間前",
+      "yesterday": "昨日"
+    }
+  }
+  ,
+  "write": {
+    "tabs": { "basic": "基本情報", "details": "詳細", "media": "メディア", "ai": "AIヘルプ" },
+    "basic": { "title": "基本情報", "desc": "夢の基本情報を入力してください", "editTitle": "基本情報を編集", "editDesc": "選択した夢の情報を更新" },
+    "fields": {
+      "title": { "label": "タイトル *", "placeholder": "例：空を飛ぶ夢" },
+      "date": { "label": "夢を見た日" },
+      "content": { "label": "内容 *", "placeholder": "夢の内容を詳しく記入してください..." }
+    },
+    "voice": { "start": "音声入力", "stop": "音声停止", "listening": "音声認識中..." },
+    "details": {
+      "title": "夢の詳細",
+      "desc": "特徴や感情を記録",
+      "emotion": "主な感情",
+      "dreamType": "夢の種類",
+      "dreamTypePlaceholder": "夢の種類を選択",
+      "vividness": "鮮明さ",
+      "vividLow": "ぼんやり",
+      "vividHigh": "とても鮮明",
+      "current": "現在",
+      "lucid": "明晰夢",
+      "lucidHint": "夢だと気づいていましたか？",
+      "sleepQuality": "睡眠の質",
+      "sleepQualityPlaceholder": "睡眠の質を選択"
+    },
+    "tags": {
+      "title": "タグ",
+      "desc": "夢に関連するキーワードを追加",
+      "placeholder": "タグを入力（例：飛行、海、家族）",
+      "add": "追加",
+      "suggested": "おすすめタグ"
+    },
+    "media": {
+      "title": "画像アップロード",
+      "desc": "夢に関連する画像やイラストをアップロード",
+      "cta": "クリックして画像をアップロード",
+      "hint": "PNG/JPG/GIF（最大10MB）",
+      "uploadedAlt": "アップロード画像"
+    },
+    "ai": {
+      "title": "AIライティング支援",
+      "desc": "AIがより良い記録をサポートします",
+      "help": "AIヘルプ",
+      "suggest": "AI提案を受け取る",
+      "emotion": "感情分析",
+      "analyzing": "AIが分析中...",
+      "suggestions": "AI提案"
+    },
+    "sidebar": {
+      "progress": "作成進捗",
+      "title": "タイトル",
+      "content": "内容",
+      "emotion": "感情",
+      "dreamType": "夢の種類",
+      "tags": "タグ",
+      "high": "完成度が高いです！",
+      "tips": "作成ヒント"
+    },
+    "save": { "saving": "保存中...", "submit": "保存", "draft": "下書き保存" },
+    "content": { "charCount": "{{count}} 文字" }
+  }
+  ,
+  "dreams": {
+    "tabs": { "search": "検索", "filter": "フィルター", "tags": "タグ" },
+    "search": { "placeholder": "タイトル・内容・タグで検索..." },
+    "filters": {
+      "emotion": "感情",
+      "dreamType": "夢の種類",
+      "byTags": "タグで絞り込み",
+      "selectedTags": "選択済みタグ:",
+      "clear": "すべて解除"
+    },
+    "recent": { "title": "最近の夢日記", "empty": "最近の記録はありません。" },
+    "summary": { "totalPrefix": "合計", "totalSuffix": "件の夢を発見", "reset": "フィルターをリセット" },
+    "options": { "sort": { "date": "日付順", "title": "タイトル順", "vividness": "鮮明さ順", "emotion": "感情順" } },
+    "calendar": { "title": "夢日記カレンダー", "desc": "記録した日付を一目で確認" },
+    "empty": {
+      "title": "夢がありません",
+      "filtered": "条件に一致する夢が見つかりません。",
+      "noData": "まだ記録がありません。最初の夢を記録しましょう！",
+      "cta": "最初の記録を作成"
+    }
+  }
+  ,
+  "stats": {
+    "loading": "統計を計算中...",
+    "overview": { "total": "総夢件数", "thisMonth": "今月", "streak": "連続記録", "lucid": "明晰夢" },
+    "emotions": { "title": "感情の分布", "desc": "夢で感じた感情の分布" },
+    "types": { "title": "夢の種類の分布", "desc": "種類別の分布" },
+    "tags": { "title": "よく使うタグ", "desc": "最もよく使われたタグ" },
+    "more": { "title": "追加統計", "avgVivid": "平均鮮明さ", "thisWeek": "今週の記録", "lucidRate": "明晰夢率", "monthAvg": "月平均" },
+    "monthly": { "title": "月別推移", "desc": "直近6ヶ月の推移" },
+    "cooccur": { "title": "タグの共起パターン", "desc": "共起頻度トップ10" },
+    "repeat": { "title": "繰り返す夢のパターン", "desc": "類似タイトル上位5組", "empty": "十分な類似タイトル組がありません", "similarity": "類似度" }
+  }
+  ,
+  "admin": {
+    "layout": { "title": "管理者ダッシュボード" },
+    "home": { "moderation": "通報/非表示 管理", "users": "ユーザー管理" },
+    "login": { "title": "管理者ログイン", "tokenPlaceholder": "管理者トークン", "submit": "ログイン" },
+    "common": { "done": "完了しました", "loading": "読み込み中...", "error": "エラー", "fetchFailed": "取得に失敗しました" },
+    "users": {
+      "title": "ユーザー管理",
+      "desc": "ブロック/ミュート管理",
+      "noData": "ユーザー情報が不足しています",
+      "mute": "ミュート",
+      "unmute": "ミュート解除",
+      "block": "ブロック",
+      "unblock": "ブロック解除"
+    },
+    "moderation": {
+      "title": "通報/非表示 管理",
+      "desc": "通報された投稿の一覧",
+      "empty": "通報された投稿はありません",
+      "reports": "通報",
+      "hidden": "非表示",
+      "unhide": "非表示解除",
+      "hide": "非表示にする"
+    }
+  }
+  ,
+  "dreamDetail": {
+    "header": { "lucid": "明晰夢", "comment": "コメント", "visualize": "ビジュアライズ" },
+    "tabs": { "content": "内容", "analysis": "AI分析", "media": "メディア" },
+    "content": { "title": "内容" },
+    "ai": { "title": "AI 夢解釈", "desc": "AIによる夢の解釈", "empty": "AI解釈はまだありません", "generating": "生成中...", "generate": "AI解釈を生成" },
+    "media": { "title": "関連画像", "empty": "アップロード画像はありません", "visualizeCta": "AIでビジュアライズ" },
+    "info": { "title": "夢の情報", "emotion": "感情", "dreamType": "夢の種類", "vividness": "鮮明さ", "sleepQuality": "睡眠の質", "createdAt": "作成日", "updatedAt": "更新日" },
+    "tags": { "title": "タグ" },
+    "quick": { "title": "クイック操作", "edit": "夢を編集", "share": "夢を共有", "export": "テキストとしてエクスポート", "visualize": "AIビジュアライズ" },
+    "share": { "copied": "リンクをクリップボードにコピーしました！" },
+    "export": {
+      "titleLabel": "タイトル",
+      "dateLabel": "日付",
+      "emotionLabel": "感情",
+      "vividnessLabel": "鮮明さ",
+      "lucidLabel": "明晰夢",
+      "contentLabel": "内容",
+      "tagsLabel": "タグ"
+    }
+  }
+  ,
+  "emotions": {
+    "joy": "喜び",
+    "peace": "安らぎ",
+    "fear": "恐れ",
+    "sadness": "悲しみ",
+    "excitement": "興奮",
+    "wonder": "驚嘆",
+    "all": "すべての感情"
+  }
+  ,
+  "dreamTypes": {
+    "normal": "通常の夢",
+    "nightmare": "悪夢",
+    "lucid": "明晰夢",
+    "recurring": "繰り返しの夢",
+    "prophetic": "予知夢",
+    "healing": "癒しの夢",
+    "all": "すべての種類"
+  }
+  ,
+  "sleepQualities": {
+    "excellent": "とても良い",
+    "good": "良い",
+    "fair": "普通",
+    "poor": "悪い",
+    "terrible": "ひどい"
+  }
 }

@@ -31,13 +31,14 @@ import {
   Brain,
   Palette,
   MessageCircle,
-  ThumbsUp,
   Bookmark,
 } from "lucide-react"
 import { format } from "date-fns"
-import { ko } from "date-fns/locale"
+import { enUS, ko, ja, zhCN } from "date-fns/locale"
+import { useTranslation } from 'react-i18next'
 
 export default function DreamDetailPage() {
+  const { t } = useTranslation()
   const params = useParams()
   const router = useRouter()
   const { dreams, deleteDream } = useDreams()
@@ -48,6 +49,17 @@ export default function DreamDetailPage() {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [likes, setLikes] = useState(0)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  const getDateFnsLocale = () => {
+    const lng = (typeof window !== 'undefined' ? (localStorage.getItem('lang') || 'ko') : 'ko') as string
+    switch (lng) {
+      case 'en': return enUS
+      case 'ja': return ja
+      case 'zh': return zhCN
+      default: return ko
+    }
+  }
+  const dateLocale = getDateFnsLocale()
 
   useEffect(() => {
     if (params.id && dreams.length > 0) {
@@ -70,24 +82,12 @@ export default function DreamDetailPage() {
       // 실제 구현에서는 AI API 호출
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      const interpretation = `이 꿈은 당신의 무의식이 전하는 중요한 메시지를 담고 있습니다. 
-
-**상징적 의미:**
-${dream.title}에서 나타나는 주요 요소들은 자유와 해방에 대한 깊은 갈망을 상징합니다. 
-
-**심리적 분석:**
-현재 당신은 일상의 제약에서 벗어나고 싶은 강한 욕구를 가지고 있으며, 이는 매우 자연스러운 감정입니다.
-
-**개인적 성장:**
-이 꿈은 당신이 새로운 가능성을 탐색하고 자아실현을 추구할 준비가 되어있음을 시사합니다.
-
-**실천 방안:**
-꿈에서 느낀 자유로움을 현실에서도 경험할 수 있는 작은 변화들을 시도해보세요.`
+      const interpretation = t('dreamDetail.ai.sample', `이 꿈은 당신의 무의식이 전하는 중요한 메시지를 담고 있습니다.\n\n**상징적 의미:**\n${dream.title}에서 나타나는 주요 요소들은 자유와 해방에 대한 깊은 갈망을 상징합니다.\n\n**심리적 분석:**\n현재 당신은 일상의 제약에서 벗어나고 싶은 강한 욕구를 가지고 있으며, 이는 매우 자연스러운 감정입니다.\n\n**개인적 성장:**\n이 꿈은 당신이 새로운 가능성을 탐색하고 자아실현을 추구할 준비가 되어있음을 시사합니다.\n\n**실천 방안:**\n꿈에서 느낀 자유로움을 현실에서도 경험할 수 있는 작은 변화들을 시도해보세요.`)
 
       setAiInterpretation(interpretation)
     } catch (error) {
       console.error("Error getting AI interpretation:", error)
-      alert("AI 해석을 가져오는데 실패했습니다.")
+      alert(t('dreamDetail.aiInterpretationFailed', 'AI 해석을 가져오는데 실패했습니다.'))
     } finally {
       setInterpretationLoading(false)
     }
@@ -98,11 +98,11 @@ ${dream.title}에서 나타나는 주요 요소들은 자유와 해방에 대한
 
     try {
       await deleteDream(dream.id)
-      alert("꿈 일기가 삭제되었습니다.")
+      alert(t('dreamDetail.deleteSuccess', '꿈 일기가 삭제되었습니다.'))
       router.push("/dreams")
     } catch (error) {
       console.error("Delete error:", error)
-      alert("삭제에 실패했습니다.")
+      alert(t('common.deleteFailed', '삭제에 실패했습니다.'))
     }
   }
 
@@ -115,7 +115,7 @@ ${dream.title}에서 나타나는 주요 요소들은 자유와 해방에 대한
       })
     } else {
       navigator.clipboard.writeText(window.location.href)
-      alert("링크가 클립보드에 복사되었습니다!")
+      alert(t('dreamDetail.share.copied', '링크가 클립보드에 복사되었습니다!'))
     }
   }
 
@@ -123,16 +123,16 @@ ${dream.title}에서 나타나는 주요 요소들은 자유와 해방에 대한
     if (!dream) return
 
     const content = `
-꿈 제목: ${dream.title}
-날짜: ${format(new Date(dream.date), "PPP", { locale: ko })}
-감정: ${dream.emotion}
-생생함: ${dream.vividness}/5
-루시드 드림: ${dream.isLucid ? "예" : "아니오"}
+${t('dreamDetail.export.titleLabel', '꿈 제목')}: ${dream.title}
+${t('dreamDetail.export.dateLabel', '날짜')}: ${format(new Date(dream.date), "PPP", { locale: dateLocale })}
+${t('dreamDetail.export.emotionLabel', '감정')}: ${dream.emotion}
+${t('dreamDetail.export.vividnessLabel', '생생함')}: ${dream.vividness}/5
+${t('dreamDetail.export.lucidLabel', '루시드 드림')}: ${dream.isLucid ? t('common.yes', '예') : t('common.no', '아니오')}
 
-내용:
+${t('dreamDetail.export.contentLabel', '내용')}:
 ${dream.content}
 
-태그: ${dream.tags.join(", ")}
+${t('dreamDetail.export.tagsLabel', '태그')}: ${dream.tags.join(", ")}
     `.trim()
 
     const blob = new Blob([content], { type: "text/plain" })
@@ -145,29 +145,29 @@ ${dream.content}
   }
 
   const emotions = {
-    joy: { label: "기쁨", color: "text-yellow-500", bg: "bg-yellow-50" },
-    peace: { label: "평온", color: "text-blue-500", bg: "bg-blue-50" },
-    fear: { label: "두려움", color: "text-red-500", bg: "bg-red-50" },
-    sadness: { label: "슬픔", color: "text-gray-500", bg: "bg-gray-50" },
-    excitement: { label: "흥분", color: "text-orange-500", bg: "bg-orange-50" },
-    wonder: { label: "경이", color: "text-purple-500", bg: "bg-purple-50" },
+    joy: { label: t('emotions.joy', '기쁨'), color: "text-yellow-500", bg: "bg-yellow-50" },
+    peace: { label: t('emotions.peace', '평온'), color: "text-blue-500", bg: "bg-blue-50" },
+    fear: { label: t('emotions.fear', '두려움'), color: "text-red-500", bg: "bg-red-50" },
+    sadness: { label: t('emotions.sadness', '슬픔'), color: "text-gray-500", bg: "bg-gray-50" },
+    excitement: { label: t('emotions.excitement', '흥분'), color: "text-orange-500", bg: "bg-orange-50" },
+    wonder: { label: t('emotions.wonder', '경이'), color: "text-purple-500", bg: "bg-purple-50" },
   }
 
   const dreamTypes = {
-    normal: "일반적인 꿈",
-    nightmare: "악몽",
-    lucid: "루시드 드림",
-    recurring: "반복되는 꿈",
-    prophetic: "예지몽",
-    healing: "치유의 꿈",
+    normal: t('dreamTypes.normal', '일반적인 꿈'),
+    nightmare: t('dreamTypes.nightmare', '악몽'),
+    lucid: t('dreamTypes.lucid', '루시드 드림'),
+    recurring: t('dreamTypes.recurring', '반복되는 꿈'),
+    prophetic: t('dreamTypes.prophetic', '예지몽'),
+    healing: t('dreamTypes.healing', '치유의 꿈'),
   }
 
   const sleepQualities = {
-    excellent: "매우 좋음",
-    good: "좋음",
-    fair: "보통",
-    poor: "나쁨",
-    terrible: "매우 나쁨",
+    excellent: t('sleepQualities.excellent', '매우 좋음'),
+    good: t('sleepQualities.good', '좋음'),
+    fair: t('sleepQualities.fair', '보통'),
+    poor: t('sleepQualities.poor', '나쁨'),
+    terrible: t('sleepQualities.terrible', '매우 나쁨'),
   }
 
   if (loading) {
@@ -175,7 +175,7 @@ ${dream.content}
       <div className="min-h-screen dreamy-bg flex items-center justify-center">
         <div className="text-center">
           <Moon className="h-12 w-12 text-indigo-600 animate-pulse mx-auto mb-4 float-animation" />
-          <p className="text-gray-600">꿈을 불러오는 중...</p>
+          <p className="text-gray-600">{t('dreamDetail.loading', '꿈을 불러오는 중...')}</p>
         </div>
       </div>
     )
@@ -202,12 +202,12 @@ ${dream.content}
                     <CardDescription className="flex items-center gap-4 text-base">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        {format(new Date(dream.date), "PPP", { locale: ko })}
+                         {format(new Date(dream.date), "PPP", { locale: dateLocale })}
                       </div>
-                      {dream.isLucid && (
+                    {dream.isLucid && (
                         <div className="flex items-center gap-1 text-yellow-600">
                           <Sparkles className="h-4 w-4" />
-                          루시드 드림
+                          {t('dreamDetail.header.lucid', '루시드 드림')}
                         </div>
                       )}
                     </CardDescription>
@@ -222,12 +222,12 @@ ${dream.content}
                     onClick={() => setLikes(likes + 1)}
                     className="text-gray-600 hover:text-red-500"
                   >
-                    <ThumbsUp className="h-4 w-4 mr-1" />
+                    <Heart className="h-4 w-4 mr-1" />
                     {likes}
                   </Button>
                   <Button variant="ghost" size="sm" className="text-gray-600 hover:text-blue-500">
                     <MessageCircle className="h-4 w-4 mr-1" />
-                    댓글
+                    {t('dreamDetail.header.comment', '댓글')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -236,7 +236,7 @@ ${dream.content}
                     className="text-gray-600 hover:text-purple-500"
                   >
                     <Palette className="h-4 w-4 mr-1" />
-                    시각화
+                    {t('dreamDetail.header.visualize', '시각화')}
                   </Button>
                 </div>
               </CardHeader>
@@ -244,16 +244,16 @@ ${dream.content}
 
             <Tabs defaultValue="content" className="space-y-6">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="content">꿈 내용</TabsTrigger>
-                <TabsTrigger value="analysis">AI 분석</TabsTrigger>
-                <TabsTrigger value="media">미디어</TabsTrigger>
+                <TabsTrigger value="content">{t('dreamDetail.tabs.content', '꿈 내용')}</TabsTrigger>
+                <TabsTrigger value="analysis">{t('dreamDetail.tabs.analysis', 'AI 분석')}</TabsTrigger>
+                <TabsTrigger value="media">{t('dreamDetail.tabs.media', '미디어')}</TabsTrigger>
               </TabsList>
 
               {/* 꿈 내용 */}
               <TabsContent value="content">
                 <Card className="glass-effect dark:bg-gray-800/70">
                   <CardHeader>
-                    <CardTitle>꿈의 내용</CardTitle>
+                    <CardTitle>{t('dreamDetail.content.title', '꿈의 내용')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="prose max-w-none">
@@ -269,9 +269,9 @@ ${dream.content}
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Brain className="h-5 w-5 text-purple-600" />
-                      AI 꿈 해석
+                      {t('dreamDetail.ai.title', 'AI 꿈 해석')}
                     </CardTitle>
-                    <CardDescription>인공지능이 분석한 꿈의 의미와 해석입니다</CardDescription>
+                    <CardDescription>{t('dreamDetail.ai.desc', '인공지능이 분석한 꿈의 의미와 해석입니다')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {aiInterpretation ? (
@@ -285,7 +285,7 @@ ${dream.content}
                     ) : (
                       <div className="text-center py-12">
                         <Brain className="h-16 w-16 text-gray-300 mx-auto mb-4 float-animation" />
-                        <p className="text-gray-500 mb-4">아직 AI 해석이 생성되지 않았습니다</p>
+                        <p className="text-gray-500 mb-4">{t('dreamDetail.ai.empty', '아직 AI 해석이 생성되지 않았습니다')}</p>
                         <Button
                           onClick={handleAiInterpretation}
                           disabled={interpretationLoading}
@@ -294,12 +294,12 @@ ${dream.content}
                           {interpretationLoading ? (
                             <>
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                              해석 생성 중...
+                              {t('dreamDetail.ai.generating', '해석 생성 중...')}
                             </>
                           ) : (
                             <>
                               <Brain className="h-4 w-4 mr-2" />
-                              AI 해석 생성
+                              {t('dreamDetail.ai.generate', 'AI 해석 생성')}
                             </>
                           )}
                         </Button>
@@ -313,25 +313,25 @@ ${dream.content}
               <TabsContent value="media">
                 <Card className="glass-effect">
                   <CardHeader>
-                    <CardTitle>관련 이미지</CardTitle>
+                    <CardTitle>{t('dreamDetail.media.title', '관련 이미지')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {dream.images.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {dream.images.map((image) => (
-                          <img key={image.url || image} src={image.url || image} alt={`꿈 이미지 ${image.url || image}`} />
+                          <img key={image.url || image} src={image.url || image} alt={`${t('dreamDetail.media.imageAlt', '꿈 이미지')} ${image.url || image}`} />
                         ))}
                       </div>
                     ) : (
                       <div className="text-center py-12">
                         <Palette className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-500 mb-4">업로드된 이미지가 없습니다</p>
+                        <p className="text-gray-500 mb-4">{t('dreamDetail.media.empty', '업로드된 이미지가 없습니다')}</p>
                         <Button
                           onClick={() => router.push(`/visualize?dream=${dream.id}`)}
                           className="bg-gradient-to-r from-pink-600 to-purple-600"
                         >
                           <Palette className="h-4 w-4 mr-2" />
-                          AI로 꿈 시각화하기
+                          {t('dreamDetail.media.visualizeCta', 'AI로 꿈 시각화하기')}
                         </Button>
                       </div>
                     )}
@@ -346,11 +346,11 @@ ${dream.content}
             {/* Dream Stats */}
             <Card className="glass-effect dark:bg-gray-800/70 sticky top-24">
               <CardHeader>
-                <CardTitle>꿈의 정보</CardTitle>
+                <CardTitle>{t('dreamDetail.info.title', '꿈의 정보')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">감정</span>
+                  <span className="text-sm text-gray-600">{t('dreamDetail.info.emotion', '감정')}</span>
                   <Badge
                     variant="secondary"
                     className={`flex items-center gap-1 ${emotions[dream.emotion as keyof typeof emotions]?.bg} dark:bg-gray-800 dark:text-gray-100`}
@@ -361,14 +361,14 @@ ${dream.content}
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">꿈의 유형</span>
+                  <span className="text-sm text-gray-600">{t('dreamDetail.info.dreamType', '꿈의 유형')}</span>
                   <span className="text-sm font-medium">
                     {dreamTypes[dream.dreamType as keyof typeof dreamTypes] || dream.dreamType}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">생생함</span>
+                  <span className="text-sm text-gray-600">{t('dreamDetail.info.vividness', '생생함')}</span>
                   <div className="flex items-center gap-1">
                     <Eye className="h-4 w-4 text-gray-400" />
                     <span className="text-sm font-medium">{dream.vividness}/5</span>
@@ -384,7 +384,7 @@ ${dream.content}
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">수면의 질</span>
+                  <span className="text-sm text-gray-600">{t('dreamDetail.info.sleepQuality', '수면의 질')}</span>
                   <span className="text-sm font-medium">
                     {sleepQualities[dream.sleepQuality as keyof typeof sleepQualities] || dream.sleepQuality}
                   </span>
@@ -393,14 +393,14 @@ ${dream.content}
                 <Separator />
 
                 <div className="space-y-2">
-                  <span className="text-sm text-gray-600">작성일</span>
-                  <p className="text-sm">{format(new Date(dream.createdAt), "PPP p", { locale: ko })}</p>
+                  <span className="text-sm text-gray-600">{t('dreamDetail.info.createdAt', '작성일')}</span>
+                  <p className="text-sm">{format(new Date(dream.createdAt), "PPP p", { locale: dateLocale })}</p>
                 </div>
 
                 {new Date(dream.updatedAt).getTime() !== new Date(dream.createdAt).getTime() && (
                   <div className="space-y-2">
-                    <span className="text-sm text-gray-600">수정일</span>
-                    <p className="text-sm">{format(new Date(dream.updatedAt), "PPP p", { locale: ko })}</p>
+                    <span className="text-sm text-gray-600">{t('dreamDetail.info.updatedAt', '수정일')}</span>
+                    <p className="text-sm">{format(new Date(dream.updatedAt), "PPP p", { locale: dateLocale })}</p>
                   </div>
                 )}
               </CardContent>
@@ -409,7 +409,7 @@ ${dream.content}
             {/* Tags */}
             <Card className="glass-effect dark:bg-gray-800/70">
               <CardHeader>
-                <CardTitle>태그</CardTitle>
+                <CardTitle>{t('dreamDetail.tags.title', '태그')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
@@ -430,7 +430,7 @@ ${dream.content}
             {/* Quick Actions */}
             <Card className="glass-effect dark:bg-gray-800/70">
               <CardHeader>
-                <CardTitle>빠른 작업</CardTitle>
+                <CardTitle>{t('dreamDetail.quick.title', '빠른 작업')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button
@@ -438,14 +438,14 @@ ${dream.content}
                   className="w-full justify-start bg-transparent"
                   onClick={() => router.push(`/write?edit=${dream.id}`)}
                 >
-                  <Edit className="h-4 w-4 mr-2" />꿈 수정하기
+                  <Edit className="h-4 w-4 mr-2" />{t('dreamDetail.quick.edit', '꿈 수정하기')}
                 </Button>
                 <Button variant="outline" className="w-full justify-start bg-transparent" onClick={handleShare}>
-                  <Share2 className="h-4 w-4 mr-2" />꿈 공유하기
+                  <Share2 className="h-4 w-4 mr-2" />{t('dreamDetail.quick.share', '꿈 공유하기')}
                 </Button>
                 <Button variant="outline" className="w-full justify-start bg-transparent" onClick={handleDownload}>
                   <Download className="h-4 w-4 mr-2" />
-                  텍스트로 내보내기
+                  {t('dreamDetail.quick.export', '텍스트로 내보내기')}
                 </Button>
                 <Button
                   variant="outline"
@@ -453,7 +453,7 @@ ${dream.content}
                   onClick={() => router.push(`/visualize?dream=${dream.id}`)}
                 >
                   <Palette className="h-4 w-4 mr-2" />
-                  AI 시각화
+                  {t('dreamDetail.quick.visualize', 'AI 시각화')}
                 </Button>
               </CardContent>
             </Card>

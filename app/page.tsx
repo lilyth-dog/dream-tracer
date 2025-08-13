@@ -26,6 +26,7 @@ import {
   Eye,
 } from "lucide-react"
 import Link from "next/link"
+import { useTranslation } from 'react-i18next'
 import { useAuth } from "@/hooks/useAuth"
 import { Navigation } from "@/components/layout/navigation"
 import type { Dream } from "@/lib/types"
@@ -65,6 +66,7 @@ function DreamStar({ left, top, animationDelay, id }: DreamStarProps) {
 }
 
 export default function LucidDreamDiary() {
+  const { t, i18n } = useTranslation()
   const router = useRouter()
   const { dreams, loading } = useDreams()
   const { user } = useAuth()
@@ -72,11 +74,11 @@ export default function LucidDreamDiary() {
   const [dreamTipIdx, setDreamTipIdx] = useState(0);
 
   const dreamTips = [
-    "꿈을 더 생생하게 기억하려면 잠에서 깨자마자 바로 기록하는 것이 좋습니다.",
-    "루시드 드림을 위해 하루 종일 '지금 꿈을 꾸고 있나?'라고 자문해보세요.",
-    "꿈 일기를 쓸 때는 감정과 색깔, 소리 등 세부사항도 함께 적어보세요.",
-    "명상과 규칙적인 수면 패턴이 꿈의 질을 향상시킵니다.",
-    "꿈 속에서 손을 보는 연습을 하면 루시드 드림에 도움이 됩니다.",
+    t('home.tips.tip1', "꿈을 더 생생하게 기억하려면 잠에서 깨자마자 바로 기록하는 것이 좋습니다."),
+    t('home.tips.tip2', "루시드 드림을 위해 하루 종일 '지금 꿈을 꾸고 있나?'라고 자문해보세요."),
+    t('home.tips.tip3', "꿈 일기를 쓸 때는 감정과 색깔, 소리 등 세부사항도 함께 적어보세요."),
+    t('home.tips.tip4', "명상과 규칙적인 수면 패턴이 꿈의 질을 향상시킵니다."),
+    t('home.tips.tip5', "꿈 속에서 손을 보는 연습을 하면 루시드 드림에 도움이 됩니다."),
   ]
 
   useEffect(() => {
@@ -86,6 +88,8 @@ export default function LucidDreamDiary() {
   }, [])
 
   const recentDreams = dreams.slice(0, 3)
+
+  const getEmotionLabel = (value: string) => t(`emotions.${value}`, value)
 
   function calculateStreak(dreams: Dream[]): number {
     if (!dreams || dreams.length === 0) return 0
@@ -129,7 +133,7 @@ export default function LucidDreamDiary() {
       return dreamDate.getMonth() === now.getMonth() && dreamDate.getFullYear() === now.getFullYear()
     }).length,
     streak: calculateStreak(dreams),
-    favoriteEmotion: "기쁨",
+    favoriteEmotion: t('emotions.joy', '기쁨'),
     lucidDreams: dreams.filter((dream) => dream.isLucid).length,
   }
 
@@ -155,9 +159,9 @@ export default function LucidDreamDiary() {
     if (recentDreams.length === 0) return dreamTips[dreamTipIdx % dreamTips.length];
     const lastDream = recentDreams[0];
     // 감정/태그/루시드 등과 연관된 팁 추천(간단 예시)
-    if (lastDream.isLucid) return "루시드 드림을 자주 경험한다면, 꿈에서 현실 자각 연습을 해보세요.";
-    if (lastDream.emotion === "fear") return "두려운 꿈을 꿨다면, 꿈 내용을 기록하고 감정을 정리해보세요.";
-    if (lastDream.tags?.includes("가족")) return "가족이 등장하는 꿈은 관계에 대한 메시지일 수 있어요.";
+    if (lastDream.isLucid) return t('home.tips.related.lucid', '루시드 드림을 자주 경험한다면, 꿈에서 현실 자각 연습을 해보세요.');
+    if (lastDream.emotion === "fear") return t('home.tips.related.fear', '두려운 꿈을 꿨다면, 꿈 내용을 기록하고 감정을 정리해보세요.');
+    if (lastDream.tags?.includes("가족")) return t('home.tips.related.family', '가족이 등장하는 꿈은 관계에 대한 메시지일 수 있어요.');
     return dreamTips[dreamTipIdx % dreamTips.length];
   };
   const handleNextTip = () => setDreamTipIdx(i => i + 1);
@@ -191,13 +195,13 @@ export default function LucidDreamDiary() {
         {/* 헤더(알림 버튼 삭제, 프로필/새 기록만 남김) */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">나의 꿈 일기장</h1>
-            <p className="text-sm text-gray-500">{currentTime.toLocaleDateString('ko-KR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <h1 className="text-2xl font-bold text-gray-800">{t('home.title', '나의 꿈 일기장')}</h1>
+            <p className="text-sm text-gray-500">{currentTime.toLocaleDateString(i18n.language || 'ko-KR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
           {/* 프로필/새 기록만 */}
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" className="text-xs ml-2">
-              <PlusCircle className="h-4 w-4 mr-1" />새 기록
+              <PlusCircle className="h-4 w-4 mr-1" />{t('home.newEntry', '새 기록')}
             </Button>
           </div>
         </div>
@@ -209,27 +213,27 @@ export default function LucidDreamDiary() {
         {/* AI 추천/분석 섹션 */}
         <div className="rounded-xl bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 shadow p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-indigo-700 mb-1 flex items-center gap-2"><Sparkles className="h-5 w-5" />오늘의 AI 꿈 해석</h2>
-            <p className="text-gray-700 text-sm mb-2">AI가 최근 꿈 기록을 분석해 오늘의 꿈 패턴과 해석을 추천합니다.</p>
-            <Button size="sm" variant="secondary" className="bg-indigo-500 text-white">AI 해석 보기</Button>
+            <h2 className="text-lg font-bold text-indigo-700 mb-1 flex items-center gap-2"><Sparkles className="h-5 w-5" />{t('home.aiTitle', '오늘의 AI 꿈 해석')}</h2>
+            <p className="text-gray-700 text-sm mb-2">{t('home.aiDesc', 'AI가 최근 꿈 기록을 분석해 오늘의 꿈 패턴과 해석을 추천합니다.')}</p>
+            <Button size="sm" variant="secondary" className="bg-indigo-500 text-white">{t('home.aiCta', 'AI 해석 보기')}</Button>
           </div>
           <div className="flex flex-col items-center">
             <Brain className="h-12 w-12 text-indigo-400 mb-2" />
-            <span className="text-xs text-indigo-600">AI 추천 활성화</span>
+            <span className="text-xs text-indigo-600">{t('home.aiEnabled', 'AI 추천 활성화')}</span>
           </div>
         </div>
 
         {/* 최근 꿈 일기/샘플/가이드 */}
         <div className="rounded-xl bg-white/80 dark:bg-gray-800/80 shadow p-5">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-bold text-gray-800">최근 꿈 일기</h2>
-            <Link href="/dreams" className="text-xs text-indigo-600 hover:underline">모두 보기</Link>
+            <h2 className="text-lg font-bold text-gray-800">{t('home.recentDreams', '최근 꿈 일기')}</h2>
+            <Link href="/dreams" className="text-xs text-indigo-600 hover:underline">{t('home.viewAll', '모두 보기')}</Link>
           </div>
           {recentDreams.length === 0 ? (
             <div className="flex flex-col items-center py-8">
               <ImageIcon className="h-16 w-16 text-gray-300 mb-4" />
-              <p className="text-gray-500 mb-2">아직 꿈 일기가 없습니다.</p>
-              <Button asChild variant="outline"><Link href="/write">꿈 기록하러 가기</Link></Button>
+              <p className="text-gray-500 mb-2">{t('home.noDreams', '아직 꿈 일기가 없습니다.')}</p>
+              <Button asChild variant="outline"><Link href="/write">{t('home.goWrite', '꿈 기록하러 가기')}</Link></Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -238,13 +242,13 @@ export default function LucidDreamDiary() {
                   <Card className="border-0 shadow-md group-hover:shadow-lg transition cursor-pointer glass-effect dark:bg-gray-800/70">
                     <CardHeader>
                       <CardTitle className="text-base font-semibold text-purple-800 dark:text-gray-100 line-clamp-1">{dream.title}</CardTitle>
-                      <CardDescription className="text-xs text-gray-500 dark:text-gray-400">{new Date(dream.date).toLocaleDateString('ko-KR')}</CardDescription>
+                       <CardDescription className="text-xs text-gray-500 dark:text-gray-400">{new Date(dream.date).toLocaleDateString(i18n.language || 'ko-KR')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-gray-700 dark:text-gray-200 line-clamp-3 mb-2">{dream.content}</p>
                       <div className="flex items-center gap-2">
-                        {dream.isLucid && <Badge className="bg-orange-200 text-orange-700 dark:bg-orange-900/40 dark:text-orange-200">루시드</Badge>}
-                        <Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200">{dream.emotion}</Badge>
+                        {dream.isLucid && <Badge className="bg-orange-200 text-orange-700 dark:bg-orange-900/40 dark:text-orange-200">{t('dreamDetail.header.lucid', '루시드 드림')}</Badge>}
+                        <Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200">{getEmotionLabel(dream.emotion)}</Badge>
                       </div>
                     </CardContent>
                   </Card>

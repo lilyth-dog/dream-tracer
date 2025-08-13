@@ -1,5 +1,4 @@
 "use client"
-import "../i18n"
 // 루트 레이아웃 업데이트 (에러 처리 개선)
 import type { PropsWithChildren } from "react"
 
@@ -15,14 +14,17 @@ import { useState, useEffect, useRef } from "react"
 import { MessageCircle } from "lucide-react"
 import { FloatingNotice } from "@/components/ui/floating-notice"
 import { ThemeProvider } from "@/components/theme-provider"
+import { useTranslation } from "react-i18next"
+import "../i18n.client"
 
 const inter = Inter({ subsets: ["latin"] })
 
 function AIHelpButton() {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState([
-    { role: "ai", text: "안녕하세요! 꿈 기록, 해석, 시각화 등 궁금한 점을 물어보세요." }
+    { role: "ai", text: t('aiHelper.welcome', '안녕하세요! 꿈 기록, 해석, 시각화 등 궁금한 점을 물어보세요.') }
   ])
   // 최초 위치: 화면 중앙(가로 50vw, 세로 70vh)
   const getInitialPosition = () => {
@@ -109,7 +111,7 @@ function AIHelpButton() {
       const data = await res.json()
       setMessages((prev) => [...prev, { role: "ai", text: data.answer }])
     } catch {
-      setMessages((prev) => [...prev, { role: "ai", text: "AI 답변 생성에 실패했습니다." }])
+      setMessages((prev) => [...prev, { role: "ai", text: t('aiHelper.fail', 'AI 답변 생성에 실패했습니다.') }])
     }
   }
 
@@ -146,7 +148,7 @@ function AIHelpButton() {
           `fixed z-50 bg-indigo-600 text-white rounded-full shadow-lg p-4 hover:bg-indigo-700 transition`
         }
         style={{ left: position.x, top: position.y }}
-        aria-label="AI 도움말 열기"
+        aria-label={t('aiHelper.open', 'AI 도움말 열기')}
         onMouseDown={startDrag}
         onTouchStart={startDrag}
         onDragStart={e => e.preventDefault()}
@@ -161,7 +163,7 @@ function AIHelpButton() {
             className="fixed z-50 bg-white dark:bg-gray-800 dark:text-gray-100 rounded-xl shadow-2xl p-4 border border-gray-200 dark:border-gray-700"
             style={{ left: dialogPos.left, top: dialogPos.top, width: 320, maxWidth: '100%' }}
           >
-            <div className="font-bold mb-2">AI 도우미</div>
+            <div className="font-bold mb-2">{t('aiHelper.title', 'AI 도우미')}</div>
             <div className="h-40 overflow-y-auto text-sm mb-2 flex flex-col gap-2">
               {messages.map((msg, i) => (
                 <div key={i} className={msg.role === "ai" ? "text-indigo-700 dark:text-indigo-300" : "text-gray-800 dark:text-gray-100 text-right"}>{msg.text}</div>
@@ -173,9 +175,9 @@ function AIHelpButton() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter") sendMessage() }}
-                placeholder="AI에게 물어보세요..."
+                placeholder={t('aiHelper.placeholder', 'AI에게 물어보세요...')}
               />
-              <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded" onClick={sendMessage}>전송</button>
+              <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded" onClick={sendMessage}>{t('aiHelper.send', '전송')}</button>
             </div>
           </div>
         )
@@ -185,6 +187,7 @@ function AIHelpButton() {
 }
 
 function AuthWrapper({ children }: Readonly<PropsWithChildren<unknown>>) {
+  const { t } = useTranslation()
   const { user, loading, error } = useAuth()
 
   if (loading) {
@@ -192,7 +195,7 @@ function AuthWrapper({ children }: Readonly<PropsWithChildren<unknown>>) {
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center">
         <div className="text-center">
           <Moon className="h-12 w-12 text-indigo-600 animate-pulse mx-auto mb-4" />
-          <p className="text-gray-600">로딩 중...</p>
+          <p className="text-gray-600">{t('common.loading', '로딩 중...')}</p>
         </div>
       </div>
     )
@@ -204,9 +207,9 @@ function AuthWrapper({ children }: Readonly<PropsWithChildren<unknown>>) {
         <Card className="w-full max-w-md">
           <CardContent className="p-6 text-center">
             <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">연결 오류</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">{t('error.connection', '연결 오류')}</h2>
             <p className="text-gray-600 mb-4">{error}</p>
-            <p className="text-sm text-gray-500">데모 모드로 전환됩니다...</p>
+            <p className="text-sm text-gray-500">{t('common.demoMode', '데모 모드로 전환됩니다...')}</p>
           </CardContent>
         </Card>
       </div>
@@ -234,8 +237,13 @@ export default function RootLayout({
   children,
 }: Readonly<PropsWithChildren<unknown>>) {
   return (
-    <html lang="ko" className="h-full">
+    <html lang="ko" className="h-full" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden`}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => { try { var m = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; var c = document.documentElement; if (c) { if (m) { c.classList.add('dark'); c.style.colorScheme = 'dark'; } else { c.classList.remove('dark'); c.style.colorScheme = 'light'; } } } catch (e) {} })();`
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -10,29 +10,41 @@ import LanguageSwitcher from "@/components/ui/language-switcher";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/hooks/useAuth"
+import { useTranslation } from "react-i18next"
 
 export default function TopNavigation() {
   const pathname = usePathname()
   const router = useRouter()
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   const navItems = [
-    { href: "/", icon: Home, label: "홈" },
-    { href: "/dreams", icon: BookOpen, label: "꿈 일기" },
-    { href: "/write", icon: PlusCircle, label: "작성" },
-    { href: "/stats", icon: BarChart3, label: "통계" },
-    { href: "/community", icon: Users, label: "커뮤니티" },
-    { href: "/dejavu", icon: Brain, label: "데자뷰" },
-    { href: "/visualize", icon: Palette, label: "시각화" },
+    { href: "/", icon: Home, labelKey: "home" },
+    { href: "/dreams", icon: BookOpen, labelKey: "dreamList" },
+    { href: "/write", icon: PlusCircle, labelKey: "write" },
+    { href: "/stats", icon: BarChart3, labelKey: "stats" },
+    { href: "/community", icon: Users, labelKey: "community" },
+    { href: "/dejavu", icon: Brain, labelKey: "dejavu" },
+    { href: "/visualize", icon: Palette, labelKey: "visualize" },
   ]
+  const defaultLabels: Record<string, string> = {
+    home: '홈',
+    dreamList: '꿈 목록',
+    write: '꿈 기록하기',
+    stats: '통계',
+    community: '커뮤니티',
+    dejavu: '데자뷰',
+    visualize: '시각화',
+    profile: '프로필',
+  }
 
   const handleLogout = async () => {
-    if (confirm("정말 로그아웃하시겠습니까?")) {
+    if (confirm(t('settings.logoutConfirm', '정말 로그아웃하시겠습니까?'))) {
       try {
         await signOut(auth)
         router.push("/")
       } catch (error) {
-        alert("로그아웃에 실패했습니다.")
+        alert(t('settings.logoutFailed', '로그아웃에 실패했습니다.'))
       }
     }
   }
@@ -41,7 +53,7 @@ export default function TopNavigation() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 h-16 flex items-center px-4 justify-between pointer-events-auto overflow-x-hidden">
       {/* 좌측: 로고 */}
       <Link href="/" className="flex items-center gap-2 text-xl font-bold text-indigo-500 dark:text-indigo-400">
-        <span role="img" aria-label="moon">🌙</span> 꿈결
+        <span role="img" aria-label="moon">🌙</span> {t('app.title', '드림트레이서')}
       </Link>
       {/* 중앙: 주요 메뉴 */}
       <nav className="hidden md:flex flex-1 justify-center min-w-0">
@@ -55,7 +67,7 @@ export default function TopNavigation() {
                   <Link href={item.href} legacyBehavior passHref>
                     <NavigationMenuLink active={isActive} className="flex items-center gap-1 px-4 py-2 text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate">
                       <IconComponent className="w-5 h-5" />
-                      {item.label}
+                      {t(`nav.${item.labelKey}`, defaultLabels[item.labelKey] || item.labelKey)}
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
@@ -70,13 +82,13 @@ export default function TopNavigation() {
         <ThemeToggle />
         <button
           className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          aria-label="알림"
+          aria-label={t('notice.title', '알림')}
         >
           <Bell className="w-6 h-6 text-gray-500 dark:text-gray-400" />
         </button>
         <button
           className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          aria-label="로그아웃"
+          aria-label={t('common.logout', '로그아웃')}
           onClick={handleLogout}
         >
           <LogOut className="w-6 h-6 text-gray-500 dark:text-gray-400" />
@@ -86,7 +98,7 @@ export default function TopNavigation() {
             <AvatarImage src={user?.photoURL || undefined} />
             <AvatarFallback>{user?.displayName?.[0] || 'N'}</AvatarFallback>
           </Avatar>
-          <span className="hidden md:inline text-base font-semibold text-gray-700 dark:text-gray-300">프로필</span>
+          <span className="hidden md:inline text-base font-semibold text-gray-700 dark:text-gray-300">{t('nav.profile', defaultLabels.profile)}</span>
         </Link>
       </div>
     </header>

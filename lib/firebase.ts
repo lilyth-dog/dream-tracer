@@ -30,7 +30,10 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "demo-api-key"
 
   if (!isFirebaseConfigured) {
-    console.log("Firebase 환경변수가 설정되지 않았습니다. 데모 모드로 실행됩니다.")
+    console.log(
+      (globalThis as any).i18next?.t?.('auth.demo.desc') ||
+        'Firebase 환경변수가 설정되지 않았습니다. 데모 모드로 실행됩니다.'
+    )
   }
 }
 

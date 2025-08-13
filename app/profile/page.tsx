@@ -23,10 +23,12 @@ import { saveUserProfile, getUserProfile, initializeBadges, getUserBadges, updat
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { useTheme } from "next-themes"
 import { usePWAInstall } from "@/hooks/usePWAInstall"
+import { useTranslation } from 'react-i18next'
 
 export default function ProfilePage() {
   const { user } = useAuth()
   const { isInstallable, isInstalled, promptInstall } = usePWAInstall()
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [profileData, setProfileData] = useState({
     displayName: "",
@@ -147,10 +149,10 @@ export default function ProfilePage() {
           bio: profileData.bio,
         })
       }
-      alert("프로필이 업데이트되었습니다.")
+      alert(t('profile.updateSuccess', '프로필이 업데이트되었습니다.'))
     } catch (error) {
       console.error("Profile update error:", error)
-      alert("프로필 업데이트에 실패했습니다.")
+      alert(t('profile.updateFailed', '프로필 업데이트에 실패했습니다.'))
     } finally {
       setLoading(false)
     }
@@ -177,10 +179,10 @@ export default function ProfilePage() {
         setProfileData({ ...profileData, photoURL: localURL })
       }
 
-      alert("프로필 사진이 업데이트되었습니다.")
+      alert(t('profile.imageUploadSuccess', '프로필 사진이 업데이트되었습니다.'))
     } catch (error) {
       console.error("Image upload error:", error)
-      alert("이미지 업로드에 실패했습니다.")
+      alert(t('profile.imageUploadFailed', '이미지 업로드에 실패했습니다.'))
     } finally {
       setLoading(false)
     }
@@ -191,7 +193,7 @@ export default function ProfilePage() {
     if (!user) return
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("새 비밀번호가 일치하지 않습니다.")
+      alert(t('profile.passwordMismatch', '새 비밀번호가 일치하지 않습니다.'))
       return
     }
 
@@ -209,10 +211,10 @@ export default function ProfilePage() {
         newPassword: "",
         confirmPassword: "",
       })
-      alert("비밀번호가 변경되었습니다.")
+      alert(t('profile.passwordChangeSuccess', '비밀번호가 변경되었습니다.'))
     } catch (error) {
       console.error("Password update error:", error)
-      alert("비밀번호 변경에 실패했습니다.")
+      alert(t('profile.passwordChangeFailed', '비밀번호 변경에 실패했습니다.'))
     } finally {
       setLoading(false)
     }
@@ -231,7 +233,7 @@ export default function ProfilePage() {
       // 새로운 배지 체크
       const newBadges = await checkAndAwardBadges(user.uid)
       if (newBadges.length > 0) {
-        alert(`새로운 배지를 획득했습니다! ${newBadges.join(', ')}`)
+        alert(t('profile.newBadge', '새로운 배지를 획득했습니다! {{badges}}', { badges: newBadges.join(', ') }))
         loadBadges() // 배지 목록 새로고침
       }
     } catch (error) {
@@ -245,7 +247,7 @@ export default function ProfilePage() {
         <Card className="w-full max-w-md">
           <CardContent className="p-6 text-center">
             <Moon className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
-            <p className="text-gray-600">로그인이 필요합니다.</p>
+            <p className="text-gray-600">{t('profile.needLogin', '로그인이 필요합니다.')}</p>
           </CardContent>
         </Card>
       </div>
@@ -257,10 +259,10 @@ export default function ProfilePage() {
       <div className="container mx-auto px-4 pt-20 pb-8 max-w-6xl">
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="profile">프로필</TabsTrigger>
-            <TabsTrigger value="preferences">환경설정</TabsTrigger>
-            <TabsTrigger value="security">보안</TabsTrigger>
-            <TabsTrigger value="achievements">성취</TabsTrigger>
+            <TabsTrigger value="profile">{t('profile.tabs.profile', '프로필')}</TabsTrigger>
+            <TabsTrigger value="preferences">{t('profile.tabs.preferences', '환경설정')}</TabsTrigger>
+            <TabsTrigger value="security">{t('profile.tabs.security', '보안')}</TabsTrigger>
+            <TabsTrigger value="achievements">{t('profile.tabs.achievements', '성취')}</TabsTrigger>
           </TabsList>
 
           {/* 프로필 탭 */}
@@ -269,9 +271,9 @@ export default function ProfilePage() {
               {/* 프로필 정보 */}
               <div className="lg:col-span-2">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>기본 정보</CardTitle>
-                    <CardDescription>프로필 정보를 수정할 수 있습니다</CardDescription>
+                    <CardHeader>
+                    <CardTitle>{t('profile.basic.title', '기본 정보')}</CardTitle>
+                    <CardDescription>{t('profile.basic.desc', '프로필 정보를 수정할 수 있습니다')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleProfileUpdate} className="space-y-6">
@@ -293,70 +295,70 @@ export default function ProfilePage() {
                           />
                           <label htmlFor="profile-image">
                             <Button variant="outline" size="sm" asChild>
-                              <span className="cursor-pointer">
-                                <Camera className="h-4 w-4 mr-2" />
-                                사진 변경
-                              </span>
+                                <span className="cursor-pointer">
+                                  <Camera className="h-4 w-4 mr-2" />
+                                  {t('profile.image.change', '사진 변경')}
+                                </span>
                             </Button>
                           </label>
-                          <p className="text-xs text-gray-500">JPG, PNG 파일만 지원</p>
+                          <p className="text-xs text-gray-500">{t('profile.image.hint', 'JPG, PNG 파일만 지원')}</p>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="displayName">이름</Label>
+                          <Label htmlFor="displayName">{t('profile.form.name', '이름')}</Label>
                           <Input
                             id="displayName"
                             value={profileData.displayName}
                             onChange={(e) => setProfileData({ ...profileData, displayName: e.target.value })}
-                            placeholder="이름을 입력하세요"
+                            placeholder={t('profile.form.namePlaceholder', '이름을 입력하세요')}
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="email">이메일</Label>
+                          <Label htmlFor="email">{t('profile.form.email', '이메일')}</Label>
                           <Input id="email" type="email" value={profileData.email} disabled className="bg-gray-50" />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="bio">자기소개</Label>
+                          <Label htmlFor="bio">{t('profile.form.bio', '자기소개')}</Label>
                         <Textarea
                           id="bio"
                           value={profileData.bio}
                           onChange={e => setProfileData({ ...profileData, bio: e.target.value })}
-                          placeholder="자기소개를 입력하세요"
+                          placeholder={t('profile.form.bioPlaceholder', '자기소개를 입력하세요')}
                           className="min-h-[100px]"
                         />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="dreamGoal">꿈 목표</Label>
+                          <Label htmlFor="dreamGoal">{t('profile.form.goal', '꿈 목표')}</Label>
                           <Input
                             id="dreamGoal"
                             value={profileData.dreamGoal}
                             onChange={(e) => setProfileData({ ...profileData, dreamGoal: e.target.value })}
-                            placeholder="예: 매일 꿈 기록하기"
+                            placeholder={t('profile.form.goalPlaceholder', '예: 매일 꿈 기록하기')}
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="favoriteTheme">좋아하는 꿈 테마</Label>
+                          <Label htmlFor="favoriteTheme">{t('profile.form.theme', '좋아하는 꿈 테마')}</Label>
                           <Select
                             value={profileData.favoriteTheme}
                             onValueChange={(value) => setProfileData({ ...profileData, favoriteTheme: value })}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="테마 선택" />
+                              <SelectValue placeholder={t('profile.form.themePlaceholder', '테마 선택')} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="자연">자연</SelectItem>
-                              <SelectItem value="모험">모험</SelectItem>
-                              <SelectItem value="판타지">판타지</SelectItem>
-                              <SelectItem value="일상">일상</SelectItem>
-                              <SelectItem value="추억">추억</SelectItem>
+                              <SelectItem value="nature">{t('profile.themes.nature', '자연')}</SelectItem>
+                              <SelectItem value="adventure">{t('profile.themes.adventure', '모험')}</SelectItem>
+                              <SelectItem value="fantasy">{t('profile.themes.fantasy', '판타지')}</SelectItem>
+                              <SelectItem value="daily">{t('profile.themes.daily', '일상')}</SelectItem>
+                              <SelectItem value="memory">{t('profile.themes.memory', '추억')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -364,7 +366,7 @@ export default function ProfilePage() {
 
                       <Button type="submit" disabled={loading} className="w-full">
                         <Save className="h-4 w-4 mr-2" />
-                        {loading ? "저장 중..." : "프로필 저장"}
+                        {loading ? t('profile.save.saving', '저장 중...') : t('profile.save.submit', '프로필 저장')}
                       </Button>
                     </form>
                   </CardContent>
@@ -374,9 +376,9 @@ export default function ProfilePage() {
               {/* 프로필 미리보기 */}
               <div className="space-y-6">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>프로필 미리보기</CardTitle>
-                    <CardDescription>다른 사용자에게 보이는 모습</CardDescription>
+                    <CardHeader>
+                    <CardTitle>{t('profile.preview.title', '프로필 미리보기')}</CardTitle>
+                    <CardDescription>{t('profile.preview.desc', '다른 사용자에게 보이는 모습')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="text-center">
@@ -384,21 +386,21 @@ export default function ProfilePage() {
                         <AvatarImage src={profileData.photoURL || "/placeholder.svg"} />
                         <AvatarFallback>{profileData.displayName?.charAt(0) || user.email?.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <h3 className="font-semibold">{profileData.displayName || "이름 없음"}</h3>
-                      <p className="text-sm text-gray-500">{profileData.bio || "자기소개가 없습니다"}</p>
+                      <h3 className="font-semibold">{profileData.displayName || t('profile.preview.noName', '이름 없음')}</h3>
+                      <p className="text-sm text-gray-500">{profileData.bio || t('profile.preview.noBio', '자기소개가 없습니다')}</p>
                     </div>
 
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600">꿈 목표</span>
-                        <span>{profileData.dreamGoal || "없음"}</span>
+                        <span className="text-gray-600">{t('profile.preview.goal', '꿈 목표')}</span>
+                         <span>{profileData.dreamGoal || t('common.empty', '없음')}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600">좋아하는 테마</span>
-                        <span>{profileData.favoriteTheme || "없음"}</span>
+                        <span className="text-gray-600">{t('profile.preview.theme', '좋아하는 테마')}</span>
+                         <span>{profileData.favoriteTheme || t('common.empty', '없음')}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600">가입일</span>
+                        <span className="text-gray-600">{t('profile.preview.joined', '가입일')}</span>
                         <span>{profileData.joinDate}</span>
                       </div>
                     </div>
@@ -407,22 +409,22 @@ export default function ProfilePage() {
 
                 {/* 앱 설치 카드 */}
                 <Card>
-                  <CardHeader>
+                    <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Download className="h-5 w-5 text-indigo-600" />
-                      앱 설치
+                      {t('profile.pwa.title', '앱 설치')}
                     </CardTitle>
-                    <CardDescription>홈 화면 배너 외에도 여기서 설치할 수 있어요</CardDescription>
+                    <CardDescription>{t('profile.pwa.desc', '홈 화면 배너 외에도 여기서 설치할 수 있어요')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {isInstalled ? (
-                      <p className="text-sm text-green-600">설치 완료됨</p>
+                      <p className="text-sm text-green-600">{t('profile.pwa.installed', '설치 완료됨')}</p>
                     ) : (
                       <Button onClick={() => promptInstall()} disabled={!isInstallable} className="w-full">
-                        {isInstallable ? "앱 설치하기" : "설치 가능 시 표시됩니다"}
+                        {isInstallable ? t('profile.pwa.install', '앱 설치하기') : t('profile.pwa.pending', '설치 가능 시 표시됩니다')}
                       </Button>
                     )}
-                    <p className="text-xs text-gray-500">설치 버튼이 보이지 않는 경우, 브라우저 메뉴에서 "홈 화면에 추가"를 이용하세요.</p>
+                    <p className="text-xs text-gray-500">{t('profile.pwa.tip', '설치 버튼이 보이지 않는 경우, 브라우저 메뉴에서 "홈 화면에 추가"를 이용하세요.')}</p>
                   </CardContent>
                 </Card>
               </div>
@@ -434,17 +436,17 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* 알림 설정 */}
               <Card>
-                <CardHeader>
+                  <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Bell className="h-5 w-5 text-blue-600" />
-                    알림 설정
+                    {t('profile.notify.title', '알림 설정')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <Label>꿈 기록 리마인더</Label>
-                      <p className="text-xs text-gray-500">매일 저녁 알림</p>
+                        <Label>{t('profile.notify.reminder', '꿈 기록 리마인더')}</Label>
+                        <p className="text-xs text-gray-500">{t('profile.notify.reminderDesc', '매일 저녁 알림')}</p>
                     </div>
                     <Switch
                       checked={preferences.notifications.dreamReminder}
@@ -458,9 +460,9 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label>주간 리포트</Label>
-                      <p className="text-xs text-gray-500">일주일 꿈 분석</p>
+                      <div className="space-y-1">
+                        <Label>{t('profile.notify.weekly', '주간 리포트')}</Label>
+                        <p className="text-xs text-gray-500">{t('profile.notify.weeklyDesc', '일주일 꿈 분석')}</p>
                     </div>
                     <Switch
                       checked={preferences.notifications.weeklyReport}
@@ -474,9 +476,9 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label>커뮤니티 업데이트</Label>
-                      <p className="text-xs text-gray-500">새 게시물 알림</p>
+                      <div className="spacey-1">
+                        <Label>{t('profile.notify.community', '커뮤니티 업데이트')}</Label>
+                        <p className="text-xs text-gray-500">{t('profile.notify.communityDesc', '새 게시물 알림')}</p>
                     </div>
                     <Switch
                       checked={preferences.notifications.communityUpdates}
@@ -490,9 +492,9 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label>AI 인사이트</Label>
-                      <p className="text-xs text-gray-500">AI 분석 결과</p>
+                      <div className="space-y-1">
+                        <Label>{t('profile.notify.ai', 'AI 인사이트')}</Label>
+                        <p className="text-xs text-gray-500">{t('profile.notify.aiDesc', 'AI 분석 결과')}</p>
                     </div>
                     <Switch
                       checked={preferences.notifications.aiInsights}
@@ -509,17 +511,17 @@ export default function ProfilePage() {
 
               {/* 개인정보 설정 */}
               <Card>
-                <CardHeader>
+                  <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Shield className="h-5 w-5 text-green-600" />
-                    개인정보 설정
+                    {t('profile.privacy.title', '개인정보 설정')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <Label>프로필 공개</Label>
-                      <p className="text-xs text-gray-500">다른 사용자에게 프로필 공개</p>
+                        <Label>{t('profile.privacy.public', '프로필 공개')}</Label>
+                        <p className="text-xs text-gray-500">{t('profile.privacy.publicDesc', '다른 사용자에게 프로필 공개')}</p>
                     </div>
                     <Switch
                       checked={preferences.privacy.profilePublic}
@@ -533,9 +535,9 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label>통계 공유</Label>
-                      <p className="text-xs text-gray-500">꿈 통계 정보 공유</p>
+                      <div className="space-y-1">
+                        <Label>{t('profile.privacy.shareStats', '통계 공유')}</Label>
+                        <p className="text-xs text-gray-500">{t('profile.privacy.shareStatsDesc', '꿈 통계 정보 공유')}</p>
                     </div>
                     <Switch
                       checked={preferences.privacy.shareStats}
@@ -549,9 +551,9 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label>메시지 허용</Label>
-                      <p className="text-xs text-gray-500">다른 사용자의 메시지 수신</p>
+                      <div className="space-y-1">
+                        <Label>{t('profile.privacy.messages', '메시지 허용')}</Label>
+                        <p className="text-xs text-gray-500">{t('profile.privacy.messagesDesc', '다른 사용자의 메시지 수신')}</p>
                     </div>
                     <Switch
                       checked={preferences.privacy.allowMessages}
@@ -568,15 +570,15 @@ export default function ProfilePage() {
 
               {/* 화면 설정 */}
               <Card>
-                <CardHeader>
+                  <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Palette className="h-5 w-5 text-purple-600" />
-                    화면 설정
+                    {t('profile.display.title', '화면 설정')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>테마</Label>
+                      <Label>{t('profile.display.theme', '테마')}</Label>
                     <Select
                       value={preferences.display.theme}
                       onValueChange={(value: "light" | "dark" | "auto") =>
@@ -590,15 +592,15 @@ export default function ProfilePage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="light">라이트 모드</SelectItem>
-                        <SelectItem value="dark">다크 모드</SelectItem>
-                        <SelectItem value="auto">시스템 설정</SelectItem>
+                         <SelectItem value="light">{t('profile.display.themes.light', '라이트 모드')}</SelectItem>
+                         <SelectItem value="dark">{t('profile.display.themes.dark', '다크 모드')}</SelectItem>
+                         <SelectItem value="auto">{t('profile.display.themes.auto', '시스템 설정')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>언어</Label>
+                      <Label>{t('profile.display.lang', '언어')}</Label>
                     <Select
                       value={preferences.display.language}
                       onValueChange={(value) =>
@@ -620,7 +622,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>날짜 형식</Label>
+                      <Label>{t('profile.display.date', '날짜 형식')}</Label>
                     <Select
                       value={preferences.display.dateFormat}
                       onValueChange={(value) =>
@@ -634,9 +636,9 @@ export default function ProfilePage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="korean">2024년 1월 15일</SelectItem>
-                        <SelectItem value="international">15/01/2024</SelectItem>
-                        <SelectItem value="american">01/15/2024</SelectItem>
+                         <SelectItem value="korean">{t('profile.display.dateSamples.korean', '2024년 1월 15일')}</SelectItem>
+                         <SelectItem value="international">{t('profile.display.dateSamples.international', '15/01/2024')}</SelectItem>
+                         <SelectItem value="american">{t('profile.display.dateSamples.american', '01/15/2024')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -649,50 +651,50 @@ export default function ProfilePage() {
           <TabsContent value="security" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-green-600" />
-                  비밀번호 변경
-                </CardTitle>
-                <CardDescription>보안을 위해 정기적으로 비밀번호를 변경하세요</CardDescription>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5 text-green-600" />
+                    {t('profile.security.title', '비밀번호 변경')}
+                  </CardTitle>
+                  <CardDescription>{t('profile.security.desc', '보안을 위해 정기적으로 비밀번호를 변경하세요')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handlePasswordUpdate} className="space-y-4 max-w-md">
                   <div className="space-y-2">
-                    <Label htmlFor="currentPassword">현재 비밀번호</Label>
+                    <Label htmlFor="currentPassword">{t('profile.security.current', '현재 비밀번호')}</Label>
                     <Input
                       id="currentPassword"
                       type="password"
                       value={passwordData.currentPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                      placeholder="현재 비밀번호"
+                      placeholder={t('profile.security.currentPlaceholder', '현재 비밀번호')}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="newPassword">새 비밀번호</Label>
+                    <Label htmlFor="newPassword">{t('profile.security.new', '새 비밀번호')}</Label>
                     <Input
                       id="newPassword"
                       type="password"
                       value={passwordData.newPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                      placeholder="새 비밀번호"
+                      placeholder={t('profile.security.newPlaceholder', '새 비밀번호')}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">새 비밀번호 확인</Label>
+                    <Label htmlFor="confirmPassword">{t('profile.security.confirm', '새 비밀번호 확인')}</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
                       value={passwordData.confirmPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                      placeholder="새 비밀번호 확인"
+                      placeholder={t('profile.security.confirmPlaceholder', '새 비밀번호 확인')}
                     />
                   </div>
 
                   <Button type="submit" disabled={loading}>
                     <Shield className="h-4 w-4 mr-2" />
-                    {loading ? "변경 중..." : "비밀번호 변경"}
+                    {loading ? t('profile.security.saving', '변경 중...') : t('profile.security.submit', '비밀번호 변경')}
                   </Button>
                 </form>
               </CardContent>
@@ -704,11 +706,11 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5" />
-                    획득한 배지
-                  </CardTitle>
-                  <CardDescription>달성한 성취들을 확인해보세요</CardDescription>
+                    <CardTitle className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5" />
+                      {t('profile.achievements.mine.title', '획득한 배지')}
+                    </CardTitle>
+                    <CardDescription>{t('profile.achievements.mine.desc', '달성한 성취들을 확인해보세요')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -721,7 +723,7 @@ export default function ProfilePage() {
                     ))}
                     {userBadges.length === 0 && (
                       <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
-                        아직 획득한 배지가 없습니다.
+                        {t('profile.achievements.mine.empty', '아직 획득한 배지가 없습니다.')}
                       </div>
                     )}
                   </div>
@@ -730,11 +732,11 @@ export default function ProfilePage() {
               
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5" />
-                    전체 배지
-                  </CardTitle>
-                  <CardDescription>획득 가능한 모든 배지들</CardDescription>
+                    <CardTitle className="flex items-center gap-2">
+                      <Star className="h-5 w-5" />
+                      {t('profile.achievements.all.title', '전체 배지')}
+                    </CardTitle>
+                    <CardDescription>{t('profile.achievements.all.desc', '획득 가능한 모든 배지들')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -755,30 +757,30 @@ export default function ProfilePage() {
             
             <Card>
               <CardHeader>
-                <CardTitle>통계 업데이트</CardTitle>
-                <CardDescription>현재 통계를 기반으로 새로운 배지를 확인합니다</CardDescription>
+                <CardTitle>{t('profile.stats.title', '통계 업데이트')}</CardTitle>
+                <CardDescription>{t('profile.stats.desc', '현재 통계를 기반으로 새로운 배지를 확인합니다')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.totalDreams}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">총 꿈 기록</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">{t('profile.stats.totalDreams', '총 꿈 기록')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.lucidDreams}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">루시드 드림</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">{t('profile.stats.lucidDreams', '루시드 드림')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.streak}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">연속 기록</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">{t('profile.stats.streak', '연속 기록')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-green-600 dark:text-green-400">{userBadges.length}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">획득 배지</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">{t('profile.stats.badges', '획득 배지')}</div>
                   </div>
                 </div>
                 <Button onClick={handleStatsUpdate} className="w-full">
-                  배지 확인하기
+                  {t('profile.stats.checkBadges', '배지 확인하기')}
                 </Button>
               </CardContent>
             </Card>

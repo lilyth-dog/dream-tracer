@@ -10,5 +10,399 @@
   "dreamList": "Dream List",
   "community": "Community",
   "settings": "Settings",
-  "language": "Language"
+  "language": "Language",
+  "app": { "title": "DreamTracer" },
+  "nav": {
+    "home": "Home",
+    "write": "Write Dream",
+    "dreamList": "Dream List",
+    "stats": "Stats",
+    "community": "Community",
+    "dejavu": "Déjà vu",
+    "visualize": "Visualize",
+    "profile": "Profile"
+  },
+  "home": { "title": "My Dream Journal", "aiTitle": "Today's AI Dream Interpretation", "aiDesc": "AI analyzes your recent dreams and suggests today's patterns and interpretations.", "aiCta": "View AI Interpretation" },
+  "common": { "loading": "Loading...", "submitting": "Submitting...", "more": "Load more", "logout": "Logout", "or": "or", "confirmDelete": "Are you sure you want to delete?", "delete": "Delete", "deleteFailed": "Failed to delete.", "empty": "None", "yes": "Yes", "no": "No" },
+  "auth": {
+    "login": { "title": "Login", "desc": "Enter the world of dreams", "loading": "Logging in...", "submit": "Login", "toRegister": "Sign up", "forgot": "Forgot password" },
+    "fields": { "email": "Email", "password": "Password" },
+    "demo": { "title": "Demo mode", "desc": "Running in demo mode because Firebase env is not set.", "autoLogin": "You will be logged in automatically in demo mode.", "info": "Demo info", "start": "Start in demo mode", "resetNotSupported": "Password reset is not supported in demo mode.", "registerNotSupported": "Sign up is not supported in demo mode." },
+    "error": { "loginFailed": "Failed to login.", "userNotFound": "Email not registered.", "wrongPassword": "Incorrect password.", "invalidEmail": "Invalid email format.", "googleFailed": "Google login failed.", "canceled": "Login canceled.", "popupBlocked": "Popup was blocked. Please allow popups." },
+    "register": { "submit": "Sign up", "submitting": "Signing up...", "backToLogin": "Back to login", "success": "Sign up complete. Please log in.", "failed": "Failed to sign up: " },
+    "reset": { "sending": "Sending email...", "submit": "Send password reset email", "sent": "Password reset email sent.", "failed": "Failed to reset password: " },
+    "google": "Continue with Google"
+  },
+  "settings": { "logoutConfirm": "Are you sure you want to logout?", "logoutFailed": "Failed to logout." },
+  "app": { "title": "DreamTracer" },
+  "profile": {
+    "needLogin": "Login is required.",
+    "tabs": { "profile": "Profile", "preferences": "Preferences", "security": "Security", "achievements": "Achievements" },
+    "basic": { "title": "Basic info", "desc": "You can edit your profile info" },
+    "form": {
+      "name": "Name", "email": "Email", "bio": "Bio", "goal": "Dream goal", "theme": "Favorite dream theme",
+      "namePlaceholder": "Enter your name", "bioPlaceholder": "Enter your bio", "goalPlaceholder": "e.g., Record dreams daily", "themePlaceholder": "Select theme"
+    },
+    "image": { "change": "Change photo", "hint": "JPG and PNG only" },
+    "preview": { "title": "Profile preview", "desc": "How others see you", "noName": "No name", "noBio": "No bio", "goal": "Dream goal", "theme": "Favorite theme", "joined": "Joined" },
+    "pwa": { "title": "Install app", "desc": "You can also install here besides the home banner", "installed": "Installed", "install": "Install app", "pending": "Shown when installable", "tip": "If you can't see the install button, use 'Add to Home screen' from browser menu." },
+    "notify": { "title": "Notification settings", "reminder": "Dream reminder", "reminderDesc": "Evening daily alert", "weekly": "Weekly report", "weeklyDesc": "Weekly dream analysis", "community": "Community updates", "communityDesc": "New post alerts", "ai": "AI insights", "aiDesc": "AI analysis results" },
+    "privacy": { "title": "Privacy settings", "public": "Public profile", "publicDesc": "Make your profile visible", "shareStats": "Share stats", "shareStatsDesc": "Share dream statistics", "messages": "Allow messages", "messagesDesc": "Receive messages from others" },
+    "display": { "title": "Display settings", "theme": "Theme", "lang": "Language", "date": "Date format", "themes": { "light": "Light", "dark": "Dark", "auto": "System" }, "dateSamples": { "korean": "Jan 15, 2024 (KR)", "international": "15/01/2024", "american": "01/15/2024" } },
+    "themes": { "nature": "Nature", "adventure": "Adventure", "fantasy": "Fantasy", "daily": "Daily", "memory": "Memory" },
+    "save": { "saving": "Saving...", "submit": "Save profile" },
+    "security": { "title": "Change password", "desc": "Change your password regularly for security.", "current": "Current password", "currentPlaceholder": "Current password", "new": "New password", "newPlaceholder": "New password", "confirm": "Confirm new password", "confirmPlaceholder": "Confirm new password", "saving": "Saving...", "submit": "Change password" },
+    "achievements": { "mine": { "title": "Earned badges", "desc": "See your achievements", "empty": "No badges earned yet." }, "all": { "title": "All badges", "desc": "All obtainable badges" } },
+    "stats": { "title": "Stats update", "desc": "Check for new badges based on current stats", "totalDreams": "Total dreams", "lucidDreams": "Lucid dreams", "streak": "Streak", "badges": "Badges", "checkBadges": "Check badges" },
+    "updateSuccess": "Profile updated.",
+    "updateFailed": "Failed to update profile.",
+    "imageUploadSuccess": "Profile photo updated.",
+    "imageUploadFailed": "Image upload failed.",
+    "passwordMismatch": "New passwords do not match.",
+    "passwordChangeSuccess": "Password changed.",
+    "passwordChangeFailed": "Failed to change password.",
+    "newBadge": "New badge acquired! {{badges}}"
+  },
+  "dejavu": {
+    "title": "Reality–Dream Déjà vu Finder",
+    "desc": "Enter a recent real-world event or scene and AI will find similar content from your past dream records and connect them.",
+    "hint": "Explore those 'I've seen this in a dream' moments scientifically.",
+    "scoreNote": "Shown similarity is a percentile within your own dream list. e.g., 80% means top 20% similarity.",
+    "input": {
+      "title": "Describe a real-world event",
+      "desc": "Freely enter an impressive event, scene, conversation, or emotion you recently experienced.",
+      "placeholder": "e.g., I saw a familiar-looking view at a cafe I visited for the first time...",
+      "required": "Please enter what you experienced in reality."
+    },
+    "cta": "Find Déjà vu",
+    "progress": { "title": "AI is comparing reality with your dreams...", "running": "Analyzing...", "done": "done" },
+    "empty": { "title": "No results yet", "hint": "Enter what you experienced and press Find Déjà vu." },
+    "result": {
+      "elements": "Similar elements",
+      "ai": "AI analysis",
+      "dream": "Dream",
+      "date": "Recorded on",
+      "elements": "Similar elements",
+      "elements": "Similar elements",
+      "elements": "Similar elements"
+    },
+    "result": { "elements": "Similar elements", "ai": "AI analysis", "dream": "Dream", "date": "Recorded on" },
+    "result.elements": { "similarPlace": "Similar place", "similarPerson": "Similar person", "similarEmotion": "Similar emotion", "placeSimilarity": "Place similarity", "emotionSimilarity": "Emotion similarity" },
+    "sample": { "dream1Title": "Flying in the sky", "dream1Analysis": "The sense of freedom in reality connects to your past flying dream.", "dream2Title": "Childhood home", "dream2Analysis": "Feelings in a familiar space connect to the safety in an old dream." },
+    "error": "An error occurred during analysis."
+  },
+  "community": {
+    "shareTitle": "Share a dream",
+    "sharePlaceholder": "Freely share your dream...",
+    "publicProfile": "Post with public profile",
+    "publicProfileShort": "With public profile",
+    "commentPlaceholder": "Write a comment",
+    "submit": "Submit",
+    "anon": "Anonymous",
+    "report": "Report",
+    "hiddenNotice": "This post is hidden due to multiple reports.",
+    "shareCta": "Share",
+    "sortRecent": "Recent",
+    "sortPopular": "Popular"
+  }
+  ,
+  "visualize": {
+    "title": "AI Dream Visualization",
+    "desc": "AI turns your dream into beautiful images. Visualize in various styles to preserve your memory vividly.",
+    "stats": { "available": "Available dreams", "generated": "Generated images" },
+    "panel": { "title": "Generate image", "desc": "Select a dream or enter a description" },
+    "form": { "selectDream": "Select dream", "selectPlaceholder": "Choose a dream to visualize", "custom": "Or enter description", "customPlaceholder": "Describe the scene in detail...", "style": "Image style" },
+    "generating": "Generating...",
+    "generate": "Generate image",
+    "progress": { "title": "Progress" },
+    "tabs": { "generated": "Generated", "gallery": "Gallery" },
+    "empty": { "title": "No generated images", "hint": "Select a dream and generate images!" },
+    "toast": { "success": "Image generated successfully!", "fail": "Failed to generate image.", "download": "Download coming soon.", "share": "Share coming soon." },
+    "input": { "required": "Select a dream or enter a description." },
+    "styles": {
+      "realistic": "Realistic", "realisticDesc": "Photo-like vivid image",
+      "artistic": "Artistic", "artisticDesc": "Beautiful painterly style",
+      "dreamy": "Dreamy", "dreamyDesc": "Soft and mysterious like a dream",
+      "fantasy": "Fantasy", "fantasyDesc": "Magical and fantastical world",
+      "minimalist": "Minimalist", "minimalistDesc": "Simple and clean style",
+      "surreal": "Surreal", "surrealDesc": "Surreal expression like Dalí"
+    },
+    "sample": "Sample"
+  }
+  ,
+  "featureCards": {
+    "newEntry": { "title": "Write a new dream", "desc": "Record today's dream" },
+    "viewDreams": { "title": "View dreams", "desc": "Revisit your past dreams" },
+    "dejavu": { "title": "Déjà vu Finder", "desc": "Find your dream patterns" },
+    "visualize": { "title": "Visualize dreams", "desc": "Paint your dreams anew" }
+  },
+  "home.widgets": {
+    "statsTitle": "Dream stats",
+    "totalDreams": "Total dreams",
+    "thisMonth": "This month",
+    "lucidDreams": "Lucid dreams",
+    "streak": "Streak",
+    "monthGoal": "Monthly goal",
+    "countSuffix": "",
+    "daySuffix": "d",
+    "todayInfo": "Today's info",
+    "now": "Current time",
+    "moon": "Moon today",
+    "frequentEmotion": "Frequent emotion",
+    "aiAvailable": "AI-analyzable dreams",
+    "todayTip": "Today's dream tip",
+    "nextTip": "See another tip"
+  }
+  ,
+  "home": {
+    "title": "My Dream Journal",
+    "aiTitle": "Today's AI Dream Interpretation",
+    "aiDesc": "AI analyzes your recent dreams and suggests today's patterns and interpretations.",
+    "aiCta": "View AI Interpretation",
+    "newEntry": "New entry",
+    "recentDreams": "Recent dreams",
+    "viewAll": "View all",
+    "noDreams": "No dreams yet.",
+    "goWrite": "Write a dream",
+    "aiEnabled": "AI recommendations enabled",
+    "widgets": {
+      "statsTitle": "Dream stats",
+      "totalDreams": "Total dreams",
+      "thisMonth": "This month",
+      "lucidDreams": "Lucid dreams",
+      "streak": "Streak",
+      "monthGoal": "Monthly goal",
+      "countSuffix": "",
+      "daySuffix": "d",
+      "todayInfo": "Today's info",
+      "now": "Current time",
+      "moon": "Moon today",
+      "frequentEmotion": "Frequent emotion",
+      "aiAvailable": "AI-analyzable dreams",
+      "todayTip": "Today's dream tip",
+      "nextTip": "See another tip"
+    },
+    "tips": {
+      "tip1": "To remember dreams more vividly, write them down right after waking.",
+      "tip2": "For lucid dreams, ask yourself during the day: 'Am I dreaming now?'",
+      "tip3": "Include emotions, colors, and sounds when writing.",
+      "tip4": "Meditation and regular sleep improve dream quality.",
+      "tip5": "Practicing looking at your hands in dreams can help lucid dreaming.",
+      "related": {
+        "lucid": "If you often have lucid dreams, practice reality checks in dreams.",
+        "fear": "If you had a scary dream, record it and process your feelings.",
+        "family": "Dreams featuring family may carry messages about relationships."
+      }
+    }
+  }
+  ,
+  "dreamDetail": {
+    "header": { "lucid": "Lucid dream", "comment": "Comments", "visualize": "Visualize" },
+    "tabs": { "content": "Content", "analysis": "AI analysis", "media": "Media" },
+    "content": { "title": "Content" },
+    "ai": { "title": "AI dream interpretation", "desc": "AI's analysis of your dream", "empty": "No AI interpretation yet", "generating": "Generating...", "generate": "Generate AI interpretation" },
+    "media": { "title": "Related images", "empty": "No uploaded images", "visualizeCta": "Visualize with AI", "imageAlt": "Dream image" },
+    "info": { "title": "Dream info", "emotion": "Emotion", "dreamType": "Dream type", "vividness": "Vividness", "sleepQuality": "Sleep quality", "createdAt": "Created", "updatedAt": "Updated" },
+    "tags": { "title": "Tags" },
+    "quick": { "title": "Quick actions", "edit": "Edit dream", "share": "Share dream", "export": "Export as text", "visualize": "AI visualize" },
+    "share": { "copied": "Link copied to clipboard!" },
+    "export": {
+      "titleLabel": "Title",
+      "dateLabel": "Date",
+      "emotionLabel": "Emotion",
+      "vividnessLabel": "Vividness",
+      "lucidLabel": "Lucid dream",
+      "contentLabel": "Content",
+      "tagsLabel": "Tags"
+    }
+  },
+  "emotions": {
+    "joy": "Joy",
+    "peace": "Peace",
+    "fear": "Fear",
+    "sadness": "Sadness",
+    "excitement": "Excitement",
+    "wonder": "Wonder",
+    "all": "All emotions"
+  },
+  "dreamTypes": {
+    "normal": "Normal dream",
+    "nightmare": "Nightmare",
+    "lucid": "Lucid dream",
+    "recurring": "Recurring dream",
+    "prophetic": "Prophetic dream",
+    "healing": "Healing dream",
+    "all": "All types"
+  },
+  "sleepQualities": {
+    "excellent": "Excellent",
+    "good": "Good",
+    "fair": "Fair",
+    "poor": "Poor",
+    "terrible": "Terrible"
+  },
+  
+  "aiHelper": {
+    "welcome": "Hello! Ask me about recording, interpreting, or visualizing dreams.",
+    "open": "Open AI helper",
+    "title": "AI Assistant",
+    "placeholder": "Ask AI...",
+    "send": "Send"
+  }
+  ,
+  "notice": {
+    "open": "Open notifications",
+    "title": "Notifications",
+    "items": {
+      "remindRecord": "Record today's dream!",
+      "newCommunity": "New post in community.",
+      "aiUpdated": "AI helper has been updated."
+    },
+    "time": {
+      "justNow": "Just now",
+      "oneHourAgo": "1 hour ago",
+      "yesterday": "Yesterday"
+    }
+  }
+  ,
+  "write": {
+    "tabs": { "basic": "Basic", "details": "Details", "media": "Media", "ai": "AI Help" },
+    "basic": { "title": "Basic", "desc": "Enter the basic information of the dream", "editTitle": "Edit basic info", "editDesc": "Update selected dream info" },
+    "fields": {
+      "title": { "label": "Title *", "placeholder": "e.g., Flying in the sky" },
+      "date": { "label": "Date of dream" },
+      "content": { "label": "Content *", "placeholder": "Describe the dream in detail..." }
+    },
+    "voice": { "start": "Dictate", "stop": "Stop dictation", "listening": "Listening..." },
+    "details": {
+      "title": "Dream details",
+      "desc": "Record the characteristics and feelings",
+      "emotion": "Main emotion",
+      "dreamType": "Dream type",
+      "dreamTypePlaceholder": "Select a dream type",
+      "vividness": "Vividness",
+      "vividLow": "Blurry",
+      "vividHigh": "Very vivid",
+      "current": "Current",
+      "lucid": "Lucid dream",
+      "lucidHint": "Did you realize you were dreaming?",
+      "sleepQuality": "Sleep quality",
+      "sleepQualityPlaceholder": "Select sleep quality"
+    },
+    "tags": {
+      "title": "Tags",
+      "desc": "Add keywords related to the dream",
+      "placeholder": "Add a tag (e.g., flight, sea, family)",
+      "add": "Add",
+      "suggested": "Suggested tags"
+    },
+    "media": {
+      "title": "Image upload",
+      "desc": "Upload images or drawings related to the dream",
+      "cta": "Click to upload images",
+      "hint": "PNG, JPG, GIF (max 10MB)",
+      "uploadedAlt": "Uploaded image"
+    },
+    "ai": {
+      "title": "AI writing assistant",
+      "desc": "AI helps you write better entries",
+      "help": "Get AI help",
+      "suggest": "Get AI suggestions",
+      "emotion": "Emotion analysis",
+      "analyzing": "AI is analyzing...",
+      "suggestions": "AI suggestions"
+    },
+    "sidebar": {
+      "progress": "Writing progress",
+      "title": "Title",
+      "content": "Content",
+      "emotion": "Emotion",
+      "dreamType": "Dream type",
+      "tags": "Tags",
+      "high": "Great progress!",
+      "tips": "Writing tips"
+    },
+    "save": { "saving": "Saving...", "submit": "Save", "draft": "Save draft" },
+    "content": { "charCount": "{{count}} chars" }
+  }
+  ,
+  "dreams": {
+    "tabs": { "search": "Search", "filter": "Filter", "tags": "Tags" },
+    "search": { "placeholder": "Search by title, content, tags..." },
+    "filters": {
+      "emotion": "Emotion",
+      "dreamType": "Dream type",
+      "byTags": "Filter by tags",
+      "selectedTags": "Selected tags:",
+      "clear": "Clear all"
+    },
+    "recent": { "title": "Recent entries", "empty": "No recent entries." },
+    "summary": { "totalPrefix": "Total", "totalSuffix": "dreams found", "reset": "Reset filters" },
+    "options": { "sort": { "date": "By date", "title": "By title", "vividness": "By vividness", "emotion": "By emotion" } },
+    "calendar": { "title": "Dream calendar", "desc": "See at a glance when you recorded dreams" },
+    "empty": {
+      "title": "No dreams",
+      "filtered": "No dreams match your filters.",
+      "noData": "No entries yet. Create your first dream!",
+      "cta": "Create first entry"
+    }
+  }
+  ,
+  "stats": {
+    "loading": "Calculating stats...",
+    "overview": { "total": "Total dreams", "thisMonth": "This month", "streak": "Streak", "lucid": "Lucid dreams" },
+    "emotions": { "title": "Emotion distribution", "desc": "Distribution of emotions felt in dreams" },
+    "types": { "title": "Dream type distribution", "desc": "Distribution by dream type" },
+    "tags": { "title": "Top tags", "desc": "Most frequently used tags" },
+    "more": { "title": "More stats", "avgVivid": "Average vividness", "thisWeek": "This week", "lucidRate": "Lucid rate", "monthAvg": "Monthly average" },
+    "monthly": { "title": "Monthly trend", "desc": "Trend of dream entries in last 6 months" },
+    "cooccur": { "title": "Frequent tag co-occurrences", "desc": "Top 10 co-occurring tag pairs" },
+    "repeat": { "title": "Recurring dream patterns", "desc": "Top 5 similar title pairs", "empty": "Not enough similar title pairs", "similarity": "Similarity" }
+  }
+  ,
+  "admin": {
+    "layout": { "title": "Admin Dashboard" },
+    "home": { "moderation": "Reports/Hidden management", "users": "User management" },
+    "login": { "title": "Admin login", "tokenPlaceholder": "Admin token", "submit": "Login" },
+    "common": { "done": "Done", "loading": "Loading...", "error": "Error", "fetchFailed": "Failed to fetch" },
+    "users": {
+      "title": "User management",
+      "desc": "Block/Mute management",
+      "noData": "Not enough user info",
+      "mute": "Mute",
+      "unmute": "Unmute",
+      "block": "Block",
+      "unblock": "Unblock"
+    },
+    "moderation": {
+      "title": "Reports/Hidden management",
+      "desc": "List of reported posts",
+      "empty": "No reported posts",
+      "reports": "Reports",
+      "hidden": "Hidden",
+      "unhide": "Unhide",
+      "hide": "Hide"
+    }
+  }
+  ,
+  "dreamDetail": {
+    "header": { "lucid": "Lucid dream", "comment": "Comments", "visualize": "Visualize" },
+    "tabs": { "content": "Content", "analysis": "AI analysis", "media": "Media" },
+    "content": { "title": "Content" },
+    "ai": { "title": "AI dream interpretation", "desc": "AI's analysis of your dream", "empty": "No AI interpretation yet", "generating": "Generating...", "generate": "Generate AI interpretation" },
+    "media": { "title": "Related images", "empty": "No uploaded images", "visualizeCta": "Visualize with AI" },
+    "info": { "title": "Dream info", "emotion": "Emotion", "dreamType": "Dream type", "vividness": "Vividness", "sleepQuality": "Sleep quality", "createdAt": "Created", "updatedAt": "Updated" },
+    "tags": { "title": "Tags" },
+    "quick": { "title": "Quick actions", "edit": "Edit dream", "share": "Share dream", "export": "Export as text", "visualize": "AI visualize" },
+    "share": { "copied": "Link copied to clipboard!" },
+    "export": {
+      "titleLabel": "Title",
+      "dateLabel": "Date",
+      "emotionLabel": "Emotion",
+      "vividnessLabel": "Vividness",
+      "lucidLabel": "Lucid dream",
+      "contentLabel": "Content",
+      "tagsLabel": "Tags"
+    }
+  }
 }

@@ -10,5 +10,373 @@
   "dreamList": "梦境列表",
   "community": "社区",
   "settings": "设置",
-  "language": "语言"
+  "language": "语言",
+  "app": { "title": "梦迹 DreamTracer" },
+  "nav": {
+    "home": "首页",
+    "write": "写梦日记",
+    "dreamList": "梦境列表",
+    "stats": "统计",
+    "community": "社区",
+    "dejavu": "似曾相识",
+    "visualize": "可视化",
+    "profile": "个人资料"
+  },
+  "home": { "title": "我的梦日记", "aiTitle": "今日AI梦境解读", "aiDesc": "AI分析你最近的梦境，并提供今天的模式与解读。", "aiCta": "查看AI解读" },
+  "common": { "loading": "加载中...", "submitting": "提交中...", "more": "加载更多", "logout": "登出", "or": "或", "confirmDelete": "确定要删除吗？", "delete": "删除", "deleteFailed": "删除失败。", "empty": "无", "yes": "是", "no": "否" },
+  "auth": {
+    "login": { "title": "登录", "desc": "进入梦的世界", "loading": "登录中...", "submit": "登录", "toRegister": "注册", "forgot": "找回密码" },
+    "fields": { "email": "邮箱", "password": "密码" },
+    "demo": { "title": "演示模式", "desc": "由于未配置 Firebase 环境变量，当前为演示模式。", "autoLogin": "演示模式下将自动登录。", "info": "演示信息", "start": "以演示模式开始", "resetNotSupported": "演示模式不支持找回密码。", "registerNotSupported": "演示模式不支持注册。" },
+    "error": { "loginFailed": "登录失败。", "userNotFound": "邮箱未注册。", "wrongPassword": "密码错误。", "invalidEmail": "邮箱格式无效。", "googleFailed": "Google 登录失败。", "canceled": "已取消登录。", "popupBlocked": "弹窗被拦截，请允许弹窗。" },
+    "register": { "submit": "注册", "submitting": "注册中...", "backToLogin": "返回登录", "success": "注册完成，请登录。", "failed": "注册失败：" },
+    "reset": { "sending": "发送中...", "submit": "发送密码重置邮件", "sent": "已发送密码重置邮件。", "failed": "找回密码失败：" },
+    "google": "使用 Google 登录"
+  },
+  "dejavu": {
+    "title": "现实-梦境 似曾相识查找",
+    "desc": "输入最近经历的事件或场景，AI 会从你的梦境记录中寻找相似内容并建立关联。",
+    "hint": "把‘这场景我在梦里见过’的瞬间用科学方式来探索。",
+    "scoreNote": "显示的相似度是你梦境列表内的百分位。例如 80% 表示相似度位于前 20%。",
+    "input": {
+      "title": "描述现实中的事件",
+      "desc": "请自由输入最近经历的事件、场景、对话或情绪。",
+      "placeholder": "例如：在第一次去的咖啡馆看到似曾相识的风景...",
+      "required": "请输入你在现实中经历的事情。"
+    },
+    "cta": "查找似曾相识",
+    "progress": { "title": "AI 正在比较现实与梦境...", "running": "分析中...", "done": "完成" },
+    "empty": { "title": "暂无结果", "hint": "输入经历并点击查找似曾相识。" },
+    "result": { "elements": "相似要素", "ai": "AI 分析", "dream": "梦境", "date": "记录日期" },
+    "result.elements": { "similarPlace": "相似地点", "similarPerson": "相似人物", "similarEmotion": "相似情绪", "placeSimilarity": "地点相似度", "emotionSimilarity": "情绪相似度" },
+    "sample": { "dream1Title": "在天空飞翔", "dream1Analysis": "现实中的自由感与过去飞行梦相连接。", "dream2Title": "儿时的家", "dream2Analysis": "在熟悉空间中的感受与过去梦境的安全感相连。" },
+    "error": "分析过程中发生错误。"
+  },
+  "community": {
+    "shareTitle": "分享梦境",
+    "sharePlaceholder": "尽情分享你的梦境...",
+    "publicProfile": "使用公开资料发布",
+    "publicProfileShort": "使用公开资料",
+    "commentPlaceholder": "写评论",
+    "submit": "提交",
+    "anon": "匿名",
+    "report": "举报",
+    "hiddenNotice": "该帖子因多次举报已被隐藏。",
+    "shareCta": "分享",
+    "sortRecent": "最新",
+    "sortPopular": "最热"
+  }
+  ,
+  "settings": {
+    "logoutConfirm": "确定要登出吗？",
+    "logoutFailed": "登出失败。"
+  }
+  ,
+  "visualize": {
+    "title": "AI 梦境可视化",
+    "desc": "AI 将你的梦境转化为精美图片。用多种风格可视化，更清晰地保留记忆。",
+    "stats": { "available": "可生成的梦", "generated": "已生成图片" },
+    "panel": { "title": "生成图片", "desc": "选择梦境或输入描述" },
+    "form": { "selectDream": "选择梦境", "selectPlaceholder": "选择要可视化的梦境", "custom": "或输入描述", "customPlaceholder": "详细描述场景...", "style": "图片风格" },
+    "generating": "生成中...",
+    "generate": "生成图片",
+    "progress": { "title": "进度" },
+    "tabs": { "generated": "已生成", "gallery": "图库" },
+    "empty": { "title": "暂无生成图片", "hint": "选择梦境并生成图片！" },
+    "toast": { "success": "图片生成成功！", "fail": "图片生成失败。", "download": "下载即将推出。", "share": "分享即将推出。" },
+    "input": { "required": "请选择梦境或输入描述。" },
+    "styles": {
+      "realistic": "写实", "realisticDesc": "如照片般清晰",
+      "artistic": "艺术", "artisticDesc": "如画般的美丽风格",
+      "dreamy": "梦幻", "dreamyDesc": "如梦般柔和而神秘",
+      "fantasy": "奇幻", "fantasyDesc": "魔法般的幻想世界",
+      "minimalist": "极简", "minimalistDesc": "简洁清爽",
+      "surreal": "超现实", "surrealDesc": "如达利般的超现实"
+    },
+    "sample": "示例"
+  }
+  ,
+  "app": { "title": "梦迹 DreamTracer" },
+  "profile": {
+    "needLogin": "需要登录。",
+    "tabs": { "profile": "个人资料", "preferences": "偏好", "security": "安全", "achievements": "成就" },
+    "basic": { "title": "基本信息", "desc": "可以编辑你的资料" },
+    "form": { "name": "姓名", "email": "邮箱", "bio": "简介", "goal": "梦境目标", "theme": "喜欢的主题", "namePlaceholder": "请输入姓名", "bioPlaceholder": "请输入简介", "goalPlaceholder": "例如：每天记录梦境", "themePlaceholder": "选择主题" },
+    "image": { "change": "更换照片", "hint": "仅支持 JPG/PNG" },
+    "preview": { "title": "资料预览", "desc": "他人看到的样子", "noName": "无姓名", "noBio": "无简介", "goal": "梦境目标", "theme": "喜欢的主题", "joined": "加入日期" },
+    "pwa": { "title": "安装应用", "desc": "除了首页横幅，你也可以在这里安装", "installed": "已安装", "install": "安装应用", "pending": "可安装时显示", "tip": "若看不到安装按钮，请在浏览器菜单选择‘添加到主屏幕’。" },
+    "notify": { "title": "通知设置", "reminder": "梦境提醒", "reminderDesc": "每晚提醒", "weekly": "每周报告", "weeklyDesc": "一周的梦境分析", "community": "社区更新", "communityDesc": "新帖子通知", "ai": "AI 洞察", "aiDesc": "AI 分析结果" },
+    "privacy": { "title": "隐私设置", "public": "公开资料", "publicDesc": "向他人公开资料", "shareStats": "共享统计", "shareStatsDesc": "共享梦境统计", "messages": "允许消息", "messagesDesc": "接收他人消息" },
+    "display": { "title": "显示设置", "theme": "主题", "lang": "语言", "date": "日期格式", "themes": { "light": "浅色", "dark": "深色", "auto": "系统" }, "dateSamples": { "korean": "2024年1月15日", "international": "15/01/2024", "american": "01/15/2024" } },
+    "themes": { "nature": "自然", "adventure": "冒险", "fantasy": "奇幻", "daily": "日常", "memory": "回忆" },
+    "save": { "saving": "保存中...", "submit": "保存资料" },
+    "security": { "title": "修改密码", "desc": "为安全起见请定期修改密码", "current": "当前密码", "currentPlaceholder": "当前密码", "new": "新密码", "newPlaceholder": "新密码", "confirm": "确认新密码", "confirmPlaceholder": "确认新密码", "saving": "修改中...", "submit": "修改密码" },
+    "achievements": { "mine": { "title": "已获得的徽章", "desc": "查看已达成的成就", "empty": "尚无徽章。" }, "all": { "title": "全部徽章", "desc": "所有可获得的徽章" } },
+    "stats": { "title": "统计更新", "desc": "基于当前统计检查新徽章", "totalDreams": "总梦数", "lucidDreams": "清醒梦", "streak": "连续记录", "badges": "徽章", "checkBadges": "检查徽章" },
+    "updateSuccess": "资料已更新。",
+    "updateFailed": "资料更新失败。",
+    "imageUploadSuccess": "头像已更新。",
+    "imageUploadFailed": "图片上传失败。",
+    "passwordMismatch": "新密码不一致。",
+    "passwordChangeSuccess": "密码已修改。",
+    "passwordChangeFailed": "修改密码失败。",
+    "newBadge": "获得新徽章！{{badges}}"
+  },
+  "featureCards": {
+    "newEntry": { "title": "写新的梦日记", "desc": "记录今天的梦" },
+    "viewDreams": { "title": "查看梦日记", "desc": "回顾以往的梦" },
+    "dejavu": { "title": "似曾相识查找器", "desc": "寻找梦的模式" },
+    "visualize": { "title": "梦境可视化", "desc": "重新描绘你的梦" }
+  },
+  "home.widgets": {
+    "statsTitle": "梦日记统计",
+    "totalDreams": "总梦数",
+    "thisMonth": "本月",
+    "lucidDreams": "清醒梦",
+    "streak": "连续记录",
+    "monthGoal": "本月目标",
+    "countSuffix": "个",
+    "daySuffix": "天",
+    "todayInfo": "今日信息",
+    "now": "当前时间",
+    "moon": "今日月相",
+    "frequentEmotion": "常见情绪",
+    "aiAvailable": "可AI分析的梦",
+    "todayTip": "今日梦境提示",
+    "nextTip": "查看新的提示"
+  }
+  ,
+  "home": {
+    "title": "我的梦日记",
+    "aiTitle": "今日AI梦境解读",
+    "aiDesc": "AI分析你最近的梦境，并提供今天的模式与解读。",
+    "aiCta": "查看AI解读",
+    "newEntry": "新建",
+    "recentDreams": "最近的梦",
+    "viewAll": "查看全部",
+    "noDreams": "还没有梦境记录。",
+    "goWrite": "去记录梦境",
+    "aiEnabled": "AI推荐已启用",
+    "widgets": {
+      "statsTitle": "梦日记统计",
+      "totalDreams": "总梦数",
+      "thisMonth": "本月",
+      "lucidDreams": "清醒梦",
+      "streak": "连续记录",
+      "monthGoal": "本月目标",
+      "countSuffix": "个",
+      "daySuffix": "天",
+      "todayInfo": "今日信息",
+      "now": "当前时间",
+      "moon": "今日月相",
+      "frequentEmotion": "常见情绪",
+      "aiAvailable": "可AI分析的梦",
+      "todayTip": "今日梦境提示",
+      "nextTip": "查看新的提示"
+    },
+    "tips": {
+      "tip1": "为更清晰地记住梦境，醒来后立即记录。",
+      "tip2": "为了清醒梦，白天多问自己‘我现在在做梦吗？’",
+      "tip3": "写梦日记时包含情绪、颜色和声音等细节。",
+      "tip4": "冥想和规律作息有助于提升梦的质量。",
+      "tip5": "在梦中看手的练习有助于清醒梦。",
+      "related": {
+        "lucid": "经常做清醒梦的话，可练习梦中的现实检验。",
+        "fear": "如果做了可怕的梦，记录下来并整理情绪。",
+        "family": "涉及家人的梦可能传达关系方面的信息。"
+      }
+    }
+  }
+  ,
+  "aiHelper": {
+    "welcome": "你好！关于记录、解读或可视化梦境，尽管问我。",
+    "open": "打开AI助手",
+    "title": "AI 助手",
+    "placeholder": "向AI提问...",
+    "send": "发送"
+  }
+  ,
+  "notice": {
+    "open": "打开通知",
+    "title": "通知",
+    "items": {
+      "remindRecord": "今天记下你的梦境吧！",
+      "newCommunity": "社区有新的帖子。",
+      "aiUpdated": "AI 助手已更新。"
+    },
+    "time": {
+      "justNow": "刚刚",
+      "oneHourAgo": "1 小时前",
+      "yesterday": "昨天"
+    }
+  }
+  ,
+  "write": {
+    "tabs": { "basic": "基本信息", "details": "详细", "media": "媒体", "ai": "AI帮助" },
+    "basic": { "title": "基本信息", "desc": "填写梦境的基本信息", "editTitle": "编辑基本信息", "editDesc": "更新所选梦境信息" },
+    "fields": {
+      "title": { "label": "标题 *", "placeholder": "例如：在天空飞翔" },
+      "date": { "label": "做梦日期" },
+      "content": { "label": "内容 *", "placeholder": "请详细描述你的梦境..." }
+    },
+    "voice": { "start": "语音输入", "stop": "停止语音", "listening": "语音识别中..." },
+    "details": {
+      "title": "梦境详情",
+      "desc": "记录特征与感受",
+      "emotion": "主要情绪",
+      "dreamType": "梦境类型",
+      "dreamTypePlaceholder": "选择梦境类型",
+      "vividness": "清晰度",
+      "vividLow": "模糊",
+      "vividHigh": "非常清晰",
+      "current": "当前",
+      "lucid": "清醒梦",
+      "lucidHint": "你是否意识到自己在做梦？",
+      "sleepQuality": "睡眠质量",
+      "sleepQualityPlaceholder": "选择睡眠质量"
+    },
+    "tags": {
+      "title": "标签",
+      "desc": "添加与梦境相关的关键词",
+      "placeholder": "输入标签（如：飞行、大海、家人）",
+      "add": "添加",
+      "suggested": "推荐标签"
+    },
+    "media": {
+      "title": "上传图片",
+      "desc": "上传与梦境相关的图片或插图",
+      "cta": "点击上传图片",
+      "hint": "PNG/JPG/GIF（最大10MB）",
+      "uploadedAlt": "已上传的图片"
+    },
+    "ai": {
+      "title": "AI写作助手",
+      "desc": "AI帮助你更好地记录",
+      "help": "获取AI帮助",
+      "suggest": "获取AI建议",
+      "emotion": "情绪分析",
+      "analyzing": "AI分析中...",
+      "suggestions": "AI建议"
+    },
+    "sidebar": {
+      "progress": "写作进度",
+      "title": "标题",
+      "content": "内容",
+      "emotion": "情绪",
+      "dreamType": "梦境类型",
+      "tags": "标签",
+      "high": "完成度很高！",
+      "tips": "写作提示"
+    },
+    "save": { "saving": "保存中...", "submit": "保存", "draft": "保存草稿" },
+    "content": { "charCount": "{{count}} 字" }
+  }
+  ,
+  "dreams": {
+    "tabs": { "search": "搜索", "filter": "筛选", "tags": "标签" },
+    "search": { "placeholder": "按标题、内容、标签搜索..." },
+    "filters": {
+      "emotion": "情绪",
+      "dreamType": "梦境类型",
+      "byTags": "按标签筛选",
+      "selectedTags": "已选标签:",
+      "clear": "全部清除"
+    },
+    "recent": { "title": "最近的梦日记", "empty": "暂无最近记录。" },
+    "summary": { "totalPrefix": "共", "totalSuffix": "条梦境", "reset": "重置筛选" },
+    "options": { "sort": { "date": "按日期", "title": "按标题", "vividness": "按清晰度", "emotion": "按情绪" } },
+    "calendar": { "title": "梦日记日历", "desc": "一目了然查看记录日期" },
+    "empty": {
+      "title": "没有梦境",
+      "filtered": "没有符合条件的梦境。",
+      "noData": "还没有记录。创建你的第一条梦境吧！",
+      "cta": "创建第一条记录"
+    }
+  }
+  ,
+  "stats": {
+    "loading": "正在计算统计...",
+    "overview": { "total": "总梦数", "thisMonth": "本月", "streak": "连续记录", "lucid": "清醒梦" },
+    "emotions": { "title": "情绪分布", "desc": "梦中情绪的分布" },
+    "types": { "title": "梦境类型分布", "desc": "按类型分布" },
+    "tags": { "title": "常用标签", "desc": "最常使用的标签" },
+    "more": { "title": "更多统计", "avgVivid": "平均清晰度", "thisWeek": "本周记录", "lucidRate": "清醒梦比例", "monthAvg": "月平均" },
+    "monthly": { "title": "月度趋势", "desc": "最近6个月的趋势" },
+    "cooccur": { "title": "高频标签共现", "desc": "前10个共现标签组合" },
+    "repeat": { "title": "重复出现的梦境模式", "desc": "最相似的标题前5组", "empty": "相似标题组合不足", "similarity": "相似度" }
+  }
+  ,
+  "admin": {
+    "layout": { "title": "管理员控制台" },
+    "home": { "moderation": "举报/隐藏 管理", "users": "用户管理" },
+    "login": { "title": "管理员登录", "tokenPlaceholder": "管理员令牌", "submit": "登录" },
+    "common": { "done": "已处理", "loading": "加载中...", "error": "错误", "fetchFailed": "获取失败" },
+    "users": {
+      "title": "用户管理",
+      "desc": "封禁/静音 管理",
+      "noData": "用户信息不足",
+      "mute": "静音",
+      "unmute": "取消静音",
+      "block": "封禁",
+      "unblock": "取消封禁"
+    },
+    "moderation": {
+      "title": "举报/隐藏 管理",
+      "desc": "被举报的帖子列表",
+      "empty": "暂无被举报的帖子",
+      "reports": "举报",
+      "hidden": "隐藏",
+      "unhide": "取消隐藏",
+      "hide": "隐藏处理"
+    }
+  }
+  ,
+  "dreamDetail": {
+    "header": { "lucid": "清醒梦", "comment": "评论", "visualize": "可视化" },
+    "tabs": { "content": "内容", "analysis": "AI 分析", "media": "媒体" },
+    "content": { "title": "内容" },
+    "ai": { "title": "AI 梦境解读", "desc": "AI 对你的梦境分析与解读", "empty": "尚无 AI 解读", "generating": "生成中...", "generate": "生成 AI 解读" },
+    "media": { "title": "相关图片", "empty": "暂无上传图片", "visualizeCta": "用 AI 可视化" },
+    "info": { "title": "梦境信息", "emotion": "情绪", "dreamType": "梦境类型", "vividness": "清晰度", "sleepQuality": "睡眠质量", "createdAt": "创建时间", "updatedAt": "更新时间" },
+    "tags": { "title": "标签" },
+    "quick": { "title": "快速操作", "edit": "编辑梦境", "share": "分享梦境", "export": "导出为文本", "visualize": "AI 可视化" },
+    "share": { "copied": "链接已复制到剪贴板！" },
+    "export": {
+      "titleLabel": "标题",
+      "dateLabel": "日期",
+      "emotionLabel": "情绪",
+      "vividnessLabel": "清晰度",
+      "lucidLabel": "清醒梦",
+      "contentLabel": "内容",
+      "tagsLabel": "标签"
+    }
+  }
+  ,
+  "emotions": {
+    "joy": "喜悦",
+    "peace": "平静",
+    "fear": "恐惧",
+    "sadness": "悲伤",
+    "excitement": "兴奋",
+    "wonder": "惊奇",
+    "all": "所有情绪"
+  }
+  ,
+  "dreamTypes": {
+    "normal": "普通梦",
+    "nightmare": "噩梦",
+    "lucid": "清醒梦",
+    "recurring": "重复梦",
+    "prophetic": "预知梦",
+    "healing": "治愈梦",
+    "all": "所有类型"
+  }
+  ,
+  "sleepQualities": {
+    "excellent": "非常好",
+    "good": "好",
+    "fair": "一般",
+    "poor": "差",
+    "terrible": "很差"
+  }
 }

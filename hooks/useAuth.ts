@@ -10,7 +10,7 @@ import { onAuthStateChanged } from "firebase/auth"
 const DEMO_USER = {
   uid: "demo-user-123",
   email: "demo@example.com",
-  displayName: "데모 사용자",
+  displayName: "Demo User",
   photoURL: null,
   emailVerified: true,
   metadata: {
@@ -34,7 +34,7 @@ export function useAuth() {
 
     if (!isFirebaseConfigured) {
       // 데모 모드: Firebase 없이 작동
-      console.log("데모 모드로 실행 중...")
+      console.log("Running in demo mode...")
       setTimeout(() => {
         setUser(DEMO_USER)
         setLoading(false)
@@ -64,7 +64,7 @@ export function useAuth() {
       )
     } catch (error) {
       console.error("Firebase auth initialization error:", error)
-      setError("Firebase 초기화 실패")
+      setError("Firebase init failed")
 
       // Firebase 초기화 실패 시 데모 모드로 전환
       setTimeout(() => {

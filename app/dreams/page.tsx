@@ -37,13 +37,15 @@ import {
   List,
 } from "lucide-react"
 import { format } from "date-fns"
-import { ko } from "date-fns/locale"
+import { enUS, ko, ja, zhCN } from "date-fns/locale"
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/hooks/useAuth"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
+import { useTranslation } from 'react-i18next'
 
 export default function DreamsListPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { dreams, loading } = useDreams()
   const { user } = useAuth()
@@ -53,32 +55,42 @@ export default function DreamsListPage() {
   const [sortBy, setSortBy] = useState("date")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const getDateFnsLocale = () => {
+    const lng = (typeof window !== 'undefined' ? (localStorage.getItem('lang') || 'ko') : 'ko') as string
+    switch (lng) {
+      case 'en': return enUS
+      case 'ja': return ja
+      case 'zh': return zhCN
+      default: return ko
+    }
+  }
+  const dateLocale = getDateFnsLocale()
 
   const emotions = [
-    { value: "all", label: "모든 감정" },
-    { value: "joy", label: "기쁨" },
-    { value: "peace", label: "평온" },
-    { value: "fear", label: "두려움" },
-    { value: "sadness", label: "슬픔" },
-    { value: "excitement", label: "흥분" },
-    { value: "wonder", label: "경이" },
+    { value: "all", label: t('emotions.all', '모든 감정') },
+    { value: "joy", label: t('emotions.joy', '기쁨') },
+    { value: "peace", label: t('emotions.peace', '평온') },
+    { value: "fear", label: t('emotions.fear', '두려움') },
+    { value: "sadness", label: t('emotions.sadness', '슬픔') },
+    { value: "excitement", label: t('emotions.excitement', '흥분') },
+    { value: "wonder", label: t('emotions.wonder', '경이') },
   ]
 
   const dreamTypes = [
-    { value: "all", label: "모든 유형" },
-    { value: "normal", label: "일반적인 꿈" },
-    { value: "nightmare", label: "악몽" },
-    { value: "lucid", label: "루시드 드림" },
-    { value: "recurring", label: "반복되는 꿈" },
-    { value: "prophetic", label: "예지몽" },
-    { value: "healing", label: "치유의 꿈" },
+    { value: "all", label: t('dreamTypes.all', '모든 유형') },
+    { value: "normal", label: t('dreamTypes.normal', '일반적인 꿈') },
+    { value: "nightmare", label: t('dreamTypes.nightmare', '악몽') },
+    { value: "lucid", label: t('dreamTypes.lucid', '루시드 드림') },
+    { value: "recurring", label: t('dreamTypes.recurring', '반복되는 꿈') },
+    { value: "prophetic", label: t('dreamTypes.prophetic', '예지몽') },
+    { value: "healing", label: t('dreamTypes.healing', '치유의 꿈') },
   ]
 
   const sortOptions = [
-    { value: "date", label: "날짜순" },
-    { value: "title", label: "제목순" },
-    { value: "vividness", label: "생생함순" },
-    { value: "emotion", label: "감정순" },
+    { value: "date", label: t('dreams.options.sort.date', '날짜순') },
+    { value: "title", label: t('dreams.options.sort.title', '제목순') },
+    { value: "vividness", label: t('dreams.options.sort.vividness', '생생함순') },
+    { value: "emotion", label: t('dreams.options.sort.emotion', '감정순') },
   ]
 
   // 모든 태그 추출
@@ -130,7 +142,7 @@ export default function DreamsListPage() {
       <div className="min-h-screen dreamy-bg flex items-center justify-center">
         <div className="text-center">
           <Moon className="h-12 w-12 text-indigo-600 animate-pulse mx-auto mb-4 float-animation" />
-          <p className="text-gray-600">꿈들을 불러오는 중...</p>
+          <p className="text-gray-600">{t('dreams.loading', '꿈들을 불러오는 중...')}</p>
         </div>
       </div>
     )
@@ -144,9 +156,9 @@ export default function DreamsListPage() {
           <CardContent className="p-6">
             <Tabs defaultValue="search" className="space-y-4">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="search">검색</TabsTrigger>
-                <TabsTrigger value="filter">필터</TabsTrigger>
-                <TabsTrigger value="tags">태그</TabsTrigger>
+                <TabsTrigger value="search">{t('dreams.tabs.search', '검색')}</TabsTrigger>
+                <TabsTrigger value="filter">{t('dreams.tabs.filter', '필터')}</TabsTrigger>
+                <TabsTrigger value="tags">{t('dreams.tabs.tags', '태그')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="search" className="space-y-4">
@@ -154,7 +166,7 @@ export default function DreamsListPage() {
                   <div className="flex-1 relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
-                      placeholder="꿈 제목, 내용, 태그로 검색..."
+                      placeholder={t('dreams.search.placeholder', '꿈 제목, 내용, 태그로 검색...')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -179,7 +191,7 @@ export default function DreamsListPage() {
               <TabsContent value="filter" className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">감정</label>
+                    <label className="text-sm font-medium">{t('dreams.filters.emotion', '감정')}</label>
                     <Select value={filterEmotion} onValueChange={setFilterEmotion}>
                       <SelectTrigger>
                         <SelectValue />
@@ -194,7 +206,7 @@ export default function DreamsListPage() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">꿈 유형</label>
+                    <label className="text-sm font-medium">{t('dreams.filters.dreamType', '꿈 유형')}</label>
                     <Select value={filterType} onValueChange={setFilterType}>
                       <SelectTrigger>
                         <SelectValue />
@@ -213,7 +225,7 @@ export default function DreamsListPage() {
 
               <TabsContent value="tags" className="space-y-4">
                 <div className="space-y-3">
-                  <label className="text-sm font-medium">태그로 필터링</label>
+                  <label className="text-sm font-medium">{t('dreams.filters.byTags', '태그로 필터링')}</label>
                   <div className="flex flex-wrap gap-2">
                     {allTags.slice(0, 20).map((tag) => (
                       <Badge
@@ -228,14 +240,14 @@ export default function DreamsListPage() {
                   </div>
                   {selectedTags.length > 0 && (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">선택된 태그:</span>
+                      <span className="text-sm text-gray-600">{t('dreams.filters.selectedTags', '선택된 태그:')}</span>
                       {selectedTags.map((tag) => (
                         <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => toggleTag(tag)}>
                           {tag} ×
                         </Badge>
                       ))}
                       <Button variant="ghost" size="sm" onClick={() => setSelectedTags([])}>
-                        모두 해제
+                        {t('dreams.filters.clear', '모두 해제')}
                       </Button>
                     </div>
                   )}
@@ -252,9 +264,9 @@ export default function DreamsListPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-blue-600" />
-                꿈 일기 달력
+                {t('dreams.calendar.title', '꿈 일기 달력')}
               </CardTitle>
-              <CardDescription>꿈을 기록한 날짜를 한눈에 확인하세요</CardDescription>
+              <CardDescription>{t('dreams.calendar.desc', '꿈을 기록한 날짜를 한눈에 확인하세요')}</CardDescription>
             </CardHeader>
             <CardContent>
               <CalendarComponent
@@ -269,18 +281,18 @@ export default function DreamsListPage() {
           {/* 최근 꿈 일기 리스트 - 오른쪽 */}
           <Card className="glass-effect dark:bg-gray-800/70 w-full">
             <CardHeader>
-              <CardTitle>최근 꿈 일기</CardTitle>
+              <CardTitle>{t('dreams.recent.title', '최근 꿈 일기')}</CardTitle>
             </CardHeader>
             <CardContent>
               {filteredDreams.length === 0 ? (
-                <div className="text-gray-400 text-sm py-8 text-center">최근 꿈 일기가 없습니다.</div>
+                <div className="text-gray-400 text-sm py-8 text-center">{t('dreams.recent.empty', '최근 꿈 일기가 없습니다.')}</div>
               ) : (
                 <ul className="divide-y divide-gray-100">
                   {filteredDreams.slice(0, 5).map((dream) => (
                     <li key={dream.id} className="py-3 cursor-pointer hover:bg-purple-50 px-2 rounded transition" onClick={() => router.push(`/dreams/${dream.id}`)}>
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-indigo-700 line-clamp-1">{dream.title}</span>
-                        <span className="text-xs text-gray-400 ml-2">{format(new Date(dream.date), "yyyy.MM.dd", { locale: ko })}</span>
+                         <span className="text-xs text-gray-400 ml-2">{format(new Date(dream.date), "yyyy.MM.dd", { locale: dateLocale })}</span>
                       </div>
                       <div className="text-xs text-gray-600 line-clamp-2 mt-0.5">{dream.content}</div>
                     </li>
@@ -294,11 +306,11 @@ export default function DreamsListPage() {
         {/* 결과 요약 */}
         <div className="mb-6 flex items-center justify-between">
           <p className="text-gray-600">
-            총{" "}
+            {t('dreams.summary.totalPrefix', '총')}{" "}
             <span className="font-semibold text-purple-600">
               {filteredDreams.length}
             </span>
-            개의 꿈을 찾았습니다
+            {t('dreams.summary.totalSuffix', '개의 꿈을 찾았습니다')}
           </p>
           {(searchTerm || filterEmotion !== "all" || filterType !== "all" || selectedTags.length > 0) && (
             <Button
@@ -312,7 +324,7 @@ export default function DreamsListPage() {
               }}
             >
               <Filter className="h-4 w-4 mr-1" />
-              필터 초기화
+              {t('dreams.summary.reset', '필터 초기화')}
             </Button>
           )}
         </div>
@@ -322,14 +334,14 @@ export default function DreamsListPage() {
           <Card className="text-center py-12 glass-effect">
             <CardContent>
               <Moon className="h-16 w-16 text-gray-300 mx-auto mb-4 float-animation" />
-              <h3 className="text-lg font-semibold text-gray-600 mb-2">꿈이 없습니다</h3>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">{t('dreams.empty.title', '꿈이 없습니다')}</h3>
               <p className="text-gray-500 mb-4">
                 {searchTerm || filterEmotion !== "all" || filterType !== "all" || selectedTags.length > 0
-                  ? "검색 조건에 맞는 꿈을 찾을 수 없습니다."
-                  : "아직 기록된 꿈이 없습니다. 첫 번째 꿈을 기록해보세요!"}
+                  ? t('dreams.empty.filtered', '검색 조건에 맞는 꿈을 찾을 수 없습니다.')
+                  : t('dreams.empty.noData', '아직 기록된 꿈이 없습니다. 첫 번째 꿈을 기록해보세요!')}
               </p>
               <Button onClick={() => router.push("/write")}>
-                <Plus className="h-4 w-4 mr-2" />첫 꿈 기록하기
+                <Plus className="h-4 w-4 mr-2" />{t('dreams.empty.cta', '첫 꿈 기록하기')}
               </Button>
             </CardContent>
           </Card>
@@ -355,7 +367,7 @@ export default function DreamsListPage() {
                       </div>
                       <CardDescription className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        {format(new Date(dream.date), "PPP", { locale: ko })}
+                        {format(new Date(dream.date), "PPP", { locale: dateLocale })}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -397,7 +409,7 @@ export default function DreamsListPage() {
                           {dream.images.length > 0 && <ImageIcon className="h-4 w-4 text-gray-400" />}
                           {dream.isLucid && <Sparkles className="h-4 w-4 text-yellow-500" />}
                           <span className="text-sm text-gray-500">
-                            {format(new Date(dream.date), "MM/dd", { locale: ko })}
+                            {format(new Date(dream.date), "MM/dd", { locale: dateLocale })}
                           </span>
                         </div>
                       </div>

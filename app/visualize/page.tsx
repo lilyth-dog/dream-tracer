@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Palette, ArrowLeft, Wand2, Download, Share2, Sparkles, ImageIcon, Loader2, Star } from "lucide-react"
 import Link from "next/link"
+import { useTranslation } from 'react-i18next'
 
 interface GeneratedImage {
   id: string
@@ -25,6 +26,7 @@ interface GeneratedImage {
 
 export default function VisualizePage() {
   const { dreams } = useDreams()
+  const { t } = useTranslation()
   const [selectedDream, setSelectedDream] = useState("")
   const [customPrompt, setCustomPrompt] = useState("")
   const [selectedStyle, setSelectedStyle] = useState("realistic")
@@ -33,12 +35,12 @@ export default function VisualizePage() {
   const [progress, setProgress] = useState(0)
 
   const imageStyles = [
-    { value: "realistic", label: "사실적", description: "실제 사진처럼 생생한 이미지" },
-    { value: "artistic", label: "예술적", description: "회화 같은 아름다운 스타일" },
-    { value: "dreamy", label: "몽환적", description: "꿈같이 부드럽고 신비로운 느낌" },
-    { value: "fantasy", label: "판타지", description: "마법적이고 환상적인 세계" },
-    { value: "minimalist", label: "미니멀", description: "간결하고 깔끔한 스타일" },
-    { value: "surreal", label: "초현실주의", description: "달리 같은 초현실적 표현" },
+    { value: "realistic", label: t('visualize.styles.realistic', '사실적'), description: t('visualize.styles.realisticDesc', '실제 사진처럼 생생한 이미지') },
+    { value: "artistic", label: t('visualize.styles.artistic', '예술적'), description: t('visualize.styles.artisticDesc', '회화 같은 아름다운 스타일') },
+    { value: "dreamy", label: t('visualize.styles.dreamy', '몽환적'), description: t('visualize.styles.dreamyDesc', '꿈같이 부드럽고 신비로운 느낌') },
+    { value: "fantasy", label: t('visualize.styles.fantasy', '판타지'), description: t('visualize.styles.fantasyDesc', '마법적이고 환상적인 세계') },
+    { value: "minimalist", label: t('visualize.styles.minimalist', '미니멀'), description: t('visualize.styles.minimalistDesc', '간결하고 깔끔한 스타일') },
+    { value: "surreal", label: t('visualize.styles.surreal', '초현실주의'), description: t('visualize.styles.surrealDesc', '달리 같은 초현실적 표현') },
   ]
 
   // 샘플 생성된 이미지들
@@ -67,7 +69,7 @@ export default function VisualizePage() {
 
   const generateImage = async () => {
     if (!selectedDream && !customPrompt) {
-      alert("꿈을 선택하거나 직접 설명을 입력해주세요.")
+      alert(t('visualize.input.required', '꿈을 선택하거나 직접 설명을 입력해주세요.'))
       return
     }
 
@@ -105,10 +107,10 @@ export default function VisualizePage() {
         createdAt: new Date(),
       }
       setGeneratedImages((prev) => [newImage, ...prev])
-      alert("이미지가 성공적으로 생성되었습니다!")
+      alert(t('visualize.toast.success', '이미지가 성공적으로 생성되었습니다!'))
     } catch (error) {
       console.error("Image generation error:", error)
-      alert("이미지 생성에 실패했습니다.")
+      alert(t('visualize.toast.fail', '이미지 생성에 실패했습니다.'))
     } finally {
       setGenerating(false)
       setProgress(0)
@@ -117,12 +119,12 @@ export default function VisualizePage() {
 
   const downloadImage = (imageUrl: string, title: string) => {
     // 실제 구현에서는 이미지 다운로드 기능
-    alert(`"${title}" 이미지 다운로드 기능이 곧 제공됩니다.`)
+    alert(t('visualize.toast.download', '이미지 다운로드 기능이 곧 제공됩니다.'))
   }
 
   const shareImage = (image: GeneratedImage) => {
     // 실제 구현에서는 소셜 공유 기능
-    alert(`"${image.dreamTitle}" 이미지 공유 기능이 곧 제공됩니다.`)
+    alert(t('visualize.toast.share', '이미지 공유 기능이 곧 제공됩니다.'))
   }
 
   return (
@@ -134,19 +136,16 @@ export default function VisualizePage() {
             <div className="flex items-start gap-4">
               <Wand2 className="h-12 w-12 text-pink-600 flex-shrink-0" />
               <div>
-                <h2 className="text-xl font-bold text-pink-800 mb-2">AI 꿈 시각화</h2>
-                <p className="text-pink-700 mb-4">
-                  인공지능이 당신의 꿈을 아름다운 이미지로 변환해드립니다. 꿈 속 장면을 다양한 스타일로 시각화하여 꿈의
-                  기억을 더욱 생생하게 보존하세요.
-                </p>
+                <h2 className="text-xl font-bold text-pink-800 mb-2">{t('visualize.title', 'AI 꿈 시각화')}</h2>
+                <p className="text-pink-700 mb-4">{t('visualize.desc', '인공지능이 당신의 꿈을 아름다운 이미지로 변환해드립니다. 다양한 스타일로 시각화하여 더 생생하게 보존하세요.')}</p>
                 <div className="flex items-center gap-4 text-sm text-pink-600">
                   <div className="flex items-center gap-1">
                     <ImageIcon className="h-4 w-4" />
-                    <span>생성 가능한 꿈: {dreams.length}개</span>
+                    <span>{t('visualize.stats.available', '생성 가능한 꿈')}: {dreams.length}{t('home.widgets.countSuffix', '개')}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Sparkles className="h-4 w-4" />
-                    <span>생성된 이미지: {generatedImages.length + sampleImages.length}개</span>
+                    <span>{t('visualize.stats.generated', '생성된 이미지')}: {generatedImages.length + sampleImages.length}{t('home.widgets.countSuffix', '개')}</span>
                   </div>
                 </div>
               </div>
@@ -158,20 +157,20 @@ export default function VisualizePage() {
           {/* 이미지 생성 설정 */}
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Wand2 className="h-5 w-5 text-purple-600" />
-                  이미지 생성
-                </CardTitle>
-                <CardDescription>꿈을 선택하거나 직접 설명을 입력하세요</CardDescription>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Wand2 className="h-5 w-5 text-purple-600" />
+                    {t('visualize.panel.title', '이미지 생성')}
+                  </CardTitle>
+                  <CardDescription>{t('visualize.panel.desc', '꿈을 선택하거나 직접 설명을 입력하세요')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* 꿈 선택 */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">꿈 선택</label>
+                  <label className="text-sm font-medium">{t('visualize.form.selectDream', '꿈 선택')}</label>
                   <Select value={selectedDream} onValueChange={setSelectedDream}>
                     <SelectTrigger>
-                      <SelectValue placeholder="시각화할 꿈을 선택하세요" />
+                      <SelectValue placeholder={t('visualize.form.selectPlaceholder', '시각화할 꿈을 선택하세요')} />
                     </SelectTrigger>
                     <SelectContent>
                       {dreams.map((dream) => (
@@ -193,9 +192,9 @@ export default function VisualizePage() {
 
                 {/* 커스텀 프롬프트 */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">또는 직접 설명 입력</label>
+                  <label className="text-sm font-medium">{t('visualize.form.custom', '또는 직접 설명 입력')}</label>
                   <Textarea
-                    placeholder="꿈의 장면을 자세히 설명해주세요..."
+                    placeholder={t('visualize.form.customPlaceholder', '꿈의 장면을 자세히 설명해주세요...')}
                     value={customPrompt}
                     onChange={(e) => setCustomPrompt(e.target.value)}
                     className="min-h-[100px]"
@@ -204,7 +203,7 @@ export default function VisualizePage() {
 
                 {/* 스타일 선택 */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">이미지 스타일</label>
+                  <label className="text-sm font-medium">{t('visualize.form.style', '이미지 스타일')}</label>
                   <Select value={selectedStyle} onValueChange={setSelectedStyle}>
                     <SelectTrigger>
                       <SelectValue />
@@ -214,7 +213,7 @@ export default function VisualizePage() {
                         <SelectItem key={style.value} value={style.value}>
                           <div>
                             <div className="font-medium">{style.label}</div>
-                            <div className="text-xs text-gray-500">{style.description}</div>
+            <div className="text-xs text-gray-500">{style.description}</div>
                           </div>
                         </SelectItem>
                       ))}
@@ -231,12 +230,12 @@ export default function VisualizePage() {
                   {generating ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      생성 중...
+                      {t('visualize.generating', '생성 중...')}
                     </>
                   ) : (
                     <>
                       <Wand2 className="h-4 w-4 mr-2" />
-                      이미지 생성
+                      {t('visualize.generate', '이미지 생성')}
                     </>
                   )}
                 </Button>
@@ -245,7 +244,7 @@ export default function VisualizePage() {
                 {generating && (
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>생성 진행률</span>
+                      <span>{t('visualize.progress.title', '생성 진행률')}</span>
                       <span>{progress}%</span>
                     </div>
                     <Progress value={progress} className="h-2" />
@@ -258,9 +257,9 @@ export default function VisualizePage() {
           {/* 생성된 이미지 갤러리 */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="generated" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="generated">생성된 이미지</TabsTrigger>
-                <TabsTrigger value="gallery">갤러리</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="generated">{t('visualize.tabs.generated', '생성된 이미지')}</TabsTrigger>
+              <TabsTrigger value="gallery">{t('visualize.tabs.gallery', '갤러리')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="generated" className="space-y-6">
@@ -268,8 +267,8 @@ export default function VisualizePage() {
                   <Card className="text-center py-12">
                     <CardContent>
                       <ImageIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-600 mb-2">생성된 이미지가 없습니다</h3>
-                      <p className="text-gray-500 mb-4">꿈을 선택하고 이미지를 생성해보세요!</p>
+                      <h3 className="text-lg font-semibold text-gray-600 mb-2">{t('visualize.empty.title', '생성된 이미지가 없습니다')}</h3>
+                      <p className="text-gray-500 mb-4">{t('visualize.empty.hint', '꿈을 선택하고 이미지를 생성해보세요!')}</p>
                     </CardContent>
                   </Card>
                 )}
@@ -328,7 +327,7 @@ export default function VisualizePage() {
                         <div className="absolute top-2 left-2">
                           <Badge className="bg-yellow-500 text-white">
                             <Star className="h-3 w-3 mr-1" />
-                            샘플
+                            {t('visualize.sample', '샘플')}
                           </Badge>
                         </div>
                         <div className="absolute top-2 right-2 flex gap-2">

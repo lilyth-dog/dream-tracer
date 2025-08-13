@@ -10,5 +10,362 @@
   "dreamList": "꿈 목록",
   "community": "커뮤니티",
   "settings": "설정",
-  "language": "언어"
+  "language": "언어",
+  "app": { "title": "드림트레이서" },
+  "nav": {
+    "home": "홈",
+    "write": "꿈 기록하기",
+    "dreamList": "꿈 목록",
+    "stats": "통계",
+    "community": "커뮤니티",
+    "dejavu": "데자뷰",
+    "visualize": "시각화",
+    "profile": "프로필"
+  },
+  "home": { "title": "나의 꿈 일기장", "aiTitle": "오늘의 AI 꿈 해석", "aiDesc": "AI가 최근 꿈 기록을 분석해 오늘의 꿈 패턴과 해석을 추천합니다.", "aiCta": "AI 해석 보기" },
+  "common": { "loading": "로딩 중...", "submitting": "등록 중...", "more": "더 보기", "logout": "로그아웃", "or": "또는", "confirmDelete": "정말 삭제하시겠습니까?", "delete": "삭제", "deleteFailed": "삭제에 실패했습니다.", "empty": "없음", "yes": "예", "no": "아니오" },
+  "settings": {
+    "logoutConfirm": "정말 로그아웃하시겠습니까?",
+    "logoutFailed": "로그아웃에 실패했습니다."
+  },
+
+  "auth": {
+    "login": { "title": "로그인", "desc": "꿈의 세계로 들어가세요", "loading": "로그인 중...", "submit": "로그인", "toRegister": "회원가입", "forgot": "비밀번호 찾기" },
+    "fields": { "email": "이메일", "password": "비밀번호" },
+    "demo": { "title": "데모 모드", "desc": "Firebase 환경변수가 설정되지 않아 데모 모드로 실행됩니다.", "autoLogin": "데모 모드에서는 자동으로 로그인됩니다.", "info": "데모 모드 안내", "start": "데모 모드로 시작", "resetNotSupported": "데모 모드에서는 비밀번호 찾기가 지원되지 않습니다.", "registerNotSupported": "데모 모드에서는 회원가입이 지원되지 않습니다." },
+    "error": { "loginFailed": "로그인에 실패했습니다.", "userNotFound": "등록되지 않은 이메일입니다.", "wrongPassword": "비밀번호가 올바르지 않습니다.", "invalidEmail": "올바르지 않은 이메일 형식입니다.", "googleFailed": "구글 로그인에 실패했습니다.", "canceled": "로그인이 취소되었습니다.", "popupBlocked": "팝업이 차단되었습니다. 팝업을 허용해주세요." },
+    "register": { "submit": "회원가입", "submitting": "회원가입 중...", "backToLogin": "로그인으로 돌아가기", "success": "회원가입이 완료되었습니다. 로그인 해주세요.", "failed": "회원가입에 실패했습니다: " },
+    "reset": { "sending": "이메일 발송 중...", "submit": "비밀번호 재설정 메일 발송", "sent": "비밀번호 재설정 이메일이 발송되었습니다.", "failed": "비밀번호 찾기에 실패했습니다: " },
+    "google": "구글로 로그인"
+  },
+  "app": { "title": "드림트레이서" },
+  "community": {
+    "shareTitle": "꿈 공유하기",
+    "sharePlaceholder": "꿈을 자유롭게 공유해보세요!",
+    "publicProfile": "공개 프로필로 작성",
+    "publicProfileShort": "공개 프로필로",
+    "commentPlaceholder": "댓글 달기",
+    "submit": "등록",
+    "anon": "익명",
+    "report": "신고",
+    "hiddenNotice": "신고 누적으로 숨김 처리된 게시글입니다.",
+    "shareCta": "공유하기",
+    "sortRecent": "최신",
+    "sortPopular": "인기"
+  }
+  ,
+  "featureCards": {
+    "newEntry": { "title": "새 꿈 일기 작성", "desc": "오늘의 꿈을 기록해보세요" },
+    "viewDreams": { "title": "꿈 일기 보기", "desc": "지난 꿈들을 다시 살펴보세요" },
+    "dejavu": { "title": "데자뷰 파인더", "desc": "꿈의 패턴을 찾아보세요" },
+    "visualize": { "title": "꿈 시각화", "desc": "새로 꿈을 그려보세요" }
+  },
+  "home.widgets": {
+    "statsTitle": "꿈 일기 통계",
+    "totalDreams": "총 꿈 일기",
+    "thisMonth": "이번 달",
+    "lucidDreams": "루시드 드림",
+    "streak": "연속 기록",
+    "monthGoal": "이번 달 목표",
+    "countSuffix": "개",
+    "daySuffix": "일",
+    "todayInfo": "오늘의 정보",
+    "now": "현재 시간",
+    "moon": "오늘의 달",
+    "frequentEmotion": "자주 느끼는 감정",
+    "aiAvailable": "AI 분석 가능한 꿈",
+    "todayTip": "오늘의 꿈 팁",
+    "nextTip": "새로운 팁 보기"
+  }
+  ,
+  "home": {
+    "title": "나의 꿈 일기장",
+    "aiTitle": "오늘의 AI 꿈 해석",
+    "aiDesc": "AI가 최근 꿈 기록을 분석해 오늘의 꿈 패턴과 해석을 추천합니다.",
+    "aiCta": "AI 해석 보기",
+    "newEntry": "새 기록",
+    "recentDreams": "최근 꿈 일기",
+    "viewAll": "모두 보기",
+    "noDreams": "아직 꿈 일기가 없습니다.",
+    "goWrite": "꿈 기록하러 가기",
+    "aiEnabled": "AI 추천 활성화",
+    "widgets": {
+      "statsTitle": "꿈 일기 통계",
+      "totalDreams": "총 꿈 일기",
+      "thisMonth": "이번 달",
+      "lucidDreams": "루시드 드림",
+      "streak": "연속 기록",
+      "monthGoal": "이번 달 목표",
+      "countSuffix": "개",
+      "daySuffix": "일",
+      "todayInfo": "오늘의 정보",
+      "now": "현재 시간",
+      "moon": "오늘의 달",
+      "frequentEmotion": "자주 느끼는 감정",
+      "aiAvailable": "AI 분석 가능한 꿈",
+      "todayTip": "오늘의 꿈 팁",
+      "nextTip": "새로운 팁 보기"
+    },
+    "tips": {
+      "tip1": "꿈을 더 생생하게 기억하려면 잠에서 깨자마자 바로 기록하는 것이 좋습니다.",
+      "tip2": "루시드 드림을 위해 하루 종일 '지금 꿈을 꾸고 있나?'라고 자문해보세요.",
+      "tip3": "꿈 일기를 쓸 때는 감정과 색깔, 소리 등 세부사항도 함께 적어보세요.",
+      "tip4": "명상과 규칙적인 수면 패턴이 꿈의 질을 향상시킵니다.",
+      "tip5": "꿈 속에서 손을 보는 연습을 하면 루시드 드림에 도움이 됩니다.",
+      "related": {
+        "lucid": "루시드 드림을 자주 경험한다면, 꿈에서 현실 자각 연습을 해보세요.",
+        "fear": "두려운 꿈을 꿨다면, 꿈 내용을 기록하고 감정을 정리해보세요.",
+        "family": "가족이 등장하는 꿈은 관계에 대한 메시지일 수 있어요."
+      }
+    }
+  }
+  ,
+  "aiHelper": {
+    "welcome": "안녕하세요! 꿈 기록, 해석, 시각화 등 궁금한 점을 물어보세요.",
+    "open": "AI 도움말 열기",
+    "title": "AI 도우미",
+    "placeholder": "AI에게 물어보세요...",
+    "send": "전송"
+  }
+  ,
+  "notice": {
+    "open": "알림 열기",
+    "title": "알림",
+    "items": {
+      "remindRecord": "오늘 꿈을 기록해보세요!",
+      "newCommunity": "커뮤니티에 새로운 글이 올라왔어요.",
+      "aiUpdated": "AI 도움 기능이 업데이트되었습니다."
+    },
+    "time": {
+      "justNow": "방금 전",
+      "oneHourAgo": "1시간 전",
+      "yesterday": "어제"
+    }
+  }
+  ,
+  "write": {
+    "tabs": { "basic": "기본 정보", "details": "세부사항", "media": "미디어", "ai": "AI 도움" },
+    "basic": { "title": "기본 정보", "desc": "꿈의 기본적인 정보를 입력해주세요", "editTitle": "기본 정보 수정", "editDesc": "선택한 꿈의 정보를 수정하세요" },
+    "fields": {
+      "title": { "label": "꿈의 제목 *", "placeholder": "예: 하늘을 나는 꿈" },
+      "date": { "label": "꿈을 꾼 날짜" },
+      "content": { "label": "꿈의 내용 *", "placeholder": "꿈의 내용을 자세히 적어주세요. 장소, 인물, 상황, 느낌 등을 포함해서 작성하면 더 좋습니다..." }
+    },
+    "voice": { "start": "음성으로 작성", "stop": "음성 인식 중지", "listening": "음성 인식 중..." },
+    "details": {
+      "title": "꿈의 세부사항",
+      "desc": "꿈의 특성과 느낌을 기록해주세요",
+      "emotion": "주된 감정",
+      "dreamType": "꿈의 유형",
+      "dreamTypePlaceholder": "꿈의 유형을 선택해주세요",
+      "vividness": "꿈의 생생함 정도",
+      "vividLow": "흐릿함",
+      "vividHigh": "매우 생생함",
+      "current": "현재",
+      "lucid": "루시드 드림 (자각몽)",
+      "lucidHint": "꿈 속에서 꿈인 것을 알고 있었나요?",
+      "sleepQuality": "수면의 질",
+      "sleepQualityPlaceholder": "수면의 질을 선택해주세요"
+    },
+    "tags": {
+      "title": "태그",
+      "desc": "꿈과 관련된 키워드를 추가해주세요",
+      "placeholder": "태그 입력 (예: 비행, 바다, 가족)",
+      "add": "추가",
+      "suggested": "추천 태그"
+    },
+    "media": {
+      "title": "이미지 업로드",
+      "desc": "꿈과 관련된 이미지나 그림을 업로드해주세요",
+      "cta": "클릭하여 이미지를 업로드하세요",
+      "hint": "PNG, JPG, GIF 파일 지원 (최대 10MB)",
+      "uploadedAlt": "업로드된 이미지"
+    },
+    "ai": {
+      "title": "AI 작성 도우미",
+      "desc": "AI가 더 나은 꿈 일기 작성을 도와드립니다",
+      "help": "AI 도움받기",
+      "suggest": "AI 제안 받기",
+      "emotion": "감정 분석",
+      "analyzing": "AI가 분석하고 있습니다...",
+      "suggestions": "AI 제안사항"
+    },
+    "sidebar": {
+      "progress": "작성 진행도",
+      "title": "제목",
+      "content": "내용",
+      "emotion": "감정",
+      "dreamType": "꿈 유형",
+      "tags": "태그",
+      "high": "완성도가 높아요!",
+      "tips": "작성 팁"
+    },
+    "save": { "saving": "저장 중...", "submit": "저장하기", "draft": "임시저장" },
+    "content": { "charCount": "{{count}}자" }
+  }
+  ,
+  "dreams": {
+    "tabs": { "search": "검색", "filter": "필터", "tags": "태그" },
+    "search": { "placeholder": "꿈 제목, 내용, 태그로 검색..." },
+    "filters": {
+      "emotion": "감정",
+      "dreamType": "꿈 유형",
+      "byTags": "태그로 필터링",
+      "selectedTags": "선택된 태그:",
+      "clear": "모두 해제"
+    },
+    "recent": { "title": "최근 꿈 일기", "empty": "최근 꿈 일기가 없습니다." },
+    "summary": { "totalPrefix": "총", "totalSuffix": "개의 꿈을 찾았습니다", "reset": "필터 초기화" },
+    "options": { "sort": { "date": "날짜순", "title": "제목순", "vividness": "생생함순", "emotion": "감정순" } },
+    "calendar": { "title": "꿈 일기 달력", "desc": "꿈을 기록한 날짜를 한눈에 확인하세요" },
+    "empty": {
+      "title": "꿈이 없습니다",
+      "filtered": "검색 조건에 맞는 꿈을 찾을 수 없습니다.",
+      "noData": "아직 기록된 꿈이 없습니다. 첫 번째 꿈을 기록해보세요!",
+      "cta": "첫 꿈 기록하기"
+    }
+  }
+  ,
+  "dreamDetail": {
+    "loading": "꿈을 불러오는 중...",
+    "header": { "lucid": "루시드 드림", "comment": "댓글", "visualize": "시각화" },
+    "tabs": { "content": "꿈 내용", "analysis": "AI 분석", "media": "미디어" },
+    "content": { "title": "꿈의 내용" },
+    "ai": {
+      "title": "AI 꿈 해석",
+      "desc": "인공지능이 분석한 꿈의 의미와 해석입니다",
+      "empty": "아직 AI 해석이 생성되지 않았습니다",
+      "generating": "해석 생성 중...",
+      "generate": "AI 해석 생성",
+      "sample": ""
+    },
+    "media": { "title": "관련 이미지", "empty": "업로드된 이미지가 없습니다", "visualizeCta": "AI로 꿈 시각화하기" },
+    "info": { "title": "꿈의 정보", "emotion": "감정", "dreamType": "꿈의 유형", "vividness": "생생함", "sleepQuality": "수면의 질", "createdAt": "작성일", "updatedAt": "수정일" },
+    "tags": { "title": "태그" },
+    "quick": { "title": "빠른 작업", "edit": "꿈 수정하기", "share": "꿈 공유하기", "export": "텍스트로 내보내기", "visualize": "AI 시각화" },
+    "share": { "copied": "링크가 클립보드에 복사되었습니다!" },
+    "export": {
+      "titleLabel": "꿈 제목",
+      "dateLabel": "날짜",
+      "emotionLabel": "감정",
+      "vividnessLabel": "생생함",
+      "lucidLabel": "루시드 드림",
+      "contentLabel": "내용",
+      "tagsLabel": "태그"
+    }
+  }
+  ,
+  "dejavu": {
+    "title": "현실-꿈 데자뷰 찾기",
+    "desc": "최근 현실에서 겪은 인상적인 사건이나 장면을 입력하면, AI가 과거 꿈 기록 중 유사한 내용을 찾아 연결해줍니다.",
+    "hint": "\"이 장면, 꿈에서 본 적 있는데?\" 싶은 순간을 과학적으로 탐구해보세요.",
+    "scoreNote": "표시되는 유사도는 내 꿈 목록 내 상대적 퍼센타일 점수입니다. 예: 80%는 상위 20% 유사함을 의미해요.",
+    "input": {
+      "title": "현실에서 겪은 일 설명",
+      "desc": "최근에 경험한 인상적인 사건, 장면, 대화, 감정 등을 자유롭게 입력해 주세요.",
+      "placeholder": "예: 오늘 처음 가본 카페에서 낯익은 풍경을 봤다...",
+      "required": "현실에서 겪은 일을 입력해 주세요."
+    },
+    "cta": "데자뷰 찾기",
+    "progress": { "title": "AI가 현실과 꿈을 비교 분석 중입니다...", "running": "분석 중...", "done": "완료" },
+    "empty": { "title": "아직 데자뷰 결과가 없습니다", "hint": "현실에서 겪은 일을 입력하고, 데자뷰 찾기를 눌러보세요." },
+    "result": { "elements": "유사한 요소", "ai": "AI 분석", "dream": "꿈", "date": "기록일" },
+    "result.elements": { "similarPlace": "비슷한 장소", "similarPerson": "비슷한 인물", "similarEmotion": "비슷한 감정", "placeSimilarity": "장소 유사성", "emotionSimilarity": "감정 유사성" },
+    "sample": { "dream1Title": "하늘을 나는 꿈", "dream1Analysis": "현실에서 겪은 자유로운 상황이 과거 꿈의 비행 경험과 연결되어 있습니다.", "dream2Title": "어린 시절 집", "dream2Analysis": "현실의 익숙한 공간에서 느낀 감정이 과거 꿈의 안전감과 연결되어 있습니다." },
+    "error": "분석 중 오류가 발생했습니다."
+  }
+  ,
+  "visualize": {
+    "title": "AI 꿈 시각화",
+    "desc": "인공지능이 당신의 꿈을 아름다운 이미지로 변환해드립니다. 다양한 스타일로 시각화하여 더 생생하게 보존하세요.",
+    "stats": { "available": "생성 가능한 꿈", "generated": "생성된 이미지" },
+    "panel": { "title": "이미지 생성", "desc": "꿈을 선택하거나 직접 설명을 입력하세요" },
+    "form": {
+      "selectDream": "꿈 선택",
+      "selectPlaceholder": "시각화할 꿈을 선택하세요",
+      "custom": "또는 직접 설명 입력",
+      "customPlaceholder": "꿈의 장면을 자세히 설명해주세요...",
+      "style": "이미지 스타일"
+    },
+    "generating": "생성 중...",
+    "generate": "이미지 생성",
+    "progress": { "title": "생성 진행률" },
+    "tabs": { "generated": "생성된 이미지", "gallery": "갤러리" },
+    "empty": { "title": "생성된 이미지가 없습니다", "hint": "꿈을 선택하고 이미지를 생성해보세요!" },
+    "toast": { "success": "이미지가 성공적으로 생성되었습니다!", "fail": "이미지 생성에 실패했습니다.", "download": "이미지 다운로드 기능이 곧 제공됩니다.", "share": "이미지 공유 기능이 곧 제공됩니다." },
+    "input": { "required": "꿈을 선택하거나 직접 설명을 입력해주세요." },
+    "styles": {
+      "realistic": "사실적", "realisticDesc": "실제 사진처럼 생생한 이미지",
+      "artistic": "예술적", "artisticDesc": "회화 같은 아름다운 스타일",
+      "dreamy": "몽환적", "dreamyDesc": "꿈같이 부드럽고 신비로운 느낌",
+      "fantasy": "판타지", "fantasyDesc": "마법적이고 환상적인 세계",
+      "minimalist": "미니멀", "minimalistDesc": "간결하고 깔끔한 스타일",
+      "surreal": "초현실주의", "surrealDesc": "달리 같은 초현실적 표현"
+    },
+    "sample": "샘플"
+  }
+  ,
+  "stats": {
+    "loading": "통계를 계산하는 중...",
+    "overview": { "total": "총 꿈 일기", "thisMonth": "이번 달", "streak": "연속 기록", "lucid": "루시드 드림" },
+    "emotions": { "title": "감정 분포", "desc": "꿈에서 느낀 감정들의 분포입니다" },
+    "types": { "title": "꿈 유형 분포", "desc": "꿈의 유형별 분포입니다" },
+    "tags": { "title": "자주 사용하는 태그", "desc": "가장 많이 사용된 태그들입니다" },
+    "more": { "title": "추가 통계", "avgVivid": "평균 생생함", "thisWeek": "이번 주 기록", "lucidRate": "루시드 드림 비율", "monthAvg": "월 평균 기록" },
+    "monthly": { "title": "월별 기록 추이", "desc": "최근 6개월간의 꿈 기록 추이입니다" },
+    "cooccur": { "title": "함께 자주 등장한 태그 패턴", "desc": "태그 조합의 공발생 빈도 상위 10개" },
+    "repeat": { "title": "반복되는 꿈 패턴", "desc": "유사한 제목 조합 상위 5쌍", "empty": "유사한 제목 조합이 충분하지 않습니다", "similarity": "유사도" }
+  }
+  ,
+  "profile": {
+    "needLogin": "로그인이 필요합니다.",
+    "tabs": { "profile": "프로필", "preferences": "환경설정", "security": "보안", "achievements": "성취" },
+    "basic": { "title": "기본 정보", "desc": "프로필 정보를 수정할 수 있습니다" },
+    "form": { "name": "이름", "email": "이메일", "bio": "자기소개", "goal": "꿈 목표", "theme": "좋아하는 꿈 테마" },
+    "save": { "saving": "저장 중...", "submit": "프로필 저장" },
+    "preview": { "title": "프로필 미리보기", "desc": "다른 사용자에게 보이는 모습", "noName": "이름 없음", "noBio": "자기소개가 없습니다", "goal": "꿈 목표", "theme": "좋아하는 테마", "joined": "가입일" },
+    "pwa": { "title": "앱 설치", "desc": "홈 화면 배너 외에도 여기서 설치할 수 있어요", "installed": "설치 완료됨", "install": "앱 설치하기", "pending": "설치 가능 시 표시됩니다", "tip": "설치 버튼이 보이지 않는 경우, 브라우저 메뉴에서 \"홈 화면에 추가\"를 이용하세요." },
+    "notify": { "title": "알림 설정", "reminder": "꿈 기록 리마인더", "reminderDesc": "매일 저녁 알림", "weekly": "주간 리포트", "weeklyDesc": "일주일 꿈 분석", "community": "커뮤니티 업데이트", "communityDesc": "새 게시물 알림", "ai": "AI 인사이트", "aiDesc": "AI 분석 결과" },
+    "privacy": { "title": "개인정보 설정", "public": "프로필 공개", "publicDesc": "다른 사용자에게 프로필 공개", "shareStats": "통계 공유", "shareStatsDesc": "꿈 통계 정보 공유", "messages": "메시지 허용", "messagesDesc": "다른 사용자의 메시지 수신" },
+    "display": { "title": "화면 설정", "theme": "테마", "lang": "언어", "date": "날짜 형식" }
+    "image": { "change": "사진 변경", "hint": "JPG, PNG 파일만 지원" },
+    "form": { "namePlaceholder": "이름을 입력하세요", "bioPlaceholder": "자기소개를 입력하세요", "goalPlaceholder": "예: 매일 꿈 기록하기", "themePlaceholder": "테마 선택" },
+    "themes": { "nature": "자연", "adventure": "모험", "fantasy": "판타지", "daily": "일상", "memory": "추억" },
+    "display": { "themes": { "light": "라이트 모드", "dark": "다크 모드", "auto": "시스템 설정" }, "dateSamples": { "korean": "2024년 1월 15일", "international": "15/01/2024", "american": "01/15/2024" } },
+    "security": { "title": "비밀번호 변경", "desc": "보안을 위해 정기적으로 비밀번호를 변경하세요", "current": "현재 비밀번호", "currentPlaceholder": "현재 비밀번호", "new": "새 비밀번호", "newPlaceholder": "새 비밀번호", "confirm": "새 비밀번호 확인", "confirmPlaceholder": "새 비밀번호 확인", "saving": "변경 중...", "submit": "비밀번호 변경" },
+    "achievements": { "mine": { "title": "획득한 배지", "desc": "달성한 성취들을 확인해보세요", "empty": "아직 획득한 배지가 없습니다." }, "all": { "title": "전체 배지", "desc": "획득 가능한 모든 배지들" } },
+    "stats": { "title": "통계 업데이트", "desc": "현재 통계를 기반으로 새로운 배지를 확인합니다", "totalDreams": "총 꿈 기록", "lucidDreams": "루시드 드림", "streak": "연속 기록", "badges": "획득 배지", "checkBadges": "배지 확인하기" },
+    "updateSuccess": "프로필이 업데이트되었습니다.",
+    "updateFailed": "프로필 업데이트에 실패했습니다.",
+    "imageUploadSuccess": "프로필 사진이 업데이트되었습니다.",
+    "imageUploadFailed": "이미지 업로드에 실패했습니다.",
+    "passwordMismatch": "새 비밀번호가 일치하지 않습니다.",
+    "passwordChangeSuccess": "비밀번호가 변경되었습니다.",
+    "passwordChangeFailed": "비밀번호 변경에 실패했습니다.",
+    "newBadge": "새로운 배지를 획득했습니다! {{badges}}"
+  },
+  "admin": {
+    "layout": { "title": "관리자 대시보드" },
+    "home": { "moderation": "신고/숨김 관리", "users": "사용자 관리" },
+    "login": { "title": "관리자 로그인", "tokenPlaceholder": "관리자 토큰", "submit": "로그인" },
+    "common": { "done": "처리되었습니다", "loading": "불러오는 중...", "error": "오류", "fetchFailed": "불러오기 실패" },
+    "users": {
+      "title": "사용자 관리",
+      "desc": "차단/뮤트 관리",
+      "noData": "사용자 정보가 부족합니다",
+      "mute": "뮤트",
+      "unmute": "뮤트 해제",
+      "block": "차단",
+      "unblock": "차단 해제"
+    },
+    "moderation": {
+      "title": "신고/숨김 관리",
+      "desc": "신고된 게시글 목록입니다",
+      "empty": "신고된 게시글이 없습니다",
+      "reports": "신고",
+      "hidden": "숨김",
+      "unhide": "숨김 해제",
+      "hide": "숨김 처리"
+    }
+  }
 }
