@@ -386,11 +386,11 @@ export default function CommunityPage() {
                                     <div className="ml-auto">
                                       <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                          <button className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="more">
-                                            <MoreVertical className="w-5 h-5" />
-                                          </button>
+                                          <Button variant="ghost" size="icon" className="rounded-full" aria-label={t('common.more','더 보기')}>
+                                            <MoreVertical className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                                          </Button>
                                         </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
+                                        <DropdownMenuContent align="end" sideOffset={6}>
                                           {post.authorId && user?.uid !== post.authorId && (
                                             <DropdownMenuItem onClick={() => toggleMute(post.authorId!)}>
                                               {mutedUserIds.has(post.authorId!) ? t('community.unmute','뮤트 해제') : t('community.mute','뮤트')}
