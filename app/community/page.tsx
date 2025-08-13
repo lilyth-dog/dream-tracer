@@ -391,12 +391,11 @@ export default function CommunityPage() {
                                           </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                          {user?.uid === post.authorId && (
-                                            <DropdownMenuItem onClick={() => handleDelete(post.id)} className="text-red-600">
-                                              <Trash2 className="w-4 h-4" /> {t('common.delete','삭제')}
+                                          {post.authorId && user?.uid !== post.authorId && (
+                                            <DropdownMenuItem onClick={() => toggleMute(post.authorId!)}>
+                                              {mutedUserIds.has(post.authorId!) ? t('community.unmute','뮤트 해제') : t('community.mute','뮤트')}
                                             </DropdownMenuItem>
                                           )}
-                                          <DropdownMenuSeparator />
                                           {/* 신고 모달 트리거 */}
                                           <AlertDialog>
                                             <AlertDialogTrigger asChild>
@@ -429,6 +428,14 @@ export default function CommunityPage() {
                                               </AlertDialogFooter>
                                             </AlertDialogContent>
                                           </AlertDialog>
+                                          {user?.uid === post.authorId && (
+                                            <>
+                                              <DropdownMenuSeparator />
+                                              <DropdownMenuItem onClick={() => handleDelete(post.id)} className="text-red-600">
+                                                <Trash2 className="w-4 h-4" /> {t('common.delete','삭제')}
+                                              </DropdownMenuItem>
+                                            </>
+                                          )}
                                         </DropdownMenuContent>
                                       </DropdownMenu>
                                     </div>
@@ -437,8 +444,8 @@ export default function CommunityPage() {
 							{post.hidden && (
 								<div className="mb-2 p-2 text-xs bg-yellow-50 border border-yellow-200 rounded text-yellow-700">{t('community.hiddenNotice', '신고 누적으로 숨김 처리된 게시글입니다.')}</div>
 							)}
-									<div className="whitespace-pre-line">{post.content}</div>
-									<div className="flex items-center gap-4 mt-2">
+                                    <div className="whitespace-pre-line">{post.content}</div>
+                                    <div className="flex items-center gap-4 mt-2">
 										<Button
 											variant={post.likedUserIds?.includes(user?.uid) ? "solid" : "ghost"}
 											size="sm"
@@ -449,41 +456,6 @@ export default function CommunityPage() {
 											<Heart className={post.likedUserIds?.includes(user?.uid) ? "h-4 w-4 text-pink-500 fill-pink-500" : "h-4 w-4 text-pink-500"} />
 											{post.likes}
 										</Button>
-                                        {/* 신고 */}
-                                        <AlertDialog>
-                                          <AlertDialogTrigger asChild>
-                                            <Button variant={post.reportedUserIds?.includes(user?.uid) ? "solid" : "ghost"} size="sm" className="dark:hover:bg-gray-700">
-                                              <Flag className="h-4 w-4 mr-1" /> {t('community.report', '신고')} {post.reports || 0}
-                                            </Button>
-                                          </AlertDialogTrigger>
-                                          <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                              <AlertDialogTitle>{t('community.report', '신고')}</AlertDialogTitle>
-                                              <AlertDialogDescription>{t('community.reportDesc','이 게시글을 신고하시겠습니까? 여러 차례 신고되면 자동으로 숨김 처리됩니다.')}</AlertDialogDescription>
-                                              <textarea id={`report-reason-${post.id}`} className="mt-3 w-full border dark:border-gray-700 rounded p-2 text-sm bg-white dark:bg-gray-800" placeholder={t('community.reportReason','신고 사유(선택)') as string}></textarea>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                              <AlertDialogCancel>{t('common.no','아니오')}</AlertDialogCancel>
-                                              <AlertDialogAction onClick={async () => {
-                                                if (!user) return
-                                                if (pendingReportIds.has(post.id)) return
-                                                setPendingReportIds(new Set(pendingReportIds).add(post.id))
-                                                const reported = post.reportedUserIds?.includes(user.uid)
-                                                const reasonEl = document.getElementById(`report-reason-${post.id}`) as HTMLTextAreaElement | null
-                                                const reason = reasonEl?.value || ''
-                                                const res = await fetch('/api/community', {
-                                                  method: 'PUT', headers: { 'Content-Type': 'application/json' },
-                                                  body: JSON.stringify({ postId: post.id, report: !reported, userId: user.uid, reason })
-                                                })
-                                                const data = await res.json()
-                                                if (data.ok) {
-                                                  setPosts(posts.map(p => p.id === post.id ? { ...p, reportedUserIds: data.reportedUserIds, reports: data.reports, hidden: data.hidden ?? p.hidden } : p))
-                                                }
-                                                setPendingReportIds(prev => { const n = new Set(prev); n.delete(post.id); return n })
-                                              }}>{t('common.yes','예')}</AlertDialogAction>
-                                            </AlertDialogFooter>
-                                          </AlertDialogContent>
-                                        </AlertDialog>
 									</div>
 									<div className="mt-4 space-y-2">
 										{(post.comments||[]).map((c: Comment) => (
