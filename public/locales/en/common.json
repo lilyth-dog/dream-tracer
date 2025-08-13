@@ -101,6 +101,7 @@
     "anon": "Anonymous",
     "report": "Report",
     "reportDesc": "Do you want to report this post? Posts reported multiple times may be hidden automatically.",
+    "reportReason": "Reason (optional)",
     "hiddenNotice": "This post is hidden due to multiple reports.",
     "shareCta": "Share",
     "sortRecent": "Recent",

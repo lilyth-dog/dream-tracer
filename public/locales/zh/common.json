@@ -62,6 +62,7 @@
     "anon": "匿名",
     "report": "举报",
     "reportDesc": "确定要举报此帖子吗？多次被举报的帖子可能会被自动隐藏。",
+    "reportReason": "举报理由（可选）",
     "hiddenNotice": "该帖子因多次举报已被隐藏。",
     "shareCta": "分享",
     "sortRecent": "最新",

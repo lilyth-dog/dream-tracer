@@ -376,6 +376,7 @@ export default function CommunityPage() {
                                             <AlertDialogHeader>
                                               <AlertDialogTitle>{t('community.report', '신고')}</AlertDialogTitle>
                                               <AlertDialogDescription>{t('community.reportDesc','이 게시글을 신고하시겠습니까? 여러 차례 신고되면 자동으로 숨김 처리됩니다.')}</AlertDialogDescription>
+                                              <textarea id={`report-reason-${post.id}`} className="mt-3 w-full border dark:border-gray-700 rounded p-2 text-sm bg-white dark:bg-gray-800" placeholder={t('community.reportReason','신고 사유(선택)') as string}></textarea>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                               <AlertDialogCancel>{t('common.no','아니오')}</AlertDialogCancel>
@@ -384,9 +385,11 @@ export default function CommunityPage() {
                                                 if (pendingReportIds.has(post.id)) return
                                                 setPendingReportIds(new Set(pendingReportIds).add(post.id))
                                                 const reported = post.reportedUserIds?.includes(user.uid)
+                                                const reasonEl = document.getElementById(`report-reason-${post.id}`) as HTMLTextAreaElement | null
+                                                const reason = reasonEl?.value || ''
                                                 const res = await fetch('/api/community', {
                                                   method: 'PUT', headers: { 'Content-Type': 'application/json' },
-                                                  body: JSON.stringify({ postId: post.id, report: !reported, userId: user.uid })
+                                                  body: JSON.stringify({ postId: post.id, report: !reported, userId: user.uid, reason })
                                                 })
                                                 const data = await res.json()
                                                 if (data.ok) {

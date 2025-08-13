@@ -49,6 +49,7 @@
     "anon": "익명",
     "report": "신고",
     "reportDesc": "이 게시글을 신고하시겠습니까? 여러 차례 신고되면 자동으로 숨김 처리됩니다.",
+    "reportReason": "신고 사유(선택)",
     "hiddenNotice": "신고 누적으로 숨김 처리된 게시글입니다.",
     "shareCta": "공유하기",
     "sortRecent": "최신",

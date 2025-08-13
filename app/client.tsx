@@ -223,6 +223,11 @@ function AuthWrapper({ children }: Readonly<PropsWithChildren<unknown>>) {
   return (
     <>
       <TopNavigation />
+      {/* iOS PWA 안내 배너 */}
+      {typeof window !== 'undefined' && require('@/components/ui/ios-install-banner').default && (() => {
+        const IOSInstallBanner = require('@/components/ui/ios-install-banner').default
+        return <IOSInstallBanner />
+      })()}
       {children}
       {/* 모바일에서만 하단 네비게이션 보이게 */}
       <div className="md:hidden">

@@ -114,7 +114,7 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  const { postId, comment, userId, like, report, isPublicProfile } = await request.json();
+  const { postId, comment, userId, like, report, isPublicProfile, reason } = await request.json();
   if (!postId || (!comment && typeof like !== 'boolean' && typeof report !== 'boolean')) return Response.json({ ok: false, error: '필수 정보 누락' }, { status: 400 });
   // 간단 레이트리밋: 60초에 최대 30회 (userId 또는 IP 기준)
   try {
@@ -204,6 +204,7 @@ export async function PUT(request: Request) {
         at: Timestamp.now(),
         hidden: next.hidden,
         reports: next.reports,
+        reason: report ? (String(reason||'').slice(0,200) || undefined) : undefined,
       })
     }
 
