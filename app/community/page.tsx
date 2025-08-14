@@ -167,6 +167,7 @@ export default function CommunityPage() {
             } else if (nextCursorMs && !opts?.reset) {
                 params.set('cursorMs', String(nextCursorMs))
             }
+            if (user?.uid) params.set('actor', user.uid)
             const res = await fetch(`/api/community?${params.toString()}`)
             const data = await res.json()
             // 유니크 병합 함수

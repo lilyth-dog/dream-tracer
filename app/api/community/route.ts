@@ -17,6 +17,26 @@ export async function GET(request: Request) {
   const pageSize = Math.min(parseInt(searchParams.get('limit') || '20', 10), 50)
   const sort = (searchParams.get('sort') || 'recent').toLowerCase()
   const reportsOnly = searchParams.get('reportsOnly') === '1'
+  const actor = (searchParams.get('actor') || '').trim()
+
+  // 관계 필터 로드: 배우자(요청자)의 뮤트/차단 목록
+  let mutedSet = new Set<string>()
+  let blockedSet = new Set<string>()
+  if (actor) {
+    try {
+      const actorRef = doc(db, 'users', actor)
+      const actorSnap = await getDoc(actorRef)
+      if (actorSnap.exists()) {
+        const data: any = actorSnap.data() || {}
+        const muted: string[] = Array.isArray(data.mutedUserIds) ? data.mutedUserIds : []
+        const blocked: string[] = Array.isArray(data.blockedUserIds) ? data.blockedUserIds : []
+        mutedSet = new Set(muted)
+        blockedSet = new Set(blocked)
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   // 신고 목록 전용(임시 관리자 키 필요)
   if (reportsOnly) {
@@ -51,7 +71,10 @@ export async function GET(request: Request) {
       return { post: p, score: base * decay }
     })
     scored.sort((a, b) => b.score - a.score)
-    const page = scored.slice(offset, offset + pageSize).map(s => s.post)
+    const page = scored
+      .map(s => s.post)
+      .filter((p: any) => !mutedSet.has(p.authorId) && !blockedSet.has(p.authorId))
+      .slice(offset, offset + pageSize)
     const nextOffset = offset + page.length
     return Response.json({ posts: page, nextOffset })
   }
@@ -68,18 +91,24 @@ export async function GET(request: Request) {
   const isDemo = !apiKey || apiKey === "demo-api-key" || apiKey === "demo"
   if (isDemo) {
     const now = Date.now()
-    const demo = Array.from({ length: 10 }, (_, i) => ({
+    let demo = Array.from({ length: 10 }, (_, i) => ({
       id: `demo-${i + 1}-${now}`,
       content: i === 0 ? '데모 커뮤니티 글입니다. 안녕하세요!' : `데모 글 #${i + 1}`,
       likes: Math.floor(Math.random() * 6),
       comments: [],
       createdAt: now - i * 3600_000,
       nickname: `익명${i + 1}`,
+      authorId: `demo-author-${(i%3)+1}`,
     })) as any[]
+    if (actor && (mutedSet.size || blockedSet.size)) {
+      demo = demo.filter(p => !mutedSet.has(p.authorId) && !blockedSet.has(p.authorId))
+    }
     return Response.json({ posts: demo, nextCursorMs: null })
   }
   const snap = await getDocs(q)
-  const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+  const posts = snap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter((p: any) => !mutedSet.has(p.authorId) && !blockedSet.has(p.authorId))
   const last = snap.docs[snap.docs.length - 1]
   const nextCursorMs = last ? (last.data().createdAt?.toMillis?.() || null) : null
   return Response.json({ posts, nextCursorMs })
