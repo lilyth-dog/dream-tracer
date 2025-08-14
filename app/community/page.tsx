@@ -169,13 +169,20 @@ export default function CommunityPage() {
             }
             const res = await fetch(`/api/community?${params.toString()}`)
             const data = await res.json()
+            // 유니크 병합 함수
+            const mergeUnique = (prevArr: any[], nextArr: any[]) => {
+                const byId = new Map<string, any>()
+                for (const p of prevArr) byId.set(p.id, p)
+                for (const p of nextArr) byId.set(p.id, p)
+                return Array.from(byId.values())
+            }
             if (mode === 'popular') {
                 const list = normalizePosts(data.posts || []).filter((p:any)=> !blockedUserIds.has(p.authorId) && !mutedUserIds.has(p.authorId))
-                setPosts((prev) => (opts?.reset ? list : [...prev, ...list]))
+                setPosts((prev) => (opts?.reset ? list : mergeUnique(prev, list)))
                 setNextOffset(data.nextOffset ?? (opts?.reset ? list.length : nextOffset + list.length))
             } else {
                 const list = normalizePosts(data.posts || []).filter((p:any)=> !blockedUserIds.has(p.authorId) && !mutedUserIds.has(p.authorId))
-                setPosts((prev) => (opts?.reset ? list : [...prev, ...list]))
+                setPosts((prev) => (opts?.reset ? list : mergeUnique(prev, list)))
                 setNextCursorMs(data.nextCursorMs || null)
             }
         } finally {

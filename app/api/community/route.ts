@@ -66,10 +66,15 @@ export async function GET(request: Request) {
   // 데모 모드: Firebase 키가 데모값이면 샘플 데이터 반환하여 UI가 비어 보이지 않도록 처리
   const isDemo = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "demo-api-key"
   if (isDemo) {
-    const demo = [
-      { id: 'demo1', content: '데모 커뮤니티 글입니다. 안녕하세요!', likes: 3, comments: [], createdAt: Date.now(), nickname: '익명1' },
-      { id: 'demo2', content: '루시드 드림 팁 공유해요.', likes: 5, comments: [], createdAt: Date.now() - 86400000, nickname: '익명2' },
-    ] as any[]
+    const now = Date.now()
+    const demo = Array.from({ length: 10 }, (_, i) => ({
+      id: `demo-${i + 1}-${now}`,
+      content: i === 0 ? '데모 커뮤니티 글입니다. 안녕하세요!' : `데모 글 #${i + 1}`,
+      likes: Math.floor(Math.random() * 6),
+      comments: [],
+      createdAt: now - i * 3600_000,
+      nickname: `익명${i + 1}`,
+    })) as any[]
     return Response.json({ posts: demo, nextCursorMs: null })
   }
   const snap = await getDocs(q)
