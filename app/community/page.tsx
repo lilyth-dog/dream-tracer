@@ -492,15 +492,12 @@ function NavButton({ icon, label, href }: { icon: React.ReactNode; label: string
 }
 
 function CommentInput({ postId, onComment }: { postId: string; onComment: (id: string, comment: string, isPublicProfile: boolean) => void }) {
-	const [comment, setComment] = useState("")
-	const [isPublicProfile, setIsPublicProfile] = useState(false)
-	const { t } = useTranslation()
-	return (
-		<form onSubmit={e => { e.preventDefault(); onComment(postId, comment, isPublicProfile); setComment(""); setIsPublicProfile(false); }} className="flex gap-2 mt-1 items-center">
-			<Input value={comment} onChange={e => setComment(e.target.value)} placeholder={t('community.commentPlaceholder', '댓글 달기')} className="text-xs" />
-			<input type="checkbox" id={`comment-public-${postId}`} checked={isPublicProfile} onChange={e => setIsPublicProfile(e.target.checked)} />
-			<label htmlFor={`comment-public-${postId}`} className="text-xs select-none">{t('community.publicProfileShort', '공개 프로필로')}</label>
-			<Button type="submit" size="sm" variant="outline">{t('community.submit', '등록')}</Button>
-		</form>
-	)
+    const [comment, setComment] = useState("")
+    const { t } = useTranslation()
+    return (
+        <form onSubmit={e => { e.preventDefault(); onComment(postId, comment, true); setComment(""); }} className="flex gap-2 mt-1 items-center">
+            <Input value={comment} onChange={e => setComment(e.target.value)} placeholder={t('community.commentPlaceholder', '댓글 달기')} className="text-xs" />
+            <Button type="submit" size="sm" variant="outline">{t('community.submit', '등록')}</Button>
+        </form>
+    )
 }
