@@ -26,6 +26,9 @@ i18n
     debug: process.env.NODE_ENV === 'development',
     backend: {
       loadPath: '/locales/{{lng}}/common.json',
+      // 로컬 환경에서 베이스 경로 보정 (Next dev 특정 404 회피)
+      // i18next-http-backend는 절대/상대 경로 모두 지원
+      // 여기서는 /locales 하위로 고정 제공
     },
     interpolation: {
       escapeValue: false,

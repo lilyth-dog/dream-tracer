@@ -27,10 +27,12 @@ export function useAuth() {
 
   useEffect(() => {
     // Firebase가 제대로 설정되었는지 확인
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY
     const isFirebaseConfigured =
-      process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
-      process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "" &&
-      process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "your_firebase_api_key"
+      !!apiKey &&
+      apiKey !== "" &&
+      apiKey !== "your_firebase_api_key" &&
+      apiKey !== "demo"
 
     if (!isFirebaseConfigured) {
       // 데모 모드: Firebase 없이 작동

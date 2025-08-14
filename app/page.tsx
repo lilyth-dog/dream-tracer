@@ -144,10 +144,18 @@ export default function LucidDreamDiary() {
   }
 
   // 별 위치 useMemo로 고정
+  const safeRandomId = () => {
+    try {
+      if (typeof crypto !== 'undefined' && typeof (crypto as any).randomUUID === 'function') {
+        return (crypto as any).randomUUID()
+      }
+    } catch {}
+    return `id-${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`
+  }
   const stars = useMemo(
     () =>
       Array.from({ length: 20 }, () => ({
-        id: crypto.randomUUID(),
+        id: safeRandomId(),
         left: Math.random() * 100,
         top: Math.random() * 100,
         animationDelay: `${Math.random() * 3}s`,
