@@ -128,7 +128,7 @@ export default function CommunityPage() {
     const router = useRouter()
     const [posts, setPosts] = useState<Post[]>([])
     const [newContent, setNewContent] = useState("")
-    const [isPublicProfile, setIsPublicProfile] = useState(false)
+    // 익명 사용 중단: 항상 프로필로 게시
     const [loading, setLoading] = useState(false)
     const [initialLoading, setInitialLoading] = useState(true)
     const [sortMode, setSortMode] = useState<'recent' | 'popular'>("recent")
@@ -260,11 +260,11 @@ export default function CommunityPage() {
 		if (!newContent.trim()) return
 		setLoading(true)
 		const authorId = user?.uid || ''
-		const nickname = t('community.anon', '익명') // 로케일 닉네임
+		const nickname = (user?.displayName || user?.email?.split('@')[0] || '').trim() || t('nav.profile','프로필')
 		const res = await fetch("/api/community", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ content: newContent, authorId, nickname, isPublicProfile })
+			body: JSON.stringify({ content: newContent, authorId, nickname, isPublicProfile: true })
 		})
 		const data = await res.json()
 		const postWithCreatedAt = (() => {
@@ -275,7 +275,6 @@ export default function CommunityPage() {
 		})()
 		setPosts([postWithCreatedAt, ...posts])
 		setNewContent("")
-		setIsPublicProfile(false)
 		setLoading(false)
 	}
     const handleLike = async (id: string) => {
@@ -348,10 +347,6 @@ export default function CommunityPage() {
 						</CardHeader>
 						<CardContent className="space-y-2">
                         <Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder={t('community.sharePlaceholder', '꿈을 자유롭게 공유해보세요!')} className="dark:bg-gray-800/70 dark:border-gray-700" />
-							<div className="flex items-center gap-2">
-								<input type="checkbox" id="publicProfile" checked={isPublicProfile} onChange={e => setIsPublicProfile(e.target.checked)} />
-                            <label htmlFor="publicProfile" className="text-xs select-none">{t('community.publicProfile', '공개 프로필로 작성')}</label>
-							</div>
                         <Button onClick={handlePost} disabled={loading} className="dark:bg-indigo-600 dark:hover:bg-indigo-500">{loading ? t('common.submitting', '등록 중...') : t('community.shareCta', '공유하기')}</Button>
 						</CardContent>
 					</Card>
