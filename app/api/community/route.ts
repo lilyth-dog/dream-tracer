@@ -64,7 +64,8 @@ export async function GET(request: Request) {
     q = query(collection(db, 'community'), orderBy('createdAt', 'desc'), startAfter(ts), fbLimit(pageSize))
   }
   // 데모 모드: Firebase 키가 데모값이면 샘플 데이터 반환하여 UI가 비어 보이지 않도록 처리
-  const isDemo = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "demo-api-key"
+  const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || ''
+  const isDemo = !apiKey || apiKey === "demo-api-key" || apiKey === "demo"
   if (isDemo) {
     const now = Date.now()
     const demo = Array.from({ length: 10 }, (_, i) => ({

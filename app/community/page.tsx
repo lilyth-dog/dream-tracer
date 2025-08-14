@@ -362,9 +362,9 @@ export default function CommunityPage() {
                     <Button variant={sortMode === 'popular' ? 'default' : 'outline'} size="sm" onClick={() => onChangeSort('popular')}>{t('community.sortPopular', '인기')}</Button>
 						</div>
 					<div className="space-y-4 mt-8">
-						{initialLoading ? (
+                        {initialLoading ? (
                         <Card className="glass-effect dark:bg-gray-800/70"><CardContent>{t('common.loading', '로딩 중...')}</CardContent></Card>
-                        ) : posts.map((post) => (
+                        ) : Array.from(new Map(posts.map(p=>[p.id,p])).values()).map((post) => (
 							<Card key={post.id} className="glass-effect dark:bg-gray-800/70">
 								<CardHeader className="flex flex-row items-center gap-2">
 									{post.isPublicProfile && user && user.uid === post.authorId ? (
