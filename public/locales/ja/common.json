@@ -102,7 +102,7 @@
   "profile": {
     "needLogin": "ログインが必要です。",
     "tabs": { "profile": "プロフィール", "preferences": "環境設定", "security": "セキュリティ", "achievements": "実績" },
-    "relations": { "title":"関係管理", "desc":"ミュート/ブロックしたユーザーを管理", "muted":"ミュート", "blocked":"ブロック" },
+    "relations": { "title":"関係管理", "desc":"ミュート/ブロックしたユーザーを管理", "muted":"ミュート", "blocked":"ブロック", "search":"ユーザー検索（メール/名前）" },
     "basic": { "title": "基本情報", "desc": "プロフィール情報を編集できます" },
     "form": { "name": "名前", "email": "メール", "bio": "自己紹介", "goal": "夢の目標", "theme": "好きな夢のテーマ", "namePlaceholder": "名前を入力", "bioPlaceholder": "自己紹介を入力", "goalPlaceholder": "例：毎日夢を記録", "themePlaceholder": "テーマを選択" },
     "image": { "change": "写真を変更", "hint": "JPG/PNGのみ対応" },

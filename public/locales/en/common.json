@@ -38,7 +38,7 @@
   "profile": {
     "needLogin": "Login is required.",
     "tabs": { "profile": "Profile", "preferences": "Preferences", "security": "Security", "achievements": "Achievements" },
-    "relations": { "title":"Relations", "desc":"Manage muted/blocked users", "muted":"Muted", "blocked":"Blocked" },
+    "relations": { "title":"Relations", "desc":"Manage muted/blocked users", "muted":"Muted", "blocked":"Blocked", "search":"Search users (email/name)" },
     "basic": { "title": "Basic info", "desc": "You can edit your profile info" },
     "form": {
       "name": "Name", "email": "Email", "bio": "Bio", "goal": "Dream goal", "theme": "Favorite dream theme",

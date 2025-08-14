@@ -102,7 +102,7 @@
   "profile": {
     "needLogin": "需要登录。",
     "tabs": { "profile": "个人资料", "preferences": "偏好", "security": "安全", "achievements": "成就" },
-    "relations": { "title":"关系管理", "desc":"管理已静音/已屏蔽的用户", "muted":"已静音", "blocked":"已屏蔽" },
+    "relations": { "title":"关系管理", "desc":"管理已静音/已屏蔽的用户", "muted":"已静音", "blocked":"已屏蔽", "search":"搜索用户（邮箱/姓名）" },
     "basic": { "title": "基本信息", "desc": "可以编辑你的资料" },
     "form": { "name": "姓名", "email": "邮箱", "bio": "简介", "goal": "梦境目标", "theme": "喜欢的主题", "namePlaceholder": "请输入姓名", "bioPlaceholder": "请输入简介", "goalPlaceholder": "例如：每天记录梦境", "themePlaceholder": "选择主题" },
     "image": { "change": "更换照片", "hint": "仅支持 JPG/PNG" },

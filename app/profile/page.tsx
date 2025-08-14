@@ -76,6 +76,8 @@ export default function ProfilePage() {
   const [userBadges, setUserBadges] = useState([])
   const [allBadges, setAllBadges] = useState([])
   const [relations, setRelations] = useState<{ muted: string[]; blocked: string[] }>({ muted: [], blocked: [] })
+  const [userSearch, setUserSearch] = useState('')
+  const [userResults, setUserResults] = useState<any[]>([])
 
   const { theme, setTheme } = useTheme()
 
@@ -142,6 +144,23 @@ export default function ProfilePage() {
     if (!user) return
     await fetch('/api/community', { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'unblock', targetUserId: target, actorUserId: user.uid }) })
     setRelations(prev => ({ ...prev, blocked: prev.blocked.filter(id=>id!==target) }))
+  }
+
+  const searchUsers = async () => {
+    if (!userSearch.trim()) { setUserResults([]); return }
+    const res = await fetch(`/api/users?q=${encodeURIComponent(userSearch.trim())}&limit=10`)
+    const data = await res.json()
+    if (data?.ok) setUserResults(data.users||[]) 
+  }
+  const muteUser = async (target: string) => {
+    if (!user) return
+    await fetch('/api/community', { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'mute', targetUserId: target, actorUserId: user.uid }) })
+    setRelations(prev => ({ ...prev, muted: Array.from(new Set([...prev.muted, target])) }))
+  }
+  const blockUser = async (target: string) => {
+    if (!user) return
+    await fetch('/api/community', { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'block', targetUserId: target, actorUserId: user.uid }) })
+    setRelations(prev => ({ ...prev, blocked: Array.from(new Set([...prev.blocked, target])) }))
   }
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
@@ -814,6 +833,25 @@ export default function ProfilePage() {
                 <CardDescription>{t('profile.relations.desc','뮤트/차단한 사용자를 관리합니다')}</CardDescription>
               </CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <div className="flex gap-2 items-center">
+                    <Input value={userSearch} onChange={e=>setUserSearch(e.target.value)} placeholder={t('profile.relations.search','사용자 검색 (이메일/이름)') as string} className="flex-1" />
+                    <Button variant="secondary" onClick={searchUsers}>{t('common.more','더 보기')}</Button>
+                  </div>
+                  {userResults.length>0 && (
+                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {userResults.map((u)=> (
+                        <div key={u.uid} className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+                          <span className="truncate mr-2">{u.displayName || u.email || u.uid}</span>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={()=>muteUser(u.uid)}>{t('community.mute','뮤트')}</Button>
+                            <Button size="sm" variant="outline" onClick={()=>blockUser(u.uid)}>{t('community.block','차단')}</Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div>
                   <h4 className="font-semibold mb-2">{t('profile.relations.muted','뮤트')}</h4>
                   <div className="space-y-2">
