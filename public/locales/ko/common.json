@@ -53,10 +53,7 @@
     "hiddenNotice": "신고 누적으로 숨김 처리된 게시글입니다.",
     "shareCta": "공유하기",
     "sortRecent": "최신",
-    "sortPopular": "인기"
-  }
-  ,
-  "community": {
+    "sortPopular": "인기",
     "mute": "뮤트",
     "unmute": "뮤트 해제",
     "block": "차단",
@@ -335,7 +332,7 @@
     "pwa": { "title": "앱 설치", "desc": "홈 화면 배너 외에도 여기서 설치할 수 있어요", "installed": "설치 완료됨", "install": "앱 설치하기", "pending": "설치 가능 시 표시됩니다", "tip": "설치 버튼이 보이지 않는 경우, 브라우저 메뉴에서 \"홈 화면에 추가\"를 이용하세요." },
     "notify": { "title": "알림 설정", "reminder": "꿈 기록 리마인더", "reminderDesc": "매일 저녁 알림", "weekly": "주간 리포트", "weeklyDesc": "일주일 꿈 분석", "community": "커뮤니티 업데이트", "communityDesc": "새 게시물 알림", "ai": "AI 인사이트", "aiDesc": "AI 분석 결과" },
     "privacy": { "title": "개인정보 설정", "public": "프로필 공개", "publicDesc": "다른 사용자에게 프로필 공개", "shareStats": "통계 공유", "shareStatsDesc": "꿈 통계 정보 공유", "messages": "메시지 허용", "messagesDesc": "다른 사용자의 메시지 수신" },
-    "display": { "title": "화면 설정", "theme": "테마", "lang": "언어", "date": "날짜 형식" }
+    "display": { "title": "화면 설정", "theme": "테마", "lang": "언어", "date": "날짜 형식" },
     "image": { "change": "사진 변경", "hint": "JPG, PNG 파일만 지원" },
     "form": { "namePlaceholder": "이름을 입력하세요", "bioPlaceholder": "자기소개를 입력하세요", "goalPlaceholder": "예: 매일 꿈 기록하기", "themePlaceholder": "테마 선택" },
     "themes": { "nature": "자연", "adventure": "모험", "fantasy": "판타지", "daily": "일상", "memory": "추억" },
