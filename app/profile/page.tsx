@@ -75,6 +75,7 @@ export default function ProfilePage() {
 
   const [userBadges, setUserBadges] = useState([])
   const [allBadges, setAllBadges] = useState([])
+  const [relations, setRelations] = useState<{ muted: string[]; blocked: string[] }>({ muted: [], blocked: [] })
 
   const { theme, setTheme } = useTheme()
 
@@ -107,6 +108,10 @@ export default function ProfilePage() {
       
       // 배지 데이터 불러오기
       loadBadges()
+      // 관계 목록 로드
+      fetch(`/api/relations?actor=${user.uid}`).then(r=>r.json()).then(d=>{
+        if (d?.ok) setRelations({ muted: d.mutedUserIds||[], blocked: d.blockedUserIds||[] })
+      }).catch(()=>{})
     }
   }, [user])
 
@@ -126,6 +131,17 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("배지 로드 실패:", error)
     }
+  }
+
+  const unmute = async (target: string) => {
+    if (!user) return
+    await fetch('/api/community', { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'unmute', targetUserId: target, actorUserId: user.uid }) })
+    setRelations(prev => ({ ...prev, muted: prev.muted.filter(id=>id!==target) }))
+  }
+  const unblock = async (target: string) => {
+    if (!user) return
+    await fetch('/api/community', { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'unblock', targetUserId: target, actorUserId: user.uid }) })
+    setRelations(prev => ({ ...prev, blocked: prev.blocked.filter(id=>id!==target) }))
   }
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
@@ -261,11 +277,12 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 pt-20 pb-8 max-w-6xl">
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="profile">{t('profile.tabs.profile', '프로필')}</TabsTrigger>
             <TabsTrigger value="preferences">{t('profile.tabs.preferences', '환경설정')}</TabsTrigger>
             <TabsTrigger value="security">{t('profile.tabs.security', '보안')}</TabsTrigger>
             <TabsTrigger value="achievements">{t('profile.tabs.achievements', '성취')}</TabsTrigger>
+            <TabsTrigger value="relations">{t('profile.relations.title','관계 관리')}</TabsTrigger>
           </TabsList>
 
           {/* 프로필 탭 */}
@@ -785,6 +802,46 @@ export default function ProfilePage() {
                 <Button onClick={handleStatsUpdate} className="w-full">
                   {t('profile.stats.checkBadges', '배지 확인하기')}
                 </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 관계 관리 탭 */}
+          <TabsContent value="relations" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('profile.relations.title','관계 관리')}</CardTitle>
+                <CardDescription>{t('profile.relations.desc','뮤트/차단한 사용자를 관리합니다')}</CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-2">{t('profile.relations.muted','뮤트')}</h4>
+                  <div className="space-y-2">
+                    {relations.muted.length === 0 && (
+                      <p className="text-sm text-gray-500">{t('common.empty','없음')}</p>
+                    )}
+                    {relations.muted.map(uid => (
+                      <div key={uid} className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+                        <span className="truncate mr-2">{uid}</span>
+                        <Button size="sm" variant="outline" onClick={()=>unmute(uid)}>{t('community.unmute','뮤트 해제')}</Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">{t('profile.relations.blocked','차단')}</h4>
+                  <div className="space-y-2">
+                    {relations.blocked.length === 0 && (
+                      <p className="text-sm text-gray-500">{t('common.empty','없음')}</p>
+                    )}
+                    {relations.blocked.map(uid => (
+                      <div key={uid} className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+                        <span className="truncate mr-2">{uid}</span>
+                        <Button size="sm" variant="outline" onClick={()=>unblock(uid)}>{t('community.unblock','차단 해제')}</Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
